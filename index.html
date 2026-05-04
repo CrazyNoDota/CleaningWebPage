@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Клининг №1 в Казахстане</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="phone-frame" id="app">
+
+<!-- ==================== SCREEN: HOME ==================== -->
+<div class="screen active" id="screen-home">
+  <div class="header">
+    <div class="header-logo">Клининг<span>Сервис</span></div>
+    <div class="header-nav">
+      <a href="#" class="header-nav-link">О нас</a>
+      <a href="#" class="header-nav-link">Услуги</a>
+      <a href="#" class="header-nav-link">Контакты</a>
+      <a href="#" class="header-nav-link">FAQ</a>
+      <a href="#" class="header-nav-link">Блог</a>
+    </div>
+    <div class="header-right">
+      <div class="header-phone">📞 +7 (700) 301-84-05</div>
+      <div class="header-city" id="city-toggle">📍 Астана ▾</div>
+      <div class="header-profile" onclick="showScreen('screen-profile')">И</div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <img src="images/cleaner_hero.png" alt="Уборка">
+    <div class="hero-overlay">
+      <h1>Идеальная чистота по доступной цене</h1>
+      <p>Профессиональная уборка квартир, домов и офисов</p>
+      <button class="hero-cta" onclick="showScreen('screen-booking-freq')">Заказать уборку</button>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-num">8 лет</div><div class="stat-label">На рынке</div></div>
+    <div class="stat-item"><div class="stat-num">1 000+</div><div class="stat-label">Клинеров</div></div>
+    <div class="stat-item"><div class="stat-num">до 15%</div><div class="stat-label">Скидка</div></div>
+  </div>
+
+  <div class="audience-toggle">
+    <button class="audience-btn active" onclick="toggleAudience(this)">🏠 Для дома</button>
+    <button class="audience-btn" onclick="toggleAudience(this)">🏢 Для бизнеса</button>
+  </div>
+
+  <div class="insurance-badge">
+    <div class="badge-icon">🛡️</div>
+    <div>Ваше имущество застраховано на <strong>16 млн ₸</strong> — Centras Insurance</div>
+  </div>
+
+  <div class="section-title">Что мы предлагаем?</div>
+  <div class="services-scroll">
+    <div class="service-card" onclick="showScreen('screen-booking-freq')">
+      <img src="images/clean_living_room.png" alt="Квартиры">
+      <div class="service-card-body"><h4>🏢 Уборка квартир</h4><p>от 12 750 ₸</p></div>
+    </div>
+    <div class="service-card" onclick="showScreen('screen-booking-freq')">
+      <img src="images/clean_bedroom.png" alt="Коттеджи">
+      <div class="service-card-body"><h4>🏡 Уборка коттеджей</h4><p>от 18 000 ₸</p></div>
+    </div>
+    <div class="service-card" onclick="showScreen('screen-booking-freq')">
+      <img src="images/clean_kitchen.png" alt="Дома">
+      <div class="service-card-body"><h4>🏠 Уборка домов</h4><p>от 15 500 ₸</p></div>
+    </div>
+    <div class="service-card" onclick="showScreen('screen-booking-freq')">
+      <img src="images/clean_bathroom.png" alt="Офисы">
+      <div class="service-card-body"><h4>🏪 Офисы</h4><p>от 20 000 ₸</p></div>
+    </div>
+  </div>
+
+  <div class="section-title">Что входит в уборку?</div>
+  <div class="room-grid">
+    <div class="room-tile"><img src="images/clean_living_room.png" alt="Гостиная"><div class="room-label">Гостиная</div></div>
+    <div class="room-tile"><img src="images/clean_bedroom.png" alt="Спальня"><div class="room-label">Спальня</div></div>
+    <div class="room-tile"><img src="images/clean_kitchen.png" alt="Кухня"><div class="room-label">Кухня</div></div>
+    <div class="room-tile"><img src="images/clean_bathroom.png" alt="Санузел"><div class="room-label">Санузел</div></div>
+  </div>
+
+  <div class="section-title">Какая уборка?</div>
+  <div class="pricing-cards">
+    <div class="pricing-card" onclick="showScreen('screen-booking-freq')">
+      <h4>Поддерживающая</h4>
+      <div class="price">12 750 ₸ <span>/ уборка</span></div>
+      <p>Для поддержания дома в чистоте и порядке</p>
+      <ul>
+        <li>Профессиональные средства</li>
+        <li>Собираем и выбрасываем мусор</li>
+        <li>Пылесосим и моем полы</li>
+      </ul>
+      <button class="card-btn">Заказать</button>
+    </div>
+    <div class="pricing-card featured" onclick="showScreen('screen-booking-freq')">
+      <h4>⭐ Генеральная</h4>
+      <div class="price">27 119 ₸ <span>/ уборка</span></div>
+      <p>Комфорт с дополнительными опциями</p>
+      <ul>
+        <li>Моем окна с внутренней стороны</li>
+        <li>Вдвое больше мастеров</li>
+        <li>Моем кафель на кухне и санузле</li>
+      </ul>
+      <button class="card-btn">Заказать</button>
+    </div>
+    <div class="pricing-card" onclick="showScreen('screen-booking-freq')">
+      <h4>После ремонта</h4>
+      <div class="price">43 500 ₸ <span>/ уборка</span></div>
+      <p>Удаляем послеремонтную пыль со всех поверхностей</p>
+      <ul>
+        <li>Удаляем строительную пыль</li>
+        <li>Удаляем остатки клея</li>
+        <li>Моем кафель на стенах</li>
+      </ul>
+      <button class="card-btn">Заказать</button>
+    </div>
+  </div>
+
+  <div class="section-title">Почему выбирают нас?</div>
+  <div class="why-cards">
+    <div class="why-card"><div class="why-icon">🛡️</div><h4>Безопасность</h4><p>Тщательный отбор и проверка всех сотрудников</p></div>
+    <div class="why-card"><div class="why-icon">✨</div><h4>Качество</h4><p>Передовые стандарты и профессиональная техника</p></div>
+    <div class="why-card"><div class="why-icon">⚡</div><h4>Удобство</h4><p>Простая заявка, оперативный выезд</p></div>
+    <div class="why-card"><div class="why-icon">💚</div><h4>Обслуживание</h4><p>Вежливый сервис и профессионализм</p></div>
+  </div>
+
+  <div class="section-title">Лучшие клинеры</div>
+  <div class="cleaners-scroll">
+    <div class="cleaner-card">
+      <img src="images/cleaner_profile_1.png" alt="Гульзира">
+      <div class="cleaner-card-body"><h4>Гульзира</h4><div class="stars">★★★★★</div><p>6 лет опыта</p></div>
+    </div>
+    <div class="cleaner-card">
+      <img src="images/cleaner_profile_2.png" alt="Лилия">
+      <div class="cleaner-card-body"><h4>Лилия</h4><div class="stars">★★★★★</div><p>5 лет опыта</p></div>
+    </div>
+    <div class="cleaner-card">
+      <img src="images/cleaner_profile_3.png" alt="Гульназ">
+      <div class="cleaner-card-body"><h4>Гульназ</h4><div class="stars">★★★★★</div><p>7 лет опыта</p></div>
+    </div>
+  </div>
+
+  <div class="section-title">Отзывы</div>
+  <div class="reviews-list">
+    <div class="review-card">
+      <div class="review-header"><div class="review-avatar">А</div><div><div class="review-name">Айгуль К.</div><div class="review-date">28 апреля 2026</div></div></div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">Отличный сервис! Квартира сияет. Клинер пришла вовремя, очень вежливая. Буду заказывать регулярно.</div>
+      <div class="review-photos"><img src="images/clean_living_room.png" alt=""><img src="images/clean_kitchen.png" alt=""></div>
+    </div>
+    <div class="review-card">
+      <div class="review-header"><div class="review-avatar">М</div><div><div class="review-name">Мурат Б.</div><div class="review-date">25 апреля 2026</div></div></div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">Заказывал генеральную уборку после ремонта. Всё идеально, даже не ожидал такого результата. Рекомендую!</div>
+    </div>
+  </div>
+
+  <div class="app-promo">
+    <div class="app-promo-text">
+      <h4>📱 Установите приложение</h4>
+      <p>Закажите уборку за 60 секунд</p>
+      <div class="app-badges"><span class="store-badge">Google Play</span><span class="store-badge">App Store</span></div>
+    </div>
+  </div>
+  </div><!-- end content-wrapper -->
+
+  <div class="footer">
+    <h5>Клининговая компания</h5>
+    
+    <p>пн-вс: 8:00-21:00</p>
+    <div class="footer-links" style="margin-top:12px">
+      <a href="#">Пользовательское соглашение</a>
+      <a href="#">Политика конфиденциальности</a>
+      <a href="#">Правила отмены подписки</a>
+    </div>
+    <div class="footer-bottom">© 2021-2026 — Астана</div>
+  </div>
+</div>
+
+<!-- ==================== SCREEN: FREQUENCY ==================== -->
+<div class="screen" id="screen-booking-freq">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showScreen('screen-home')">←</button>
+    <h2>Частота уборки</h2>
+    <div class="spacer"></div>
+  </div>
+  <div class="booking-section">
+    <h3>Выберите частоту уборки:</h3>
+    <div class="freq-options">
+      <button class="freq-btn" onclick="selectFreq(this,'Один раз')">Один раз</button>
+      <button class="freq-btn" onclick="selectFreq(this,'Каждую неделю')">Каждую неделю <span style="color:var(--accent-gold);font-size:12px">−15%</span></button>
+      <button class="freq-btn" onclick="selectFreq(this,'Каждые две недели')">Каждые две недели <span style="color:var(--accent-gold);font-size:12px">−10%</span></button>
+      <button class="freq-btn" onclick="selectFreq(this,'Каждый месяц')">Каждый месяц <span style="color:var(--accent-gold);font-size:12px">−5%</span></button>
+    </div>
+  </div>
+  <button class="sticky-cta" onclick="showScreen('screen-booking-date')">
+    <span>Далее</span><span class="cta-price">от 12 750 ₸</span>
+  </button>
+</div>
+
+<!-- ==================== SCREEN: DATE ==================== -->
+<div class="screen" id="screen-booking-date">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showScreen('screen-booking-freq')">←</button>
+    <h2>Выберите дату</h2>
+    <div class="spacer"></div>
+  </div>
+  <div class="booking-section">
+    <h3>Когда вам удобно?</h3>
+    <div class="calendar">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+        <h4 id="cal-month-label">Май 2026</h4>
+        <button class="cal-nav" onclick="changeMonth(1)">›</button>
+      </div>
+      <div class="cal-days" id="cal-grid"></div>
+    </div>
+  </div>
+  <button class="sticky-cta" onclick="showScreen('screen-booking-time')">
+    <span>Далее</span><span class="cta-price">от 12 750 ₸</span>
+  </button>
+</div>
+
+<!-- ==================== SCREEN: TIME ==================== -->
+<div class="screen" id="screen-booking-time">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showScreen('screen-booking-date')">←</button>
+    <h2>Время начала</h2>
+    <div class="spacer"></div>
+  </div>
+  <div class="booking-section">
+    <h3>Выберите время начала:</h3>
+    <div class="time-picker" style="background:var(--bg-white);border-radius:var(--radius-md);padding:30px;box-shadow:var(--shadow-sm);">
+      <div class="time-display" id="time-val">12:00</div>
+      <input type="range" class="time-slider" min="8" max="20" step="0.5" value="12" oninput="updateTime(this.value)">
+      <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--text-light)">
+        <span>08:00</span><span>14:00</span><span>20:00</span>
+      </div>
+    </div>
+  </div>
+  <button class="sticky-cta" onclick="showScreen('screen-booking-duration')">
+    <span>Далее</span><span class="cta-price">от 12 750 ₸</span>
+  </button>
+</div>
+
+<!-- ==================== SCREEN: DURATION ==================== -->
+<div class="screen" id="screen-booking-duration">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showScreen('screen-booking-time')">←</button>
+    <h2>Длительность</h2>
+    <div class="spacer"></div>
+  </div>
+  <div class="booking-section">
+    <h3>Сколько часов уборки?</h3>
+    <div class="duration-grid">
+      <button class="dur-btn" onclick="selectDur(this,'2 часа')">2 часа</button>
+      <button class="dur-btn" onclick="selectDur(this,'2.5 часа')">2.5 часа</button>
+      <button class="dur-btn selected" onclick="selectDur(this,'3 часа')">3 часа</button>
+      <button class="dur-btn" onclick="selectDur(this,'3.5 часа')">3.5 часа</button>
+    </div>
+    <div style="margin-top:12px">
+      <button class="dur-btn" style="width:100%" onclick="selectDur(this,'4+ часа')">Дольше… ▾</button>
+    </div>
+  </div>
+  <button class="sticky-cta" onclick="showScreen('screen-summary')">
+    <span>Далее</span><span class="cta-price">от 12 750 ₸</span>
+  </button>
+</div>
+
+<!-- ==================== SCREEN: SUMMARY ==================== -->
+<div class="screen" id="screen-summary">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showScreen('screen-booking-duration')">←</button>
+    <h2>Ваш заказ</h2>
+    <div class="spacer"></div>
+  </div>
+  <div style="padding-top:16px">
+    <div class="summary-card">
+      <div class="summary-row"><span>Дата</span><span id="sum-date">5 мая 2026</span></div>
+      <div class="summary-row"><span>Частота</span><span id="sum-freq">Один раз</span></div>
+      <div class="summary-row"><span>Время начала</span><span id="sum-time">12:00</span></div>
+      <div class="summary-row"><span>Длительность</span><span id="sum-dur">3 часа</span></div>
+      <div class="summary-row"><span>Цена / час</span><span>4 250 ₸</span></div>
+      <div class="summary-row"><span>Сервисный сбор</span><span>500 ₸</span></div>
+      <div class="summary-row total"><span>Итого</span><span id="sum-total">13 250 ₸</span></div>
+      <div class="promo-row">
+        <input class="promo-input" placeholder="Промокод">
+        <button class="promo-btn">›</button>
+      </div>
+    </div>
+  </div>
+  <button class="sticky-cta" onclick="showScreen('screen-confirm')">
+    <span>Оформить заказ</span><span class="cta-price">13 250 ₸</span>
+  </button>
+</div>
+
+<!-- ==================== SCREEN: CONFIRM ==================== -->
+<div class="screen" id="screen-confirm">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;padding:40px;text-align:center;">
+    <div style="font-size:64px;margin-bottom:20px;">✅</div>
+    <h2 style="font-size:22px;margin-bottom:8px;">Заказ оформлен!</h2>
+    <p style="color:var(--text-mid);font-size:14px;margin-bottom:24px;line-height:1.5;">Мы подтвердим ваш заказ в течение 15 минут. Ожидайте SMS-уведомление.</p>
+    <button class="hero-cta" style="background:var(--green-primary);color:#fff;padding:14px 40px;" onclick="showScreen('screen-home')">На главную</button>
+  </div>
+</div>
+
+<!-- ==================== SCREEN: PROFILE ==================== -->
+<div class="screen" id="screen-profile">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showScreen('screen-home')">←</button>
+    <h2>Профиль</h2>
+    <div class="spacer"></div>
+  </div>
+  <div style="padding:30px 20px;text-align:center;">
+    <div style="width:80px;height:80px;border-radius:50%;background:var(--green-primary);color:#fff;font-size:32px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">И</div>
+    <h3 style="font-size:18px;">Ильяс Кайратович</h3>
+    <p style="color:var(--text-light);font-size:13px;">+7 (700) 123-45-67</p>
+  </div>
+  <div style="padding:0 20px;display:flex;flex-direction:column;gap:8px;">
+    <div class="pricing-card" style="border-left:none;cursor:default;display:flex;align-items:center;gap:12px;"><span style="font-size:22px">📋</span><div><h4 style="font-size:14px">Мои заказы</h4><p style="font-size:12px;color:var(--text-light)">2 активных заказа</p></div></div>
+    <div class="pricing-card" style="border-left:none;cursor:default;display:flex;align-items:center;gap:12px;"><span style="font-size:22px">💳</span><div><h4 style="font-size:14px">Оплата</h4><p style="font-size:12px;color:var(--text-light)">Kaspi •••• 4521</p></div></div>
+    <div class="pricing-card" style="border-left:none;cursor:default;display:flex;align-items:center;gap:12px;"><span style="font-size:22px">📍</span><div><h4 style="font-size:14px">Адреса</h4><p style="font-size:12px;color:var(--text-light)">ул. Сыганак 32, кв 45</p></div></div>
+    <div class="pricing-card" style="border-left:none;cursor:default;display:flex;align-items:center;gap:12px;"><span style="font-size:22px">❓</span><div><h4 style="font-size:14px">Помощь</h4><p style="font-size:12px;color:var(--text-light)">FAQ и поддержка</p></div></div>
+  </div>
+</div>
+
+<!-- ==================== BOTTOM NAV ==================== -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="nav-item active" onclick="navTo('screen-home',this)"><span class="nav-icon">🏠</span>Главная</button>
+  <button class="nav-item" onclick="navTo('screen-booking-freq',this)"><span class="nav-icon">🧹</span>Заказать</button>
+  <button class="nav-item" onclick="navTo('screen-profile',this)"><span class="nav-icon">📋</span>Заказы</button>
+  <button class="nav-item" onclick="navTo('screen-profile',this)"><span class="nav-icon">👤</span>Профиль</button>
+</nav>
+
+<button class="wa-float" id="wa-btn" title="WhatsApp">💬</button>
+</div>
+
+<script>
+/* ---- Navigation ---- */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+  // hide wa btn and nav on confirm
+  const isConfirm = id === 'screen-confirm';
+  document.getElementById('wa-btn').style.display = isConfirm ? 'none' : 'flex';
+}
+
+function navTo(id, btn) {
+  showScreen(id);
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ---- Audience Toggle ---- */
+function toggleAudience(btn) {
+  document.querySelectorAll('.audience-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ---- Frequency Selection ---- */
+let selectedFreq = 'Один раз';
+function selectFreq(btn, val) {
+  document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedFreq = val;
+}
+
+/* ---- Duration Selection ---- */
+let selectedDur = '3 часа';
+function selectDur(btn, val) {
+  document.querySelectorAll('.dur-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedDur = val;
+}
+
+/* ---- Time Slider ---- */
+function updateTime(val) {
+  const h = Math.floor(val);
+  const m = (val % 1 === 0.5) ? '30' : '00';
+  document.getElementById('time-val').textContent = `${String(h).padStart(2,'0')}:${m}`;
+}
+
+/* ---- Calendar ---- */
+const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const dayNames = ['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'];
+let calYear = 2026, calMonth = 4, selectedDay = null; // May 2026
+
+function renderCalendar() {
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  document.getElementById('cal-month-label').textContent = `${months[calMonth]} ${calYear}`;
+  dayNames.forEach(d => { const el = document.createElement('div'); el.className='cal-day-name'; el.textContent=d; grid.appendChild(el); });
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const offset = (first === 0 ? 6 : first - 1);
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const today = new Date();
+  for (let i = 0; i < offset; i++) { const el = document.createElement('div'); el.className='cal-day'; grid.appendChild(el); }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day';
+    el.textContent = d;
+    const thisDate = new Date(calYear, calMonth, d);
+    if (thisDate < new Date(today.getFullYear(), today.getMonth(), today.getDate())) el.classList.add('disabled');
+    else {
+      el.onclick = function() {
+        document.querySelectorAll('.cal-day.selected').forEach(s => s.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedDay = d;
+      };
+    }
+    if (d === selectedDay) el.classList.add('selected');
+    grid.appendChild(el);
+  }
+}
+function changeMonth(dir) { calMonth += dir; if (calMonth > 11) { calMonth = 0; calYear++; } if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); }
+
+/* ---- Init ---- */
+document.addEventListener('DOMContentLoaded', () => { renderCalendar(); });
+</script>
+</body>
+</html>

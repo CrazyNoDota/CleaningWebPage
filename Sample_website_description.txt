@@ -1,0 +1,38 @@
+Based on the inspection of the **Top.kz** contact page for Astana, here is a comprehensive breakdown of its structure, purpose, design architecture, and layout. 
+
+### 1. Purpose and Core Function
+The primary purpose of this page is **lead generation and customer support** for a cleaning and maintenance service company in Kazakhstan (ТОО "Top.kz"). It is designed to make it as frictionless as possible for users (both B2C and B2B) to get in touch with the company, either by directly calling, messaging, or leaving their details for a callback.
+
+### 2. Information Architecture & Layout Structure
+The page follows a standard, highly effective corporate structure, divided into three main functional zones:
+
+#### A. Header (Global Navigation)
+The header is optimized for immediate conversions and localized context:
+* **App Promotion:** A banner encouraging users to download the mobile app ("Через приложение удобнее!").
+* **Contact Info:** The main phone number `+7(700)301-84-05` is prominently displayed.
+* **Audience Toggle:** Clearly splits the user journey into two main segments: **"Для дома"** (For Home) and **"Для бизнеса"** (For Business).
+* **Localization:** Features a city selector (currently set to "Astana") and a language toggle (currently "ru" - Russian).
+* **Main Navigation:** Links to Core Pages (About Us, Contacts, FAQ, Blog) and a User Profile section.
+
+#### B. Main Body (The "Contacts" Section)
+This is the focal point of the page, designed with a split-layout (or grid) separating contact details from the contact form:
+* **Company Details:** * **Legal Name & Address:** ТОО “Top.kz”, Astana, Syganak st. 32, VP 33.
+    * **Direct Contact:** Phone and Email (`sales@top.kz`).
+* **Lead Generation Form:** A highly simplified form asking only for essential information: Name (Required) and Phone Number (Required), followed by an "Оставить заявку" (Leave a request) button.
+* **Interactive Map:** The page embeds an interactive map using the **Leaflet.js** open-source library to visually pinpoint their physical office on Syganak street.
+
+#### C. Footer (Comprehensive Sitemap & Legal)
+The footer acts as a deep-navigation hub and trust-building section:
+* **Business Details:** Reiterates the company name, BIN (Business Identification Number: 170640016378), email, and operating hours (Mon-Sun: 8:00-21:00).
+* **Categorized Service Links:**
+    * *Home:* Apartment/house cleaning, dry cleaning.
+    * *Business:* Cleaning, repair, movers, florists, industrial alpinism, electrical work, HVAC/AC maintenance, and landscaping.
+* **Legal & Corporate Links:** Privacy policy, terms of use, data storage agreements, payment procedures, and subscription cancellation rules.
+* **Tech Support Block:** A dedicated module for troubleshooting, featuring the phone number and a direct **"Write to WhatsApp"** button.
+
+### 3. UI/UX Design Architecture & Features
+* **Omnichannel Support:** The page caters to multiple communication preferences. A user can call directly, use WhatsApp, fill out a web form, write an email, or visit the physical address.
+* **Floating Action Elements (Widgets):** The site features a floating widget (Виртуальная АТС / Virtual PBX) acting as a "Callback Button" ("Хотите, перезвоним Вам в удобное время?"). This is a sticky UI element designed to capture users who scroll without interacting with the main form.
+* **Audience Segmentation:** By splitting services into "Home" and "Business" at both the very top of the page (header) and the very bottom (footer), the architecture clearly guides different customer personas to their relevant sales funnels without cluttering the UI. 
+
+**Summary:** The architecture is pragmatic and conversion-focused. It avoids unnecessary clutter, relying on clear typography, prominent Call-to-Action (CTA) buttons, interactive mapping (Leaflet), and sticky communication widgets to drive user engagement.
