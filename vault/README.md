@@ -34,6 +34,7 @@ The full long-form plan still lives at [`../global_plan.md`](../global_plan.md).
 - [[modules/job-applications]] — careers funnel, fans out to ops via NotificationsService
 - [[modules/addresses]] — saved addresses + geocoding adapter (2GIS-ready, stub today)
 - [[modules/web-client]] — public Next.js site: home, login, 5-step booking wizard, live order page
+- [[modules/web-admin]] — operator console (Russian-only): cleaners CRUD with sidebar shell
 
 ## Modules planned (Phase 2 cont'd)
 

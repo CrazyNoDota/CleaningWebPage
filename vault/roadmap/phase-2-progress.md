@@ -84,6 +84,18 @@ The full plan is in [`../../global_plan.md`](../../global_plan.md) §9. This pag
   - Service unconditionally validates ownership / existence (404 / 403)
   - Web client API helper signature now requires `addressId`; wizard's submit asserts via type narrowing
   - Prisma column kept nullable to preserve legacy rows; future migration to `NOT NULL` after cleanup
+- [x] Cleaner admin CRUD endpoints
+  - `POST/GET/PATCH /api/v1/admin/cleaners` (manager + admin role-gated)
+  - `adminCreate` smartly creates a User if needed, promotes existing client to cleaner, refuses higher-role conflicts (409)
+  - `adminUpdate` covers profile fields, verification status (with `verifiedAt` stamping), and `isActive` flag
+- [x] `apps/web-admin` scaffold → [[../modules/web-admin]]
+  - Separate Next.js app on port 3001, Russian-only, brand-matched
+  - `AdminShell` sidebar layout with role-gated session check (`useAdminSession`)
+  - Login page with phone OTP + role check ("only manager/admin allowed")
+  - Cleaners list with status + verification filters
+  - Cleaners create form
+  - Cleaner detail/edit page with verification + suspend toggles
+  - Sidebar reserves slots for Orders / Reviews / Applications (placeholders shown as "скоро")
 
 ## Next
 

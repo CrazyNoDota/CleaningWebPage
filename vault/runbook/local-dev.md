@@ -24,6 +24,7 @@ If Prisma complains about `DATABASE_URL`, see [[../gotchas/prisma-env-path]].
 |---|---|
 | Start API (watch) | `cd apps/api && pnpm dev` |
 | Start web client | `cd apps/web-client && pnpm dev` (port 3000, talks to API on 4000) |
+| Start web admin | `cd apps/web-admin && pnpm dev` (port 3001, talks to API on 4000) |
 | Postgres + Redis | `docker compose up -d` (idempotent) |
 | Stop containers | `docker compose down` |
 | Type-check api | `cd apps/api && pnpm typecheck` |

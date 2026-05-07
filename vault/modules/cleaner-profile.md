@@ -50,7 +50,7 @@ Open question: do we add an `arrived` status, or derive it from a `cleaner.arriv
 
 ## Verification badge
 
-The `verificationStatus` field is operator-controlled, not user-controlled. A future admin endpoint flips `unverified → pending → verified` after document checks. The public profile shows the badge only for `verified`.
+The `verificationStatus` field is operator-controlled, not user-controlled. The admin app ([[web-admin]]) surfaces four buttons (`unverified` / `pending` / `verified` / `rejected`) that PATCH the cleaner. Setting it to `verified` stamps `verifiedAt`; any other value clears it. The public profile shows the badge only when status is `verified`.
 
 The *meaning* of "verified" is open — see [[../roadmap/open-questions]] #10.
 
