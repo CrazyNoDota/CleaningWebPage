@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { AdminShell } from '@/components/AdminShell';
+import { CleanerBadges } from '@/components/CleanerBadges';
 import { ApiError, adminListCleaners } from '@/lib/api';
 import type { AdminCleanerListItem, VerificationStatus } from '@/lib/types';
 
@@ -127,7 +128,7 @@ export default function CleanersPage() {
                       : '—'}
                   </td>
                   <td className="px-4 py-3">
-                    <Badges
+                    <CleanerBadges
                       isActive={c.isActive}
                       verificationStatus={c.verificationStatus}
                     />
@@ -179,26 +180,3 @@ function Filter({
   );
 }
 
-export function Badges({
-  isActive,
-  verificationStatus,
-}: {
-  isActive: boolean;
-  verificationStatus: VerificationStatus;
-}) {
-  return (
-    <span className="flex flex-wrap gap-1">
-      {isActive ? (
-        <span className="badge-green">Активен</span>
-      ) : (
-        <span className="badge-slate">Заблокирован</span>
-      )}
-      {verificationStatus === 'verified' && <span className="badge-green">✓ Проверен</span>}
-      {verificationStatus === 'pending' && <span className="badge-amber">На проверке</span>}
-      {verificationStatus === 'unverified' && (
-        <span className="badge-slate">Не проверен</span>
-      )}
-      {verificationStatus === 'rejected' && <span className="badge-red">Отклонён</span>}
-    </span>
-  );
-}

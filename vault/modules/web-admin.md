@@ -41,6 +41,25 @@ apps/web-admin/
         └── types.ts            TS types for the admin API surface
 ```
 
+## Orders section
+
+`/orders` — table with `?status=` and `?userPhone=` filters. Click a row → detail.
+
+`/orders/[id]` — operator console for a single order. Layout:
+- Header: service name + short id + total + scheduled date + current status badge
+- Three cards in a row: **Customer** (name / phone / email / order notes), **Address** (street / building / apartment / city / instructions), **Cleaner** (assigned cleaner OR a picker dropdown that calls `adminListCleaners({ isActive: true })` and `POST /admin/orders/:id/assign`)
+- **Action panel** — buttons for valid forward transitions based on current status. The same `NEXT_STATUSES` adjacency list as the server-side state machine; cancellation is offered from any non-terminal state. The server validates anyway — UI is just there to hide impossible buttons.
+- **Event log** — append-only list from `OrderEvent` showing transition history.
+
+Two new backend endpoints were needed (managers had no read endpoints before):
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/api/v1/admin/orders` | List with `status / cleanerId / userPhone / take / skip` filters; includes user, service, cleaner relations |
+| GET | `/api/v1/admin/orders/:id` | Full detail with all relations + event log + review |
+
+Both gated `@Roles('manager','admin','operator','cleaner')` like the existing assign/transition endpoints.
+
 ## Backend endpoints consumed
 
 `AdminCleanersController` (`/api/v1/admin/cleaners`):
@@ -75,7 +94,7 @@ All admin endpoints are gated `@Roles('manager', 'admin')` via the same `JwtAuth
 ## What's intentionally not here yet
 
 - **Locale switching** — Russian only. `next-intl` can be added when an English-speaking ops user appears.
-- **Orders / Reviews / Applications sections** — sidebar shows them as "скоро" placeholders. Backend endpoints exist; UI is the only missing piece.
+- **Reviews / Applications sections** — sidebar shows them as "скоро" placeholders. Backend endpoints exist; UI is the only missing piece. Orders is now shipped — see below.
 - **Cleaner photo upload UI** — `photoUrl` field exists in API but the form just accepts a URL string. Real upload waits on storage decision (ADR-005).
 - **Bulk actions / pagination cursors** — list uses `take/skip`; default 50 rows is plenty for current scale.
 - **Audit log of admin actions** — every endpoint touches `prisma.user.update` / `cleaner.update` directly. A `AdminAuditEvent` table is the natural place for this once compliance asks.

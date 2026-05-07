@@ -2,7 +2,10 @@ import { clearSession, getAccessToken, loadSession, saveSession } from './auth';
 import type {
   AdminCleanerFull,
   AdminCleanerListItem,
+  AdminOrderFull,
+  AdminOrderListItem,
   CreateCleanerBody,
+  OrderStatus,
   Session,
   UpdateCleanerBody,
 } from './types';
@@ -122,4 +125,45 @@ export function adminCreateCleaner(body: CreateCleanerBody) {
 
 export function adminUpdateCleaner(id: string, body: UpdateCleanerBody) {
   return request<AdminCleanerFull>(`/admin/cleaners/${id}`, { method: 'PATCH', body });
+}
+
+// ── Admin · Orders ─────────────────────────────────────────────────
+
+export function adminListOrders(opts: {
+  status?: OrderStatus;
+  cleanerId?: string;
+  userPhone?: string;
+  take?: number;
+  skip?: number;
+} = {}) {
+  const qs = new URLSearchParams();
+  if (opts.status) qs.set('status', opts.status);
+  if (opts.cleanerId) qs.set('cleanerId', opts.cleanerId);
+  if (opts.userPhone) qs.set('userPhone', opts.userPhone);
+  if (opts.take !== undefined) qs.set('take', String(opts.take));
+  if (opts.skip !== undefined) qs.set('skip', String(opts.skip));
+  const q = qs.toString();
+  return request<AdminOrderListItem[]>(`/admin/orders${q ? `?${q}` : ''}`);
+}
+
+export function adminGetOrder(id: string) {
+  return request<AdminOrderFull>(`/admin/orders/${id}`);
+}
+
+export function adminAssignCleaner(orderId: string, cleanerId: string) {
+  return request(`/admin/orders/${orderId}/assign`, {
+    method: 'POST',
+    body: { cleanerId },
+  });
+}
+
+export function adminTransitionOrder(
+  orderId: string,
+  to: OrderStatus,
+  note?: string,
+) {
+  return request(`/admin/orders/${orderId}/transition`, {
+    method: 'POST',
+    body: { to, note },
+  });
 }

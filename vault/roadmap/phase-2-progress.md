@@ -95,7 +95,12 @@ The full plan is in [`../../global_plan.md`](../../global_plan.md) §9. This pag
   - Cleaners list with status + verification filters
   - Cleaners create form
   - Cleaner detail/edit page with verification + suspend toggles
-  - Sidebar reserves slots for Orders / Reviews / Applications (placeholders shown as "скоро")
+  - Sidebar reserves slots for Reviews / Applications (placeholders shown as "скоро")
+- [x] Orders section in web-admin
+  - New backend endpoints: `GET /admin/orders` (with status/phone filters), `GET /admin/orders/:id` (full detail + relations + event log)
+  - `/orders` page: filterable table with status badges + customer phone search
+  - `/orders/[id]` page: customer/address/cleaner cards, cleaner assignment picker (lists active cleaners with rating), state-machine-aware transition buttons, event log
+  - Russian status labels + colour-coded badges
 
 ## Next
 

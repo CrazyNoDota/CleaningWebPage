@@ -117,6 +117,50 @@ export class OrdersService {
     return orders.map((o) => this.publicView(o));
   }
 
+  // ── operator/admin reads ────────────────────────────────────────
+
+  async adminList(opts: {
+    take: number;
+    skip: number;
+    status?: OrderStatus;
+    cleanerId?: string;
+    userPhone?: string;
+  }) {
+    return this.prisma.order.findMany({
+      where: {
+        ...(opts.status ? { status: opts.status } : {}),
+        ...(opts.cleanerId ? { cleanerId: opts.cleanerId } : {}),
+        ...(opts.userPhone ? { user: { phone: opts.userPhone } } : {}),
+      },
+      orderBy: { createdAt: 'desc' },
+      take: opts.take,
+      skip: opts.skip,
+      include: {
+        user: { select: { name: true, phone: true } },
+        service: { select: { slug: true, nameRu: true } },
+        cleaner: { include: { user: { select: { name: true } } } },
+      },
+    });
+  }
+
+  async adminGet(orderId: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        user: { select: { id: true, name: true, phone: true, email: true } },
+        service: true,
+        address: { include: { city: true } },
+        cleaner: {
+          include: { user: { select: { name: true, phone: true } } },
+        },
+        events: { orderBy: { createdAt: 'asc' } },
+        review: true,
+      },
+    });
+    if (!order) throw new NotFoundException(`order "${orderId}" not found`);
+    return order;
+  }
+
   async getForUser(orderId: string, userId: string) {
     const order = await this.requireOwnedOrder(orderId, userId);
     const events = await this.prisma.orderEvent.findMany({

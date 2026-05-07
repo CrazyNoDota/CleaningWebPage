@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AdminShell } from '@/components/AdminShell';
-import { Badges } from '@/app/cleaners/page';
+import { CleanerBadges } from '@/components/CleanerBadges';
 import { ApiError, adminGetCleaner, adminUpdateCleaner } from '@/lib/api';
 import type { AdminCleanerFull, VerificationStatus } from '@/lib/types';
 
@@ -56,7 +56,7 @@ export default function CleanerEditPage() {
                 </h1>
                 <p className="mt-1 text-sm text-slate-500">{cleaner.user.phone}</p>
                 <div className="mt-2">
-                  <Badges
+                  <CleanerBadges
                     isActive={cleaner.isActive}
                     verificationStatus={cleaner.verificationStatus}
                   />
