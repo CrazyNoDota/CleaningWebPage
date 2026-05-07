@@ -1,0 +1,101 @@
+{
+  "common": {
+    "brand": "КлинингСервис",
+    "tagline": "Идеальная чистота по доступной цене",
+    "loading": "Загрузка…",
+    "back": "Назад",
+    "next": "Далее",
+    "cancel": "Отмена",
+    "submit": "Подтвердить",
+    "error": "Ошибка"
+  },
+  "nav": {
+    "services": "Услуги",
+    "calculator": "Калькулятор",
+    "about": "О нас",
+    "contacts": "Контакты",
+    "signIn": "Войти",
+    "signOut": "Выйти",
+    "myOrders": "Мои заказы",
+    "book": "Заказать"
+  },
+  "home": {
+    "heroTitle": "Профессиональная уборка квартир, домов и офисов",
+    "heroCta": "Заказать уборку",
+    "stats": {
+      "experience": "лет на рынке",
+      "cleaners": "клинеров",
+      "discount": "до 15% скидка"
+    }
+  },
+  "footer": {
+    "rights": "Все права защищены"
+  },
+  "login": {
+    "title": "Вход по номеру телефона",
+    "phoneLabel": "Номер телефона",
+    "phoneHint": "Формат: +77011234567",
+    "sendCode": "Получить код",
+    "codeLabel": "Код из СМС",
+    "verify": "Войти",
+    "wrongPhone": "Указать другой номер",
+    "devCodeHint": "В режиме разработки код печатается в логи API."
+  },
+  "wizard": {
+    "title": "Заказ уборки",
+    "step": "Шаг {current} из {total}",
+    "stepService": "Выберите услугу",
+    "stepConfigure": "Параметры уборки",
+    "stepAddress": "Адрес",
+    "stepSchedule": "Дата и время",
+    "stepConfirm": "Подтверждение",
+    "areaM2": "Площадь, м²",
+    "rooms": "Комнаты",
+    "extras": "Дополнительные опции",
+    "noOptions": "Без дополнительных опций",
+    "estimatedTotal": "Итого",
+    "selectAddress": "Выберите адрес",
+    "newAddress": "Добавить новый",
+    "label": "Метка (Дом, Офис)",
+    "street": "Улица",
+    "building": "Дом",
+    "apartment": "Квартира",
+    "comment": "Комментарий для клинера",
+    "scheduledAt": "Когда приехать",
+    "submitOrder": "Оформить заказ",
+    "needAuth": "Войдите, чтобы продолжить"
+  },
+  "order": {
+    "title": "Ваш заказ",
+    "status": "Статус",
+    "total": "Сумма",
+    "scheduledAt": "Дата визита",
+    "yourCleaner": "Ваш клинер",
+    "noCleanerYet": "Клинер ещё не назначен.",
+    "rating": "{avg} ({count})",
+    "experience": "{years} лет опыта",
+    "verified": "Проверен",
+    "live": "Обновления приходят в реальном времени"
+  },
+  "review": {
+    "prompt": "Оцените уборку",
+    "ratingHint": "Нажмите на звёзды",
+    "commentLabel": "Комментарий",
+    "commentPlaceholder": "Что особенно понравилось или что можно улучшить?",
+    "submit": "Отправить отзыв",
+    "thanksTitle": "Спасибо за отзыв!",
+    "thanksBody": "Ваша оценка помогает нам становиться лучше.",
+    "errorPickRating": "Выберите оценку"
+  },
+  "status": {
+    "draft": "Черновик",
+    "created": "Создан",
+    "paid": "Оплачен",
+    "assigned": "Назначен клинер",
+    "en_route": "В пути",
+    "in_progress": "Идёт уборка",
+    "done": "Готово — оцените работу",
+    "reviewed": "Отзыв оставлен",
+    "cancelled": "Отменён"
+  }
+}

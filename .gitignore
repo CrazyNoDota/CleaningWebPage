@@ -1,0 +1,35 @@
+# deps
+node_modules/
+.pnpm-store/
+
+# build
+dist/
+build/
+.next/
+out/
+.turbo/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# editor
+.vscode/
+.idea/
+.obsidian/
+*.swp
+.DS_Store
+
+# generated
+*.tsbuildinfo
+coverage/
+prisma/migrations/dev.db*
+
+# docker volumes
+docker-data/

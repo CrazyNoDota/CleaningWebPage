@@ -1,0 +1,101 @@
+{
+  "common": {
+    "brand": "CleaningService",
+    "tagline": "Spotless clean at an affordable price",
+    "loading": "Loading…",
+    "back": "Back",
+    "next": "Next",
+    "cancel": "Cancel",
+    "submit": "Confirm",
+    "error": "Error"
+  },
+  "nav": {
+    "services": "Services",
+    "calculator": "Calculator",
+    "about": "About",
+    "contacts": "Contacts",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "myOrders": "My orders",
+    "book": "Book"
+  },
+  "home": {
+    "heroTitle": "Professional cleaning for apartments, houses and offices",
+    "heroCta": "Book a cleaning",
+    "stats": {
+      "experience": "years in business",
+      "cleaners": "cleaners",
+      "discount": "up to 15% off"
+    }
+  },
+  "footer": {
+    "rights": "All rights reserved"
+  },
+  "login": {
+    "title": "Sign in with your phone",
+    "phoneLabel": "Phone number",
+    "phoneHint": "Format: +77011234567",
+    "sendCode": "Send code",
+    "codeLabel": "SMS code",
+    "verify": "Sign in",
+    "wrongPhone": "Use a different number",
+    "devCodeHint": "In dev mode the code is printed in the API logs."
+  },
+  "wizard": {
+    "title": "Book a cleaning",
+    "step": "Step {current} of {total}",
+    "stepService": "Choose a service",
+    "stepConfigure": "Cleaning details",
+    "stepAddress": "Address",
+    "stepSchedule": "Date & time",
+    "stepConfirm": "Review",
+    "areaM2": "Area, m²",
+    "rooms": "Rooms",
+    "extras": "Add-ons",
+    "noOptions": "No add-ons",
+    "estimatedTotal": "Total",
+    "selectAddress": "Pick an address",
+    "newAddress": "Add a new one",
+    "label": "Label (Home, Office)",
+    "street": "Street",
+    "building": "Building",
+    "apartment": "Apartment",
+    "comment": "Notes for the cleaner",
+    "scheduledAt": "When should we come",
+    "submitOrder": "Place order",
+    "needAuth": "Please sign in to continue"
+  },
+  "order": {
+    "title": "Your order",
+    "status": "Status",
+    "total": "Total",
+    "scheduledAt": "Scheduled",
+    "yourCleaner": "Your cleaner",
+    "noCleanerYet": "A cleaner has not been assigned yet.",
+    "rating": "{avg} ({count})",
+    "experience": "{years} years of experience",
+    "verified": "Verified",
+    "live": "Status updates arrive in real time"
+  },
+  "review": {
+    "prompt": "Rate your cleaning",
+    "ratingHint": "Tap the stars",
+    "commentLabel": "Comment",
+    "commentPlaceholder": "What stood out, what could be better?",
+    "submit": "Submit review",
+    "thanksTitle": "Thanks for your review!",
+    "thanksBody": "Your feedback helps us improve.",
+    "errorPickRating": "Pick a rating first"
+  },
+  "status": {
+    "draft": "Draft",
+    "created": "Created",
+    "paid": "Paid",
+    "assigned": "Cleaner assigned",
+    "en_route": "On the way",
+    "in_progress": "Cleaning in progress",
+    "done": "Done — please rate",
+    "reviewed": "Review submitted",
+    "cancelled": "Cancelled"
+  }
+}

@@ -1,0 +1,420 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  client
+  cleaner
+  operator
+  manager
+  admin
+}
+
+enum AuthProvider {
+  phone
+  email
+  google
+  apple
+}
+
+enum Locale {
+  ru
+  kk
+  en
+}
+
+enum ServiceType {
+  apartment
+  office
+  post_renovation
+  subscription
+}
+
+enum OrderStatus {
+  draft
+  created
+  paid
+  assigned
+  en_route
+  in_progress
+  done
+  reviewed
+  cancelled
+}
+
+enum OrderSource {
+  web
+  mobile
+  admin
+  subscription
+  crm
+}
+
+enum VerificationStatus {
+  unverified
+  pending
+  verified
+  rejected
+}
+
+enum ReviewStatus {
+  pending
+  published
+  hidden
+  rejected
+}
+
+enum JobApplicationStatus {
+  new
+  contacted
+  interviewing
+  hired
+  rejected
+}
+
+enum NotificationChannel {
+  push
+  whatsapp
+  telegram
+  email
+  sms
+}
+
+enum NotificationStatus {
+  pending
+  sent
+  failed
+  skipped
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Identity
+// ─────────────────────────────────────────────────────────────────
+
+model User {
+  id                   String                @id @default(uuid())
+  phone                String?               @unique
+  email                String?               @unique
+  name                 String?
+  passwordHash         String?
+  role                 UserRole              @default(client)
+  locale               Locale                @default(ru)
+  isActive             Boolean               @default(true)
+  notificationChannels NotificationChannel[] @default([push, email, sms])
+  telegramChatId       String?
+  deviceTokens         String[]              @default([])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
+
+  oauthAccounts  OAuthAccount[]
+  refreshTokens  RefreshToken[]
+  addresses      Address[]
+  orders         Order[]
+  cleanerProfile Cleaner?
+  reviews        Review[]
+  notifications  Notification[]
+
+  @@index([phone])
+  @@index([email])
+  @@index([role])
+}
+
+model OAuthAccount {
+  id             String       @id @default(uuid())
+  userId         String
+  provider       AuthProvider
+  providerUserId String
+  createdAt      DateTime     @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@index([userId])
+}
+
+model RefreshToken {
+  id          String    @id @default(uuid())
+  userId      String
+  tokenHash   String
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  userAgent   String?
+  ipAddress   String?
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+}
+
+model OtpCode {
+  id         String    @id @default(uuid())
+  phone      String
+  codeHash   String
+  expiresAt  DateTime
+  attempts   Int       @default(0)
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([phone])
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Geography (multi-city ready from day 1)
+// ─────────────────────────────────────────────────────────────────
+
+model City {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  name      String
+  timezone  String   @default("Asia/Almaty")
+  currency  String   @default("KZT")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  addresses    Address[]
+  services     Service[]
+  applications JobApplication[]
+}
+
+model Address {
+  id        String    @id @default(uuid())
+  userId    String
+  cityId    String
+  label     String?
+  street    String
+  building  String
+  apartment String?
+  comment   String?
+  lat       Float?
+  lng       Float?
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  city   City   @relation(fields: [cityId], references: [id])
+  orders Order[]
+
+  @@index([userId])
+  @@index([cityId])
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Catalog
+// ─────────────────────────────────────────────────────────────────
+
+model Service {
+  id          String      @id @default(uuid())
+  cityId      String?     // null = available in all cities
+  slug        String      @unique
+  type        ServiceType
+  nameRu      String
+  nameKk      String
+  nameEn      String
+  descRu      String      @default("")
+  descKk      String      @default("")
+  descEn      String      @default("")
+  basePrice   Int         // in minor units (tiyin) — KZT * 100
+  currency    String      @default("KZT")
+  // Pricing formula DSL — JSON expression evaluated server-side.
+  // Lets admins edit pricing without redeploys. See PricingEngine.
+  pricingExpr Json
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  city    City?           @relation(fields: [cityId], references: [id])
+  options ServiceOption[]
+  orders  Order[]
+
+  @@index([type])
+  @@index([cityId])
+}
+
+model ServiceOption {
+  id        String  @id @default(uuid())
+  serviceId String
+  key       String  // stable identifier (e.g. "windows", "carpet")
+  labelRu   String
+  labelKk   String
+  labelEn   String
+  priceDelta Int    // minor units
+  inputType String  @default("checkbox") // checkbox | counter | select
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, key])
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Orders (state machine + event log)
+// ─────────────────────────────────────────────────────────────────
+
+model Order {
+  id          String       @id @default(uuid())
+  userId      String?      // null = guest order
+  guestPhone  String?
+  guestEmail  String?
+  serviceId   String
+  addressId   String?
+  scheduledAt DateTime?
+  status      OrderStatus  @default(draft)
+  source      OrderSource  @default(web)
+  total       Int          // minor units
+  currency    String       @default("KZT")
+  cleanerId   String?
+  notes       String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  cancelledAt DateTime?
+
+  user    User?        @relation(fields: [userId], references: [id])
+  service Service      @relation(fields: [serviceId], references: [id])
+  address Address?     @relation(fields: [addressId], references: [id])
+  cleaner Cleaner?     @relation(fields: [cleanerId], references: [id])
+  events  OrderEvent[]
+  review  Review?
+
+  @@index([userId])
+  @@index([status])
+  @@index([scheduledAt])
+}
+
+model OrderEvent {
+  id        String   @id @default(uuid())
+  orderId   String
+  type      String   // domain event name, e.g. "order.created"
+  payload   Json
+  actorId   String?  // user/admin who caused this event
+  createdAt DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([type])
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Cleaners (employee model)
+// ─────────────────────────────────────────────────────────────────
+
+model Cleaner {
+  id                    String             @id @default(uuid())
+  userId                String             @unique
+  specialization        String[]           @default([])
+  ratingAvg             Float              @default(0)
+  ratingCount           Int                @default(0)
+  photoUrl              String?
+  bioRu                 String             @default("")
+  bioKk                 String             @default("")
+  bioEn                 String             @default("")
+  yearsOfExperience     Int                @default(0)
+  languages             String[]           @default([])
+  completedOrdersCount  Int                @default(0)
+  verificationStatus    VerificationStatus @default(unverified)
+  verifiedAt            DateTime?
+  isActive              Boolean            @default(true)
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders  Order[]
+  reviews Review[]
+
+  @@index([isActive])
+  @@index([verificationStatus])
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Reviews (one per completed order, feeds cleaner ratings)
+// ─────────────────────────────────────────────────────────────────
+
+model Review {
+  id              String       @id @default(uuid())
+  orderId         String       @unique
+  userId          String
+  cleanerId       String?
+  rating          Int          // 1..5
+  comment         String?
+  tags            String[]     @default([])
+  photos          String[]     @default([])
+  status          ReviewStatus @default(pending)
+  publishedAt     DateTime?
+  moderatedById   String?
+  moderationNote  String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id])
+  cleaner Cleaner? @relation(fields: [cleanerId], references: [id])
+
+  @@index([cleanerId, status])
+  @@index([status])
+  @@index([userId])
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Job applications (careers / "Become a Cleaner")
+// ─────────────────────────────────────────────────────────────────
+
+model JobApplication {
+  id            String               @id @default(uuid())
+  fullName      String
+  phone         String
+  cityId        String?
+  cityFreeText  String?
+  age           Int?
+  experience    String?
+  resumeUrl     String?
+  documentUrls  String[]             @default([])
+  source        String               @default("web")
+  status        JobApplicationStatus @default(new)
+  notes         String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  city City? @relation(fields: [cityId], references: [id])
+
+  @@index([phone])
+  @@index([status])
+  @@index([cityId])
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Notifications (append-only dispatch log)
+// ─────────────────────────────────────────────────────────────────
+
+model Notification {
+  id          String              @id @default(uuid())
+  userId      String?             // null for guest / system recipients
+  kind        String              // domain event name, e.g. "order.assigned"
+  channel     NotificationChannel
+  status      NotificationStatus  @default(pending)
+  recipient   String              // phone / email / chatId / device token snapshot
+  subject     String?
+  body        String
+  payload     Json
+  error       String?
+  createdAt   DateTime            @default(now())
+  sentAt      DateTime?
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([kind])
+  @@index([status])
+}

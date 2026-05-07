@@ -1,0 +1,101 @@
+{
+  "common": {
+    "brand": "КлинингСервис",
+    "tagline": "Қолжетімді бағамен мінсіз тазалық",
+    "loading": "Жүктелуде…",
+    "back": "Артқа",
+    "next": "Әрі қарай",
+    "cancel": "Бас тарту",
+    "submit": "Растау",
+    "error": "Қате"
+  },
+  "nav": {
+    "services": "Қызметтер",
+    "calculator": "Калькулятор",
+    "about": "Біз туралы",
+    "contacts": "Байланыс",
+    "signIn": "Кіру",
+    "signOut": "Шығу",
+    "myOrders": "Тапсырыстарым",
+    "book": "Тапсырыс"
+  },
+  "home": {
+    "heroTitle": "Пәтерлерді, үйлерді және кеңселерді кәсіби тазалау",
+    "heroCta": "Тазалауға тапсырыс беру",
+    "stats": {
+      "experience": "жыл нарықта",
+      "cleaners": "тазалаушы",
+      "discount": "15%-ға дейін жеңілдік"
+    }
+  },
+  "footer": {
+    "rights": "Барлық құқықтар қорғалған"
+  },
+  "login": {
+    "title": "Телефон арқылы кіру",
+    "phoneLabel": "Телефон нөмірі",
+    "phoneHint": "Формат: +77011234567",
+    "sendCode": "Кодты алу",
+    "codeLabel": "СМС-код",
+    "verify": "Кіру",
+    "wrongPhone": "Басқа нөмір көрсету",
+    "devCodeHint": "Дамыту режимінде код API логіне жазылады."
+  },
+  "wizard": {
+    "title": "Тазалауға тапсырыс",
+    "step": "{current} / {total} қадам",
+    "stepService": "Қызметті таңдаңыз",
+    "stepConfigure": "Тазалау параметрлері",
+    "stepAddress": "Мекенжай",
+    "stepSchedule": "Күн және уақыт",
+    "stepConfirm": "Растау",
+    "areaM2": "Алаң, м²",
+    "rooms": "Бөлмелер",
+    "extras": "Қосымшалар",
+    "noOptions": "Қосымшаларсыз",
+    "estimatedTotal": "Барлығы",
+    "selectAddress": "Мекенжай таңдаңыз",
+    "newAddress": "Жаңасын қосу",
+    "label": "Белгі (Үй, Кеңсе)",
+    "street": "Көше",
+    "building": "Үй",
+    "apartment": "Пәтер",
+    "comment": "Тазалаушыға ескертпе",
+    "scheduledAt": "Қашан келу керек",
+    "submitOrder": "Тапсырыс жасау",
+    "needAuth": "Жалғастыру үшін кіріңіз"
+  },
+  "order": {
+    "title": "Сіздің тапсырысыңыз",
+    "status": "Күй",
+    "total": "Сома",
+    "scheduledAt": "Уақыт",
+    "yourCleaner": "Сіздің тазалаушы",
+    "noCleanerYet": "Тазалаушы әлі тағайындалмаған.",
+    "rating": "{avg} ({count})",
+    "experience": "{years} жыл тәжірибе",
+    "verified": "Расталған",
+    "live": "Жаңартулар нақты уақытта келеді"
+  },
+  "review": {
+    "prompt": "Тазалауды бағалаңыз",
+    "ratingHint": "Жұлдыздарды басыңыз",
+    "commentLabel": "Пікір",
+    "commentPlaceholder": "Не ұнады, нені жақсартуға болады?",
+    "submit": "Пікір жіберу",
+    "thanksTitle": "Пікіріңіз үшін рақмет!",
+    "thanksBody": "Бағаңыз бізге жақсаруға көмектеседі.",
+    "errorPickRating": "Алдымен бағаны таңдаңыз"
+  },
+  "status": {
+    "draft": "Жоба",
+    "created": "Жасалды",
+    "paid": "Төленді",
+    "assigned": "Тазалаушы тағайындалды",
+    "en_route": "Жолда",
+    "in_progress": "Тазалау жүруде",
+    "done": "Дайын — бағалаңыз",
+    "reviewed": "Пікір қалдырылды",
+    "cancelled": "Бас тартылды"
+  }
+}
