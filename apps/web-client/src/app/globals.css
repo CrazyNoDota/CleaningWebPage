@@ -1,32 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: 255 255 255;
-  --foreground: 15 23 42;
+  --bg-page: 247 248 250;
+  --foreground: 26 26 46;
 }
 
 html,
 body {
-  background: rgb(var(--background));
+  background: rgb(var(--bg-page));
   color: rgb(var(--foreground));
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 @layer components {
   .input {
-    @apply w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900
+    @apply w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-ink-900
            focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-100;
   }
+
+  /* Pill-shaped primary CTA — brand green */
   .btn-primary {
-    @apply rounded-lg bg-brand-600 px-4 py-2 text-white font-medium
-           hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply rounded-pill bg-brand-600 px-6 py-3 text-white font-semibold
+           shadow-soft hover:bg-brand-700 transition
+           disabled:cursor-not-allowed disabled:opacity-50;
   }
+
+  /* Pill secondary — outlined, hover fill */
   .btn-secondary {
-    @apply rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-700
-           hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply rounded-pill border-2 border-brand-600 bg-white px-6 py-3 text-brand-600 font-semibold
+           hover:bg-brand-600 hover:text-white transition
+           disabled:cursor-not-allowed disabled:opacity-50;
   }
+
+  /* Plain card — soft white tile */
   .card {
-    @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-sm;
+    @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-soft;
+  }
+
+  /* Section heading */
+  .section-title {
+    @apply text-xl md:text-2xl font-bold text-ink-900;
+  }
+
+  /* Tag pill — used for "city", labels */
+  .pill {
+    @apply inline-flex items-center gap-1 rounded-pill bg-brand-100 px-3 py-1
+           text-sm text-brand-700 font-medium;
   }
 }

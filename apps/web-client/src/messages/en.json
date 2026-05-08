@@ -1,4 +1,8 @@
 {
+  "brand": {
+    "first": "Cleaning",
+    "second": "Service"
+  },
   "common": {
     "brand": "CleaningService",
     "tagline": "Spotless clean at an affordable price",
@@ -17,19 +21,97 @@
     "signIn": "Sign in",
     "signOut": "Sign out",
     "myOrders": "My orders",
-    "book": "Book"
+    "book": "Book",
+    "city": "Astana"
   },
   "home": {
     "heroTitle": "Professional cleaning for apartments, houses and offices",
+    "heroSubtitle": "Spotless clean at an affordable price",
     "heroCta": "Book a cleaning",
     "stats": {
       "experience": "years in business",
       "cleaners": "cleaners",
       "discount": "up to 15% off"
+    },
+    "audience": {
+      "home": "🏠 For home",
+      "business": "🏢 For business"
+    },
+    "insurance": "Your property is insured up to 16M ₸ — Centras Insurance",
+    "servicesTitle": "What we offer",
+    "services": {
+      "apartment": "Apartment cleaning",
+      "cottage": "Cottage cleaning",
+      "house": "House cleaning",
+      "office": "Offices"
+    },
+    "from": "from",
+    "roomsTitle": "What's included",
+    "rooms": {
+      "living": "Living room",
+      "bedroom": "Bedroom",
+      "kitchen": "Kitchen",
+      "bathroom": "Bathroom"
+    },
+    "pricingTitle": "Which cleaning do you need?",
+    "pricing": {
+      "maintenance": {
+        "name": "Maintenance",
+        "desc": "To keep your home clean and tidy",
+        "items": "Pro supplies · Trash collection · Vacuuming and floor washing"
+      },
+      "deep": {
+        "name": "Deep clean",
+        "desc": "Comfort with extra options",
+        "items": "Indoor windows · Twice the cleaners · Tile in kitchen and bathroom"
+      },
+      "renovation": {
+        "name": "Post-renovation",
+        "desc": "Removes construction dust from every surface",
+        "items": "Construction dust · Glue residue · Wall tile washing"
+      },
+      "perVisit": "/ visit",
+      "order": "Book"
+    },
+    "whyTitle": "Why choose us",
+    "why": {
+      "safety": { "title": "Safety", "body": "Thorough screening of all staff" },
+      "quality": { "title": "Quality", "body": "Modern standards and pro equipment" },
+      "convenience": { "title": "Ease", "body": "Simple booking, fast dispatch" },
+      "service": { "title": "Service", "body": "Polite and professional" }
+    },
+    "cleanersTitle": "Top cleaners",
+    "experienceYears": "{years} years of experience",
+    "reviewsTitle": "Reviews",
+    "appPromo": {
+      "title": "Get the app",
+      "body": "Book a cleaning in 60 seconds",
+      "androidBadge": "Google Play",
+      "iosBadge": "App Store"
     }
   },
   "footer": {
-    "rights": "All rights reserved"
+    "rights": "All rights reserved",
+    "hours": "Mon–Sun: 8:00–21:00",
+    "agreement": "Terms of service",
+    "privacy": "Privacy policy",
+    "subscriptionRules": "Subscription cancellation rules"
+  },
+  "page": {
+    "services": {
+      "title": "Services",
+      "intro": "Full list of services and pricing."
+    },
+    "about": {
+      "title": "About",
+      "intro": "We are a professional cleaning company in Kazakhstan."
+    },
+    "contacts": {
+      "title": "Contacts",
+      "address": "Astana, Syganak st. 32, VP 33",
+      "email": "sales@top.kz",
+      "hours": "Mon–Sun: 8:00–21:00"
+    }
   },
   "login": {
     "title": "Sign in with your phone",
