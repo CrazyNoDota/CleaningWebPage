@@ -1,32 +1,33 @@
 ---
 title: Open questions
 tags: [roadmap, blockers]
-updated: 2026-05-07
+updated: 2026-05-08
 ---
 
 # Open questions
 
-These need a client decision before the affected work can finish. Carried over from `global_plan.md` §2.
+Decisions still owed by the client. Each one blocks specific work — the Severity column says how badly.
 
-| # | Question | Affects |
-|---|---|---|
-| 1 | When does Kaspi Pay merchant onboarding start? Need merchant ID + API keys. | Payments adapter (Phase 2 step 2) |
-| 2 | Specific SMS provider — confirm Mobizon, or alternative? | [[../modules/notifications-sms]] |
-| 3 | B2B (corporate clients) included in MVP, or post-launch? | Order schema, billing, invoicing |
-| 4 | Refund policy — automatic on cancel within X hours? Manual approval? | Order state machine |
-| 5 | Cleaner shifts and assignment — manual by manager, or automatic round-robin? | Assignment logic, admin UI |
-| 6 | SLA for first response after order placement | Notifications & manager workflow |
-| 7 | Do we issue receipts (фискальный чек) directly, or via Kaspi? | Compliance — KKM integration |
-| 8 | Logo, brand colors, typography | Web client styling pass |
-| 9 | Object storage choice (S3 / Cloud.ru / MinIO self-hosted)? KZ data-residency rules apply. | Review photo upload, cleaner profile photo, job-app resume upload |
-| 10 | Cleaner verification process — what does "verified" mean operationally? Document check, in-person interview, training certification? | Cleaner profile verification badge logic |
-| 11 | Review moderation policy — auto-publish then take down on report, or hold all reviews until manager approves? | Review module default state |
+| # | Question | Affects | Severity |
+|---|---|---|---|
+| 1 | When does Kaspi Pay merchant onboarding start? Need merchant ID + API keys. | Payments adapter | **Hard blocker** — no money flows |
+| 2 | Specific SMS provider — confirm Mobizon, or alternative? | OTP delivery in production | **Hard blocker** — stub only logs |
+| 7 | Receipts (фискальный чек) — directly, or via Kaspi? | Compliance, KKM integration | **Hard blocker** — KZ tax law |
+| 9 | Object storage choice (S3 / Cloud.ru / MinIO self-hosted)? KZ residency rules apply. | Photo + resume upload | Soft — UI works without uploads |
+| 8 | Logo, brand colors, typography | Final styling pass | Soft — green palette stands in |
+| 11 | Review moderation policy — auto-publish then moderate, or hold-then-approve? | `REVIEWS_AUTO_PUBLISH` default | Soft — env-flippable |
+| 4 | Refund policy — auto on cancel within X hours? Manual approval? | Order state machine | Soft — affects cancellation UX |
+| 5 | Cleaner shifts + assignment — manual or automatic round-robin? | Admin UI flow | Soft — manual is fine for first ~50 orders |
+| 6 | SLA for first response after order placement | Manager workflow + notification timing | Soft — operations decision |
+| 10 | "Verified" cleaner — document check / interview / certification? | Verification badge logic | Soft — admin can verify on whatever process |
+| 3 | B2B in MVP scope, or post-launch? | Order schema, billing, audience toggle | Soft — toggle is decorative today |
 
 ## Why these are blockers, not just deferrals
 
-Each one shapes the data model or external-integration contract. Building around an assumption and reversing later costs more than waiting. The current build-out has been routed around all of them — current Phase 2 work is fine to continue, but Step 2 (Kaspi) and the receipts piece need answers before they can ship.
+Each one shapes a data model or external-integration contract. Building around an assumption and reversing later is expensive. The current build is routed around all of them — see [[plan]] §3a for what's still moving even with these unresolved, and §3b for what's actually waiting.
 
 ## Related
 
-- [[phase-2-progress]]
-- [[../architecture/locked-decisions]]
+- [[plan]] — the full forward roadmap
+- [[done]] — what's already shipped
+- [[../architecture/locked-decisions]] — what's already nailed down

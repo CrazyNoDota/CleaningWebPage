@@ -36,9 +36,9 @@ The full long-form plan still lives at [`../global_plan.md`](../global_plan.md).
 - [[modules/web-client]] — public Next.js site: home, login, 5-step booking wizard, live order page
 - [[modules/web-admin]] — operator console (Russian-only): cleaners CRUD with sidebar shell
 
-## Modules planned (Phase 2 cont'd)
+## Modules planned (Phase 3+)
 
-- *(none right now — see [[roadmap/phase-2-progress]] for the next priorities)*
+- See [[roadmap/plan]] §3-5 for the full forward roadmap.
 
 ## Decisions worth re-reading
 
@@ -62,5 +62,7 @@ The full long-form plan still lives at [`../global_plan.md`](../global_plan.md).
 
 ## Where we are
 
-- [[roadmap/phase-2-progress]] — what's done, what's next
+- [[roadmap/plan]] — what's left, prioritized
+- [[roadmap/done]] — historical log of what's shipped
+- [[roadmap/open-questions]] — pending client decisions
 - [[roadmap/open-questions]] — pending answers from the client
