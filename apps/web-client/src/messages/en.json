@@ -147,6 +147,20 @@
     "submitOrder": "Place order",
     "needAuth": "Please sign in to continue"
   },
+  "orders": {
+    "title": "My orders",
+    "intro": "Your order history. Tap a card to open details.",
+    "empty": "You don't have any orders yet.",
+    "bookCta": "Book a cleaning",
+    "needAuth": "Sign in to see your orders."
+  },
+  "wizardAddress": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "deleteConfirm": "Delete this address? This cannot be undone."
+  },
   "order": {
     "title": "Your order",
     "status": "Status",

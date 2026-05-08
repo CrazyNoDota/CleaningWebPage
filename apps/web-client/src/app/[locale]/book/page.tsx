@@ -8,9 +8,11 @@ import {
   ApiError,
   createAddress,
   createOrder,
+  deleteAddress,
   listAddresses,
   listServices,
   quote as quoteApi,
+  updateAddress,
 } from '@/lib/api';
 import { formatMoney } from '@/lib/format';
 import { useSession } from '@/lib/use-session';
@@ -226,12 +228,14 @@ export default function BookPage() {
               hydrated={hydrated}
               session={Boolean(session)}
               addresses={addresses}
+              setAddresses={setAddresses}
               mode={addressMode}
               setMode={setAddressMode}
               addressId={addressId}
               setAddressId={setAddressId}
               draft={draft}
               setDraft={setDraft}
+              onError={setError}
             />
           )}
           {step === 'schedule' && (
@@ -447,58 +451,209 @@ function AddressStep({
   hydrated,
   session,
   addresses,
+  setAddresses,
   mode,
   setMode,
   addressId,
   setAddressId,
   draft,
   setDraft,
+  onError,
 }: {
   hydrated: boolean;
   session: boolean;
   addresses: Address[] | null;
+  setAddresses: (rows: Address[] | null) => void;
   mode: 'pick' | 'new';
   setMode: (m: 'pick' | 'new') => void;
   addressId: string | null;
   setAddressId: (s: string | null) => void;
   draft: AddressDraft;
   setDraft: (d: AddressDraft) => void;
+  onError: (msg: string | null) => void;
 }) {
   const t = useTranslations();
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [edit, setEdit] = useState<AddressDraft>(EMPTY_ADDRESS);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
   if (!hydrated) return <p>{t('common.loading')}</p>;
   if (!session) {
     return <p className="text-slate-700">{t('wizard.needAuth')}</p>;
+  }
+
+  function startEdit(a: Address) {
+    setEditingId(a.id);
+    setEdit({
+      city: 'astana',
+      label: a.label ?? '',
+      street: a.street,
+      building: a.building,
+      apartment: a.apartment ?? '',
+      comment: a.comment ?? '',
+    });
+  }
+
+  async function saveEdit(a: Address) {
+    setBusyId(a.id);
+    onError(null);
+    try {
+      const updated = await updateAddress(a.id, {
+        label: edit.label || undefined,
+        street: edit.street,
+        building: edit.building,
+        apartment: edit.apartment || undefined,
+        comment: edit.comment || undefined,
+      });
+      setAddresses(
+        (addresses ?? []).map((x) => (x.id === updated.id ? updated : x)),
+      );
+      setEditingId(null);
+    } catch (e) {
+      onError(e instanceof ApiError ? e.message : 'update failed');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function remove(a: Address) {
+    if (typeof window !== 'undefined' && !window.confirm(t('wizardAddress.deleteConfirm'))) {
+      return;
+    }
+    setBusyId(a.id);
+    onError(null);
+    try {
+      await deleteAddress(a.id);
+      const next = (addresses ?? []).filter((x) => x.id !== a.id);
+      setAddresses(next);
+      if (addressId === a.id) {
+        const first = next[0];
+        if (first) {
+          setAddressId(first.id);
+        } else {
+          setMode('new');
+          setAddressId(null);
+        }
+      }
+    } catch (e) {
+      onError(e instanceof ApiError ? e.message : 'delete failed');
+    } finally {
+      setBusyId(null);
+    }
   }
 
   return (
     <div className="space-y-4">
       {addresses && addresses.length > 0 && (
         <div className="space-y-2">
-          {addresses.map((a) => (
-            <label
-              key={a.id}
-              className={`flex items-start gap-3 rounded-lg border p-4 cursor-pointer ${
-                mode === 'pick' && addressId === a.id
-                  ? 'border-brand-600 bg-brand-50'
-                  : 'border-slate-200'
-              }`}
-            >
-              <input
-                type="radio"
-                checked={mode === 'pick' && addressId === a.id}
-                onChange={() => {
-                  setMode('pick');
-                  setAddressId(a.id);
-                }}
-                className="mt-1"
-              />
-              <span className="text-sm">
-                {a.label && <strong className="block">{a.label}</strong>}
-                {a.street}, {a.building}
-                {a.apartment && `, кв. ${a.apartment}`}
-              </span>
-            </label>
-          ))}
+          {addresses.map((a) => {
+            const isEditing = editingId === a.id;
+            return (
+              <div
+                key={a.id}
+                className={`rounded-lg border p-4 ${
+                  mode === 'pick' && addressId === a.id && !isEditing
+                    ? 'border-brand-600 bg-brand-50'
+                    : 'border-slate-200'
+                }`}
+              >
+                {!isEditing ? (
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="radio"
+                      checked={mode === 'pick' && addressId === a.id}
+                      onChange={() => {
+                        setMode('pick');
+                        setAddressId(a.id);
+                      }}
+                      className="mt-1"
+                      aria-label={a.label ?? a.street}
+                    />
+                    <div className="flex-1 text-sm">
+                      {a.label && <strong className="block">{a.label}</strong>}
+                      {a.street}, {a.building}
+                      {a.apartment && `, кв. ${a.apartment}`}
+                      {a.comment && (
+                        <p className="mt-1 text-xs text-slate-500">{a.comment}</p>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-1 text-xs">
+                      <button
+                        type="button"
+                        onClick={() => startEdit(a)}
+                        disabled={busyId === a.id}
+                        className="text-brand-600 hover:underline"
+                      >
+                        {t('wizardAddress.edit')}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => remove(a)}
+                        disabled={busyId === a.id}
+                        className="text-red-600 hover:underline"
+                      >
+                        {t('wizardAddress.delete')}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        label={t('wizard.label')}
+                        value={edit.label}
+                        onChange={(v) => setEdit({ ...edit, label: v })}
+                      />
+                      <Input
+                        label={t('wizard.street')}
+                        value={edit.street}
+                        required
+                        onChange={(v) => setEdit({ ...edit, street: v })}
+                      />
+                      <Input
+                        label={t('wizard.building')}
+                        value={edit.building}
+                        required
+                        onChange={(v) => setEdit({ ...edit, building: v })}
+                      />
+                      <Input
+                        label={t('wizard.apartment')}
+                        value={edit.apartment}
+                        onChange={(v) => setEdit({ ...edit, apartment: v })}
+                      />
+                      <Input
+                        label={t('wizard.comment')}
+                        value={edit.comment}
+                        onChange={(v) => setEdit({ ...edit, comment: v })}
+                      />
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setEditingId(null)}
+                        disabled={busyId === a.id}
+                        className="btn-secondary"
+                      >
+                        {t('wizardAddress.cancel')}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => saveEdit(a)}
+                        disabled={
+                          busyId === a.id ||
+                          edit.street.length === 0 ||
+                          edit.building.length === 0
+                        }
+                        className="btn-primary"
+                      >
+                        {t('wizardAddress.save')}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
           <label className="flex items-start gap-3 rounded-lg border p-4 cursor-pointer border-slate-200">
             <input
               type="radio"

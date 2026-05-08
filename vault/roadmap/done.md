@@ -45,6 +45,8 @@ What's been built and shipped, in roughly the order it landed. For what's *next*
 - [x] Re-themed to forest green + Inter font matching `design/reference/`
 - [x] Multi-section home page (hero / stats / audience / insurance / services / rooms / pricing tiers / why-us / top cleaners / app promo / footer)
 - [x] /services, /about, /contacts pages
+- [x] /orders — customer order history with status badges and per-row link to detail
+- [x] Wizard address step: edit + delete saved addresses inline (PATCH/DELETE endpoints)
 
 ## Frontend — admin console (Phase 2)
 

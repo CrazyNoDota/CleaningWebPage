@@ -158,6 +158,26 @@ export function createAddress(body: {
   return request<Address>('/addresses', { method: 'POST', body });
 }
 
+export function updateAddress(
+  id: string,
+  body: {
+    city?: string;
+    label?: string;
+    street?: string;
+    building?: string;
+    apartment?: string;
+    comment?: string;
+    lat?: number;
+    lng?: number;
+  },
+) {
+  return request<Address>(`/addresses/${id}`, { method: 'PATCH', body });
+}
+
+export function deleteAddress(id: string) {
+  return request<void>(`/addresses/${id}`, { method: 'DELETE' });
+}
+
 // ── Orders ──────────────────────────────────────────────────────────
 
 export function createOrder(body: {
@@ -169,6 +189,10 @@ export function createOrder(body: {
   notes?: string;
 }) {
   return request<Order>('/orders', { method: 'POST', body });
+}
+
+export function listOrders() {
+  return request<Order[]>('/orders');
 }
 
 export function getOrder(id: string) {

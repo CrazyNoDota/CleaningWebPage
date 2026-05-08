@@ -28,9 +28,7 @@ These can land any time. Roughly ordered by leverage.
 | # | Item | Effort | Why it matters |
 |---|---|---|---|
 | 1 | **2GIS geocoding provider** | S (~2h) | Free-tier API key. Lights up reverse-geocode + autocomplete in the wizard. Without it cleaners may get bad addresses. |
-| 5 | **"My Orders" page on web-client** | S (~1h) | `GET /api/v1/orders` already returns the user's orders; needs a page. |
 | 6 | **Profile / settings page on web-client** | S (~2h) | Manage notification channels, language, telegram chat id, name, email. Today only changeable via API. |
-| 7 | **Address PATCH/DELETE UI** in wizard | S (~1h) | Backend done; UI only has create-and-pick. |
 | 8 | **Forward-geocoding autocomplete in wizard** | S (~1h) | Activates after item #1. Replaces the plain street/building form. |
 | 9 | **Privacy policy + Terms pages** | S (~2h, content from legal) | KZ personal-data law requires both. Today both nav links are placeholders. |
 | 10 | **Cookie consent banner** | S (~1h) | Same compliance bucket as #9. |
