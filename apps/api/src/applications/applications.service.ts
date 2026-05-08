@@ -51,6 +51,7 @@ export class ApplicationsService {
         age: dto.age,
         experience: dto.experience,
         source: dto.source ?? 'web',
+        resumeUrl: dto.resumeUrl ?? null,
       },
       include: { city: true },
     });

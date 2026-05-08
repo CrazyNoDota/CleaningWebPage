@@ -51,4 +51,13 @@ export class SubmitApplicationDto {
   @IsString()
   @MaxLength(40)
   source?: string;
+
+  @ApiProperty({
+    required: false,
+    description: 'Public URL to the uploaded resume (issued by @vercel/blob)',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2048)
+  resumeUrl?: string;
 }

@@ -13,6 +13,8 @@ out/
 .env
 .env.local
 .env.*.local
+.env.production
+.env.production.local
 
 # logs
 *.log
@@ -33,3 +35,9 @@ prisma/migrations/dev.db*
 
 # docker volumes
 docker-data/
+
+# local docker-compose overrides (developer-specific port remaps etc.)
+docker-compose.override.yml
+docker-compose.override.yaml
+.vercel
+.claude/

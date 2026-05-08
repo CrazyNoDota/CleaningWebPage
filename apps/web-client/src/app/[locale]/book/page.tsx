@@ -389,17 +389,49 @@ function ConfigureStep({
             className="input mt-1"
           />
         </label>
-        <label>
+        <div>
           <span className="text-sm font-medium text-slate-700">{t('wizard.rooms')}</span>
-          <input
-            type="number"
-            min={1}
-            max={10}
-            value={rooms}
-            onChange={(e) => setRooms(Math.max(1, Number(e.target.value)))}
-            className="input mt-1"
-          />
-        </label>
+          <div className="mt-1 grid grid-cols-5 gap-1.5">
+            {[1, 2, 3, 4].map((n) => {
+              const active = rooms === n;
+              return (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setRooms(n)}
+                  className={`rounded-lg py-2 text-sm font-semibold transition ${
+                    active
+                      ? 'bg-brand-600 text-white border border-brand-600'
+                      : 'border border-slate-200 text-slate-700 hover:border-slate-300'
+                  }`}
+                >
+                  {n}
+                </button>
+              );
+            })}
+            <button
+              type="button"
+              onClick={() => setRooms(rooms < 5 ? 5 : rooms)}
+              className={`rounded-lg py-2 text-sm font-semibold transition ${
+                rooms >= 5
+                  ? 'bg-brand-600 text-white border border-brand-600'
+                  : 'border border-slate-200 text-slate-700 hover:border-slate-300'
+              }`}
+            >
+              5+
+            </button>
+          </div>
+          {rooms >= 5 && (
+            <input
+              type="number"
+              min={5}
+              max={20}
+              value={rooms}
+              onChange={(e) => setRooms(Math.max(5, Number(e.target.value)))}
+              className="input mt-2"
+            />
+          )}
+        </div>
       </div>
 
       <div>
@@ -435,14 +467,6 @@ function ConfigureStep({
         </div>
       </div>
 
-      {quote && (
-        <p className="text-sm text-slate-500">
-          {t('wizard.estimatedTotal')}:{' '}
-          <strong className="text-slate-900">
-            {formatMoney(quote.total, quote.currency, locale)}
-          </strong>
-        </p>
-      )}
     </div>
   );
 }

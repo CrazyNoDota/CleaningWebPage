@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { RequestOtpDto, VerifyOtpDto, RefreshDto } from './dto/auth.dto';
+import { AdminLoginDto, RequestOtpDto, VerifyOtpDto, RefreshDto } from './dto/auth.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -20,6 +20,13 @@ export class AuthController {
   @ApiOperation({ summary: 'Verify the OTP and issue access + refresh tokens' })
   verifyOtp(@Body() dto: VerifyOtpDto) {
     return this.auth.verifyOtp(dto.phone, dto.code, dto.name);
+  }
+
+  @Post('admin/login')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Admin login with username + password' })
+  adminLogin(@Body() dto: AdminLoginDto) {
+    return this.auth.adminLogin(dto.login, dto.password);
   }
 
   @Post('refresh')

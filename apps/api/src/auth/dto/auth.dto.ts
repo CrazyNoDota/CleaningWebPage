@@ -34,3 +34,15 @@ export class RefreshDto {
   @IsNotEmpty()
   refreshToken!: string;
 }
+
+export class AdminLoginDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  login!: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password!: string;
+}

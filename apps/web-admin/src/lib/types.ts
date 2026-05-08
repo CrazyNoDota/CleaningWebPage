@@ -124,6 +124,7 @@ export interface AdminApplication {
   source: string | null;
   status: JobApplicationStatusValue;
   notes: string | null;
+  resumeUrl: string | null;
   createdAt: string;
   city: { id: string; slug: string; name: string } | null;
 }

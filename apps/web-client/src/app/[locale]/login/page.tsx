@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
@@ -10,6 +10,14 @@ import { saveSession } from '@/lib/auth';
 type Stage = 'phone' | 'code';
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginInner />
+    </Suspense>
+  );
+}
+
+function LoginInner() {
   const t = useTranslations();
   const router = useRouter();
   const params = useSearchParams();
@@ -66,7 +74,7 @@ export default function LoginPage() {
                   onChange={(e) => setPhone(e.target.value)}
                   className="input"
                   required
-                  pattern="^\\+\\d{10,15}$"
+                  pattern="^\+\d{10,15}$"
                   placeholder="+77011234567"
                   autoFocus
                 />
@@ -89,7 +97,7 @@ export default function LoginPage() {
                   className="input tracking-widest text-center text-lg"
                   required
                   maxLength={6}
-                  pattern="\\d{6}"
+                  pattern="\d{6}"
                   autoFocus
                 />
               </Field>

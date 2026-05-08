@@ -191,6 +191,22 @@ export default function ApplicationsPage() {
                             </div>
                           )}
 
+                          {a.resumeUrl && (
+                            <div className="mb-3">
+                              <div className="text-xs uppercase text-slate-400">
+                                Резюме
+                              </div>
+                              <a
+                                href={a.resumeUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-1 inline-flex items-center gap-1 text-sm text-brand-600 hover:underline"
+                              >
+                                📄 Открыть файл
+                              </a>
+                            </div>
+                          )}
+
                           <div className="mb-3">
                             <div className="text-xs uppercase text-slate-400">
                               Статус

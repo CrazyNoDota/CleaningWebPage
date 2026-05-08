@@ -16,6 +16,8 @@ import { ApplicationsModule } from './applications/applications.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { AdminMetricsModule } from './admin-metrics/admin-metrics.module';
 
+const realtimeEnabled = process.env.DISABLE_REALTIME !== 'true';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -32,7 +34,7 @@ import { AdminMetricsModule } from './admin-metrics/admin-metrics.module';
     CleanersModule,
     OrdersModule,
     ReviewsModule,
-    RealtimeModule,
+    ...(realtimeEnabled ? [RealtimeModule] : []),
     NotificationsModule,
     ApplicationsModule,
     AddressesModule,

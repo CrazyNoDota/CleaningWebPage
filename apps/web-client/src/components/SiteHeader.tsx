@@ -29,6 +29,9 @@ export function SiteHeader() {
           <Link href="/contacts" className="hover:text-brand-600 transition">
             {t('nav.contacts')}
           </Link>
+          <Link href="/careers" className="hover:text-brand-600 transition">
+            {t('nav.careers')}
+          </Link>
         </nav>
 
         <div className="ml-auto flex items-center gap-3">

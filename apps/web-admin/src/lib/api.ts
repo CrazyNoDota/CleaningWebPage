@@ -103,6 +103,14 @@ export async function verifyOtp(phone: string, code: string): Promise<Session> {
   });
 }
 
+export async function adminLogin(login: string, password: string): Promise<Session> {
+  return request<Session>('/auth/admin/login', {
+    method: 'POST',
+    body: { login, password },
+    auth: false,
+  });
+}
+
 // ── Admin · Cleaners ───────────────────────────────────────────────
 
 export function adminListCleaners(opts: {

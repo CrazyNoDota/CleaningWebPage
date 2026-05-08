@@ -208,6 +208,26 @@ export function getOrderCleaner(id: string, locale: Locale) {
   );
 }
 
+// ── Job applications (cleaner careers form) ────────────────────────
+
+export interface SubmitApplicationBody {
+  fullName: string;
+  phone: string;
+  city?: string;
+  cityFreeText?: string;
+  age?: number;
+  experience?: string;
+  resumeUrl?: string;
+  source?: string;
+}
+
+export function submitApplication(body: SubmitApplicationBody) {
+  return request<{ id: string; fullName: string; createdAt: string }>(
+    '/applications',
+    { method: 'POST', body, auth: false },
+  );
+}
+
 // ── Reviews ─────────────────────────────────────────────────────────
 
 export function submitReview(

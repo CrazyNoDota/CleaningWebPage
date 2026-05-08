@@ -22,7 +22,8 @@
     "signOut": "Sign out",
     "myOrders": "My orders",
     "book": "Book",
-    "city": "Astana"
+    "city": "Astana",
+    "careers": "Careers"
   },
   "home": {
     "heroTitle": "Professional cleaning for apartments, houses and offices",
@@ -75,10 +76,22 @@
     },
     "whyTitle": "Why choose us",
     "why": {
-      "safety": { "title": "Safety", "body": "Thorough screening of all staff" },
-      "quality": { "title": "Quality", "body": "Modern standards and pro equipment" },
-      "convenience": { "title": "Ease", "body": "Simple booking, fast dispatch" },
-      "service": { "title": "Service", "body": "Polite and professional" }
+      "safety": {
+        "title": "Safety",
+        "body": "Thorough screening of all staff"
+      },
+      "quality": {
+        "title": "Quality",
+        "body": "Modern standards and pro equipment"
+      },
+      "convenience": {
+        "title": "Ease",
+        "body": "Simple booking, fast dispatch"
+      },
+      "service": {
+        "title": "Service",
+        "body": "Polite and professional"
+      }
     },
     "cleanersTitle": "Top cleaners",
     "experienceYears": "{years} years of experience",
@@ -193,5 +206,24 @@
     "done": "Done — please rate",
     "reviewed": "Review submitted",
     "cancelled": "Cancelled"
+  },
+  "careers": {
+    "title": "Become a cleaner",
+    "lead": "Fill out the form — a manager will get back to you the same business day.",
+    "fullNameLabel": "Full name",
+    "phoneLabel": "Phone",
+    "phoneHint": "Format: +77011234567",
+    "cityLabel": "City",
+    "ageLabel": "Age",
+    "experienceLabel": "Experience",
+    "experienceHint": "Briefly: where you worked and on what kind of jobs.",
+    "resumeLabel": "Resume (PDF, DOC, photo)",
+    "resumeHint": "Up to 5 MB. Optional.",
+    "submit": "Send application",
+    "submitting": "Sending…",
+    "success": "Application received! We will contact you on the phone you provided.",
+    "sending": "Uploading resume…",
+    "fileTooLarge": "File is larger than 5 MB",
+    "duplicateError": "An application from this phone was already submitted in the last 24 hours."
   }
 }

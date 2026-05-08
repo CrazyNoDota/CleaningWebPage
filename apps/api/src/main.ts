@@ -12,11 +12,13 @@ async function bootstrap() {
 
   app.use(helmet());
   app.use(cookieParser());
+  const corsOriginsRaw = process.env.CORS_ORIGINS ?? 'http://localhost:3000,http://localhost:3001';
+  const corsOrigins = corsOriginsRaw
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-    ],
+    origin: corsOrigins,
     credentials: true,
   });
 
