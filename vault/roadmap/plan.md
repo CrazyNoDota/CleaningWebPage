@@ -2,6 +2,7 @@
 title: Plan — what's left
 tags: [roadmap]
 updated: 2026-05-08
+revised: 2026-05-08
 ---
 
 # Plan — what's left
@@ -27,9 +28,6 @@ These can land any time. Roughly ordered by leverage.
 | # | Item | Effort | Why it matters |
 |---|---|---|---|
 | 1 | **2GIS geocoding provider** | S (~2h) | Free-tier API key. Lights up reverse-geocode + autocomplete in the wizard. Without it cleaners may get bad addresses. |
-| 2 | **Reviews moderation UI in admin** | S (~1h) | Endpoints exist — `GET /admin/reviews` + `PATCH /admin/reviews/:id`. Just needs the page. |
-| 3 | **Job applications queue UI in admin** | S (~1h) | Endpoints exist. Recruiters need a way to triage incoming applications. |
-| 4 | **Admin dashboard with metrics** | S (~2h) | Today orders / active cleaners / pending reviews / pending applications. Currently a placeholder. |
 | 5 | **"My Orders" page on web-client** | S (~1h) | `GET /api/v1/orders` already returns the user's orders; needs a page. |
 | 6 | **Profile / settings page on web-client** | S (~2h) | Manage notification channels, language, telegram chat id, name, email. Today only changeable via API. |
 | 7 | **Address PATCH/DELETE UI** in wizard | S (~1h) | Backend done; UI only has create-and-pick. |
@@ -141,12 +139,11 @@ If a single goal is "first paying customer in 2 weeks," the order is:
 1. **Get the answers**: Kaspi onboarding date (#1), SMS provider (#2), receipts approach (#7), object storage (#9).
 2. **Wire the real providers** — Mobizon, 2GIS, FCM (basic), email (SMTP). All in parallel; ~3 days total once accounts exist.
 3. **Build Kaspi adapter** + tighten state machine to require `paid → assigned`. ~2-3 days.
-4. **Reviews + Applications + Dashboard UIs** in admin. ~half a day total.
-5. **Privacy + Terms pages** (legal copy required). ~1 day to write, paste.
-6. **Production deploy** (Docker, KZ VPS, Caddy, Postgres, Redis, secrets, backups). ~1-2 days.
-7. **One Playwright E2E test** that exercises the booking flow against the real deploy. ~half a day.
-8. **Onboard 5-10 real cleaners** through admin app + verify them. Operations.
-9. **Soft launch** to a small cohort.
+4. **Privacy + Terms pages** (legal copy required). ~1 day to write, paste.
+5. **Production deploy** (Docker, KZ VPS, Caddy, Postgres, Redis, secrets, backups). ~1-2 days.
+6. **One Playwright E2E test** that exercises the booking flow against the real deploy. ~half a day.
+7. **Onboard 5-10 real cleaners** through admin app + verify them. Operations.
+8. **Soft launch** to a small cohort.
 
 Phase 4 work (mobile, retries, B2B) can come after. Phase 5 is post-product-market-fit.
 

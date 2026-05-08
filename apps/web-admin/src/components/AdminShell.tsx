@@ -11,11 +11,11 @@ interface NavItem {
 }
 
 const NAV: NavItem[] = [
-  { href: '/', label: 'Дашборд', ready: false },
+  { href: '/', label: 'Дашборд', ready: true },
   { href: '/cleaners', label: 'Клинеры', ready: true },
   { href: '/orders', label: 'Заказы', ready: true },
-  { href: '/reviews', label: 'Отзывы', ready: false },
-  { href: '/applications', label: 'Заявки', ready: false },
+  { href: '/reviews', label: 'Отзывы', ready: true },
+  { href: '/applications', label: 'Заявки', ready: true },
 ];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {

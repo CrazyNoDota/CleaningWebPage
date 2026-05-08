@@ -13,7 +13,11 @@ export function formatDateTimeRu(iso: string): string {
   });
 }
 
-import type { OrderStatus } from './types';
+import type {
+  JobApplicationStatusValue,
+  OrderStatus,
+  ReviewStatusValue,
+} from './types';
 
 export function statusLabel(s: OrderStatus): string {
   return {
@@ -39,6 +43,52 @@ export function statusBadgeClass(s: OrderStatus): string {
     case 'assigned':
       return 'badge-amber';
     case 'cancelled':
+      return 'badge-red';
+    default:
+      return 'badge-slate';
+  }
+}
+
+export function reviewStatusLabel(s: ReviewStatusValue): string {
+  return {
+    pending: 'На модерации',
+    published: 'Опубликован',
+    hidden: 'Скрыт',
+    rejected: 'Отклонён',
+  }[s];
+}
+
+export function reviewStatusBadgeClass(s: ReviewStatusValue): string {
+  switch (s) {
+    case 'published':
+      return 'badge-green';
+    case 'pending':
+      return 'badge-amber';
+    case 'rejected':
+      return 'badge-red';
+    default:
+      return 'badge-slate';
+  }
+}
+
+export function applicationStatusLabel(s: JobApplicationStatusValue): string {
+  return {
+    new: 'Новая',
+    contacted: 'Связались',
+    interviewing: 'Интервью',
+    hired: 'Принята',
+    rejected: 'Отклонена',
+  }[s];
+}
+
+export function applicationStatusBadgeClass(s: JobApplicationStatusValue): string {
+  switch (s) {
+    case 'hired':
+      return 'badge-green';
+    case 'contacted':
+    case 'interviewing':
+      return 'badge-amber';
+    case 'rejected':
       return 'badge-red';
     default:
       return 'badge-slate';

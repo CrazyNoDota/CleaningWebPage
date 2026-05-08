@@ -92,6 +92,50 @@ export interface AdminOrderEvent {
   createdAt: string;
 }
 
+export type ReviewStatusValue = 'pending' | 'published' | 'hidden' | 'rejected';
+
+export interface AdminReview {
+  id: string;
+  orderId: string;
+  cleanerId: string | null;
+  rating: number;
+  comment: string | null;
+  tags: string[];
+  photos: string[];
+  status: ReviewStatusValue;
+  publishedAt: string | null;
+  createdAt: string;
+}
+
+export type JobApplicationStatusValue =
+  | 'new'
+  | 'contacted'
+  | 'interviewing'
+  | 'hired'
+  | 'rejected';
+
+export interface AdminApplication {
+  id: string;
+  fullName: string;
+  phone: string;
+  age: number | null;
+  experience: string | null;
+  cityFreeText: string | null;
+  source: string | null;
+  status: JobApplicationStatusValue;
+  notes: string | null;
+  createdAt: string;
+  city: { id: string; slug: string; name: string } | null;
+}
+
+export interface AdminMetrics {
+  ordersToday: number;
+  activeCleaners: number;
+  pendingReviews: number;
+  pendingApplications: number;
+  generatedAt: string;
+}
+
 export interface AdminOrderFull {
   id: string;
   status: OrderStatus;

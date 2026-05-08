@@ -1,11 +1,16 @@
 import { clearSession, getAccessToken, loadSession, saveSession } from './auth';
 import type {
+  AdminApplication,
   AdminCleanerFull,
   AdminCleanerListItem,
+  AdminMetrics,
   AdminOrderFull,
   AdminOrderListItem,
+  AdminReview,
   CreateCleanerBody,
+  JobApplicationStatusValue,
   OrderStatus,
+  ReviewStatusValue,
   Session,
   UpdateCleanerBody,
 } from './types';
@@ -166,4 +171,63 @@ export function adminTransitionOrder(
     method: 'POST',
     body: { to, note },
   });
+}
+
+// ── Admin · Reviews ────────────────────────────────────────────────
+
+export function adminListReviews(opts: {
+  status?: ReviewStatusValue;
+  take?: number;
+  skip?: number;
+} = {}) {
+  const qs = new URLSearchParams();
+  if (opts.status) qs.set('status', opts.status);
+  if (opts.take !== undefined) qs.set('take', String(opts.take));
+  if (opts.skip !== undefined) qs.set('skip', String(opts.skip));
+  const q = qs.toString();
+  return request<AdminReview[]>(`/admin/reviews${q ? `?${q}` : ''}`);
+}
+
+export function adminModerateReview(
+  id: string,
+  status: Exclude<ReviewStatusValue, 'pending'>,
+  note?: string,
+) {
+  return request<AdminReview>(`/admin/reviews/${id}`, {
+    method: 'PATCH',
+    body: { status, note },
+  });
+}
+
+// ── Admin · Job applications ───────────────────────────────────────
+
+export function adminListApplications(opts: {
+  status?: JobApplicationStatusValue;
+  phone?: string;
+  take?: number;
+  skip?: number;
+} = {}) {
+  const qs = new URLSearchParams();
+  if (opts.status) qs.set('status', opts.status);
+  if (opts.phone) qs.set('phone', opts.phone);
+  if (opts.take !== undefined) qs.set('take', String(opts.take));
+  if (opts.skip !== undefined) qs.set('skip', String(opts.skip));
+  const q = qs.toString();
+  return request<AdminApplication[]>(`/admin/applications${q ? `?${q}` : ''}`);
+}
+
+export function adminUpdateApplication(
+  id: string,
+  body: { status?: JobApplicationStatusValue; notes?: string },
+) {
+  return request<AdminApplication>(`/admin/applications/${id}`, {
+    method: 'PATCH',
+    body,
+  });
+}
+
+// ── Admin · Metrics ────────────────────────────────────────────────
+
+export function adminGetMetrics() {
+  return request<AdminMetrics>('/admin/metrics');
 }

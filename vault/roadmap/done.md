@@ -2,6 +2,7 @@
 title: Done — historical log
 tags: [roadmap, done]
 updated: 2026-05-08
+revised: 2026-05-08
 ---
 
 # Done — historical log
@@ -51,6 +52,9 @@ What's been built and shipped, in roughly the order it landed. For what's *next*
 - [x] Login with role gate (manager / admin only)
 - [x] Cleaners list + create + detail (verification + suspend toggles)
 - [x] Orders list + detail (cleaner picker, transition buttons, event log)
+- [x] Reviews moderation queue (filter by status, approve / hide / reject)
+- [x] Job applications queue (filter, status pipeline, recruiter notes)
+- [x] Dashboard with live counters → `GET /admin/metrics` (today orders, active cleaners, pending reviews, pending applications)
 
 ## Verification
 
