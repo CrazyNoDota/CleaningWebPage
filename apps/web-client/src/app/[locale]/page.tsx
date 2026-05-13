@@ -64,7 +64,7 @@ export default async function HomePage({
         <section className="mx-auto max-w-6xl px-4 md:px-6 mt-10">
           <h2 className="section-title">{t('home.roomsTitle')}</h2>
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4 md:gap-4">
-            <RoomTile img="/img/clean_living_room.png" label={t('home.rooms.living')} />
+            <RoomTile img="/img/clean_living_room_supplies.jpg" label={t('home.rooms.living')} />
             <RoomTile img="/img/clean_bedroom.png" label={t('home.rooms.bedroom')} />
             <RoomTile img="/img/clean_kitchen.png" label={t('home.rooms.kitchen')} />
             <RoomTile img="/img/clean_bathroom.png" label={t('home.rooms.bathroom')} />
