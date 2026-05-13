@@ -8,17 +8,17 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // Brand palette mirrors design/reference/styles.css
+        // Shine X: deep cyan/blue with mint-green highlights from the new logo.
         brand: {
-          50: '#f0faf4', // green-bg
-          100: '#d8f3dc', // green-pale
-          200: '#a8d8b9',
-          300: '#74c69d',
-          400: '#52b788', // accent-mint
-          500: '#40916c', // green-light
-          600: '#2d6a4f', // green-primary (PRIMARY)
-          700: '#1b4332',
-          800: '#10301f',
+          50: '#ecfeff',
+          100: '#cffafe',
+          200: '#a5f3fc',
+          300: '#67e8f9',
+          400: '#24d6c6',
+          500: '#00a7d8',
+          600: '#0088c7',
+          700: '#006b9f',
+          800: '#07516f',
         },
         gold: {
           DEFAULT: '#f4a261',

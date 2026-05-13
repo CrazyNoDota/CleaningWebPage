@@ -25,15 +25,15 @@ interface AddressDraft {
   street: string;
   building: string;
   apartment: string;
-  comment: string;
 }
 
 const EMPTY_ADDRESS: AddressDraft = {
   street: '',
   building: '',
   apartment: '',
-  comment: '',
 };
+
+const WHATSAPP_ORDER_PHONE = '77055975056';
 
 export default function BookPage() {
   const t = useTranslations();
@@ -173,7 +173,6 @@ export default function BookPage() {
           street: draft.street,
           building: draft.building,
           apartment: draft.apartment || undefined,
-          comment: draft.comment || undefined,
         });
         resolvedAddressId = created.id;
       } else if (addressId) {
@@ -193,7 +192,27 @@ export default function BookPage() {
         options: opts,
         notes: notes || undefined,
       });
-      router.push(`/orders/${order.id}`);
+
+      if (typeof window !== 'undefined' && quote) {
+        window.location.href = buildWhatsAppOrderUrl({
+          orderId: order.id,
+          service: selectedService,
+          quote,
+          areaM2,
+          rooms,
+          chosen,
+          address:
+            addressMode === 'pick'
+              ? addresses?.find((a) => a.id === addressId) ?? null
+              : draft,
+          scheduledAt,
+          notes,
+          locale,
+          customerPhone: session?.user.phone ?? null,
+        });
+      } else {
+        router.push(`/orders/${order.id}`);
+      }
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'submit failed');
     } finally {
@@ -504,7 +523,6 @@ function AddressStep({
       street: a.street,
       building: a.building,
       apartment: a.apartment ?? '',
-      comment: a.comment ?? '',
     });
   }
 
@@ -516,7 +534,6 @@ function AddressStep({
         street: edit.street,
         building: edit.building,
         apartment: edit.apartment || undefined,
-        comment: edit.comment || undefined,
       });
       setAddresses(
         (addresses ?? []).map((x) => (x.id === updated.id ? updated : x)),
@@ -586,9 +603,6 @@ function AddressStep({
                       {a.label && <strong className="block">{a.label}</strong>}
                       {a.street}, {a.building}
                       {a.apartment && `, кв. ${a.apartment}`}
-                      {a.comment && (
-                        <p className="mt-1 text-xs text-slate-500">{a.comment}</p>
-                      )}
                     </div>
                     <div className="flex gap-3 text-xs sm:flex-col sm:items-end sm:gap-1">
                       <button
@@ -629,12 +643,6 @@ function AddressStep({
                         label={t('wizard.apartment')}
                         value={edit.apartment}
                         onChange={(v) => setEdit({ ...edit, apartment: v })}
-                      />
-                      <Input
-                        label={t('wizard.comment')}
-                        value={edit.comment}
-                        onChange={(v) => setEdit({ ...edit, comment: v })}
-                        className="sm:col-span-2"
                       />
                     </div>
                     <div className="flex flex-col justify-end gap-2 sm:flex-row">
@@ -698,12 +706,6 @@ function AddressStep({
             label={t('wizard.apartment')}
             value={draft.apartment}
             onChange={(v) => setDraft({ ...draft, apartment: v })}
-          />
-          <Input
-            label={t('wizard.comment')}
-            value={draft.comment}
-            onChange={(v) => setDraft({ ...draft, comment: v })}
-            className="sm:col-span-2"
           />
         </div>
       )}
@@ -802,7 +804,7 @@ function ConfirmStep({
             : `${draft.street}, ${draft.building}${draft.apartment ? `, кв. ${draft.apartment}` : ''}`
         }
       />
-      <Row label={t('wizard.scheduledAt')} value={scheduledAt} />
+      <Row label={t('wizard.scheduledAt')} value={formatDateTime(scheduledAt, locale)} />
       {notes && <Row label={t('wizard.comment')} value={notes} />}
       <Row
         label={t('wizard.estimatedTotal')}
@@ -879,6 +881,75 @@ function CityField() {
       </div>
     </div>
   );
+}
+
+function buildWhatsAppOrderUrl({
+  orderId,
+  service,
+  quote,
+  areaM2,
+  rooms,
+  chosen,
+  address,
+  scheduledAt,
+  notes,
+  locale,
+  customerPhone,
+}: {
+  orderId: string;
+  service: Service | null;
+  quote: Quote;
+  areaM2: number;
+  rooms: number;
+  chosen: Record<string, number>;
+  address: Address | AddressDraft | null;
+  scheduledAt: string;
+  notes: string;
+  locale: Locale;
+  customerPhone: string | null;
+}) {
+  const options =
+    service?.options
+      .filter((option) => (chosen[option.key] ?? 0) > 0)
+      .map((option) => option.label)
+      .join(', ') || 'нет';
+
+  const lines = [
+    'Новый заказ уборки',
+    `Заказ: ${orderId}`,
+    `Услуга: ${service?.name ?? service?.slug ?? 'не выбрана'}`,
+    `Дата: ${formatDateTime(scheduledAt, locale)}`,
+    `Адрес: ${formatAddressForMessage(address)}`,
+    `Площадь: ${areaM2} м²`,
+    `Комнаты: ${rooms}`,
+    `Опции: ${options}`,
+    `Комментарий: ${notes.trim() || 'нет'}`,
+    `Итого: ${formatMoney(quote.total, quote.currency, locale)}`,
+    customerPhone ? `Телефон клиента: ${customerPhone}` : null,
+  ].filter(Boolean);
+
+  return `https://wa.me/${WHATSAPP_ORDER_PHONE}?text=${encodeURIComponent(lines.join('\n'))}`;
+}
+
+function formatAddressForMessage(address: Address | AddressDraft | null): string {
+  if (!address) return 'Астана';
+  const apartment = address.apartment ? `, кв. ${address.apartment}` : '';
+  return `Астана, ${address.street}, ${address.building}${apartment}`;
+}
+
+function formatDateTime(value: string, locale: Locale): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString(localeToTag(locale), {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+}
+
+function localeToTag(locale: Locale): string {
+  if (locale === 'kk') return 'kk-KZ';
+  if (locale === 'en') return 'en-US';
+  return 'ru-RU';
 }
 
 function defaultSchedule(): string {

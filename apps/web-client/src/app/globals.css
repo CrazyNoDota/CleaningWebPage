@@ -5,8 +5,8 @@
 @tailwind utilities;
 
 :root {
-  --bg-page: 247 248 250;
-  --foreground: 26 26 46;
+  --bg-page: 244 250 251;
+  --foreground: 10 31 45;
 }
 
 html,
