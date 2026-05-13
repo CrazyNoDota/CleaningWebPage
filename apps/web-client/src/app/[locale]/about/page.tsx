@@ -18,20 +18,26 @@ export default async function AboutPage({
           {t('page.about.title')}
         </h1>
         <p className="mt-4 max-w-2xl text-lg leading-8 text-ink-700">{t('page.about.intro')}</p>
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="card text-center">
-            <div className="text-5xl font-extrabold leading-none text-brand-600 md:text-6xl">8</div>
-            <div className="mt-3 text-sm text-ink-400">{t('home.stats.experience')}</div>
+        <dl className="mt-8 grid grid-cols-1 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-soft sm:grid-cols-3 sm:divide-x sm:divide-slate-200">
+          <div className="border-b border-slate-200 px-6 py-5 sm:border-b-0">
+            <dt className="text-sm text-ink-700">{t('home.stats.experience')}</dt>
+            <dd className="mt-1 whitespace-nowrap text-2xl font-bold text-brand-600">
+              8 лет
+            </dd>
           </div>
-          <div className="card text-center">
-            <div className="text-5xl font-extrabold leading-none text-brand-600 md:text-6xl">1 000+</div>
-            <div className="mt-3 text-sm text-ink-400">{t('home.stats.cleaners')}</div>
+          <div className="border-b border-slate-200 px-6 py-5 sm:border-b-0">
+            <dt className="text-sm text-ink-700">{t('home.stats.cleaners')}</dt>
+            <dd className="mt-1 whitespace-nowrap text-2xl font-bold text-brand-600">
+              1 000+
+            </dd>
           </div>
-          <div className="card text-center">
-            <div className="text-5xl font-extrabold leading-none text-brand-600 md:text-6xl">16M ₸</div>
-            <div className="mt-3 text-sm text-ink-400">Centras Insurance</div>
+          <div className="px-6 py-5">
+            <dt className="text-sm text-ink-700">Centras Insurance</dt>
+            <dd className="mt-1 whitespace-nowrap text-2xl font-bold text-brand-600">
+              16M ₸
+            </dd>
           </div>
-        </div>
+        </dl>
       </main>
     </div>
   );
