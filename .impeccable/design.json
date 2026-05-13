@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-14T00:00:00.000Z",
+  "title": "Design System: Shine X",
+  "extensions": {
+    "colorMeta": {
+      "astana-sky": {
+        "role": "primary",
+        "displayName": "Astana Sky",
+        "canonical": "oklch(54% 0.175 225)",
+        "tonalRamp": ["#001428", "#002b4d", "#07516f", "#006b9f", "#0088c7", "#00a7d8", "#67e8f9", "#ecfeff"]
+      },
+      "astana-sky-deep": {
+        "role": "primary-hover",
+        "displayName": "Astana Sky Deep",
+        "canonical": "oklch(43% 0.165 225)",
+        "tonalRamp": ["#001428", "#002b4d", "#07516f", "#006b9f", "#0088c7", "#00a7d8", "#67e8f9", "#ecfeff"]
+      },
+      "astana-sky-light": {
+        "role": "primary-surface",
+        "displayName": "Astana Sky Light",
+        "canonical": "oklch(93% 0.04 225)",
+        "tonalRamp": ["#001428", "#002b4d", "#07516f", "#006b9f", "#0088c7", "#00a7d8", "#67e8f9", "#ecfeff"]
+      },
+      "fresh-mint": {
+        "role": "secondary",
+        "displayName": "Fresh Mint",
+        "canonical": "oklch(77% 0.15 195)",
+        "tonalRamp": ["#003534", "#005551", "#007a72", "#00a89c", "#24d6c6", "#7ce5df", "#b2f3ef", "#e8fdfb"]
+      },
+      "fresh-mint-light": {
+        "role": "secondary-surface",
+        "displayName": "Fresh Mint Light",
+        "canonical": "oklch(94% 0.05 195)",
+        "tonalRamp": ["#003534", "#005551", "#007a72", "#00a89c", "#24d6c6", "#7ce5df", "#b2f3ef", "#e8fdfb"]
+      },
+      "social-proof-amber": {
+        "role": "tertiary",
+        "displayName": "Social Proof Amber",
+        "canonical": "oklch(74% 0.14 60)",
+        "tonalRamp": ["#2d1200", "#5c2900", "#8b4800", "#b06000", "#f4a261", "#fac89a", "#fde9d2", "#fef7f1"]
+      },
+      "ink": {
+        "role": "neutral-text-high",
+        "displayName": "Ink",
+        "canonical": "oklch(18% 0.035 262)",
+        "tonalRamp": ["#080810", "#0f0f1e", "#1a1a2e", "#2d2d45", "#4a4a5a", "#6b6b7a", "#8a8a9a", "#c8c8d4"]
+      },
+      "ink-secondary": {
+        "role": "neutral-text-mid",
+        "displayName": "Ink Secondary",
+        "canonical": "oklch(35% 0.02 262)",
+        "tonalRamp": ["#080810", "#0f0f1e", "#1a1a2e", "#2d2d45", "#4a4a5a", "#6b6b7a", "#8a8a9a", "#c8c8d4"]
+      },
+      "ink-muted": {
+        "role": "neutral-text-low",
+        "displayName": "Ink Muted",
+        "canonical": "oklch(60% 0.015 262)",
+        "tonalRamp": ["#080810", "#0f0f1e", "#1a1a2e", "#2d2d45", "#4a4a5a", "#6b6b7a", "#8a8a9a", "#c8c8d4"]
+      },
+      "page-wash": {
+        "role": "neutral-bg",
+        "displayName": "Page Wash",
+        "canonical": "oklch(97% 0.007 225)",
+        "tonalRamp": ["#c0d0dc", "#d0e0ea", "#e0edf4", "#ecf4f8", "#f4fafb", "#f8fcfd", "#fafefe", "#fdfeff"]
+      },
+      "surface": {
+        "role": "surface",
+        "displayName": "Surface",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": ["#e2e8f0", "#edf2f7", "#f3f7fa", "#f8fafc", "#fbfcfd", "#fdfefe", "#fefffe", "#ffffff"]
+      },
+      "divider": {
+        "role": "neutral-border",
+        "displayName": "Divider",
+        "canonical": "oklch(90% 0.008 225)",
+        "tonalRamp": ["#94a3b8", "#b0bcca", "#c8d4df", "#d8e2ea", "#e2e8f0", "#edf2f7", "#f3f7fa", "#f8fafc"]
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-soft",
+        "value": "0 1px 3px rgba(0,0,0,0.06)",
+        "purpose": "Cards and form panels at rest. Barely perceptible; separates white card from page-wash."
+      },
+      {
+        "name": "shadow-soft-md",
+        "value": "0 4px 12px rgba(0,0,0,0.08)",
+        "purpose": "Interactive cards on hover (cleaners, wizard container). Communicates hover state."
+      },
+      {
+        "name": "shadow-soft-lg",
+        "value": "0 8px 30px rgba(0,0,0,0.12)",
+        "purpose": "Modals and floating overlays only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.25, 0, 0, 1)",
+        "purpose": "Default easing for all state transitions (color, shadow, opacity)."
+      },
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "purpose": "Color shifts, focus rings, hover fills."
+      },
+      {
+        "name": "duration-standard",
+        "value": "200ms",
+        "purpose": "Shadow elevation, opacity changes, panel reveals."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Pill-shaped primary CTA. Astana Sky fill. Use for the most important action on any screen.",
+      "html": "<button class=\"ds-btn-primary\">Заказать уборку</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; background: #0088c7; color: #ffffff; border: none; border-radius: 50px; padding: 12px 24px; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 600; line-height: 1.4; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: background 0.15s cubic-bezier(0.25,0,0,1); } .ds-btn-primary:hover { background: #006b9f; } .ds-btn-primary:focus-visible { outline: 2px solid #cffafe; outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Pill-shaped outlined secondary action. Fills with Astana Sky on hover.",
+      "html": "<button class=\"ds-btn-secondary\">Назад</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; background: #ffffff; color: #0088c7; border: 2px solid #0088c7; border-radius: 50px; padding: 10px 24px; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 600; line-height: 1.4; cursor: pointer; transition: background 0.15s cubic-bezier(0.25,0,0,1), color 0.15s cubic-bezier(0.25,0,0,1); } .ds-btn-secondary:hover { background: #0088c7; color: #ffffff; } .ds-btn-secondary:focus-visible { outline: 2px solid #cffafe; outline-offset: 2px; }"
+    },
+    {
+      "name": "Chip / Pill Tag",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Read-only label for city, category, or status. Fresh Mint Light background.",
+      "html": "<span class=\"ds-chip\">📍 Астана</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 4px; background: #cffafe; color: #006b9f; border-radius: 50px; padding: 4px 12px; font-family: Inter, system-ui, sans-serif; font-size: 0.75rem; font-weight: 500; line-height: 1.4; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Standard content card. White surface, soft shadow, 16px radius. Interactive cards scale shadow on hover.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">Поддерживающая уборка</h3><p class=\"ds-card-body\">Регулярная уборка для поддержания чистоты в доме.</p></div>",
+      "css": ".ds-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: box-shadow 0.2s cubic-bezier(0.25,0,0,1); } .ds-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); } .ds-card-title { font-family: Inter, system-ui, sans-serif; font-size: 1.125rem; font-weight: 700; color: #1a1a2e; margin: 0 0 8px; } .ds-card-body { font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 400; color: #4a4a5a; line-height: 1.6; margin: 0; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Standard form field. 16px radius, Astana Sky focus ring. Label always visible above.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Улица <span class=\"ds-field-required\">*</span></span><input class=\"ds-input\" type=\"text\" placeholder=\"Кенесары\" /></label>",
+      "css": ".ds-field { display: block; } .ds-field-label { display: block; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; color: #4a4a5a; margin-bottom: 4px; } .ds-field-required { color: #b91c1c; } .ds-input { display: block; width: 100%; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 12px 16px; font-family: Inter, system-ui, sans-serif; font-size: 1rem; font-weight: 400; color: #1a1a2e; box-sizing: border-box; transition: border-color 0.15s cubic-bezier(0.25,0,0,1), box-shadow 0.15s cubic-bezier(0.25,0,0,1); } .ds-input:focus { outline: none; border-color: #0088c7; box-shadow: 0 0 0 2px #cffafe; } .ds-input::placeholder { color: #8a8a9a; }"
+    },
+    {
+      "name": "Service Selector Row",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Selectable full-width touch target for the booking wizard service step. Selected state: Astana Sky Light fill + border.",
+      "html": "<button class=\"ds-service-row ds-service-row--selected\"><div class=\"ds-service-row-info\"><span class=\"ds-service-row-name\">Глубокая уборка</span><span class=\"ds-service-row-desc\">Тщательная уборка всех поверхностей</span></div><span class=\"ds-service-row-price\">от 27 119 ₸</span></button>",
+      "css": ".ds-service-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; text-align: left; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; cursor: pointer; transition: border-color 0.15s cubic-bezier(0.25,0,0,1), background 0.15s cubic-bezier(0.25,0,0,1); } .ds-service-row:hover { border-color: #8a8a9a; } .ds-service-row--selected { background: #e0f4fd; border-color: #0088c7; } .ds-service-row-info { display: flex; flex-direction: column; gap: 2px; } .ds-service-row-name { font-family: Inter, system-ui, sans-serif; font-size: 0.9375rem; font-weight: 600; color: #1a1a2e; } .ds-service-row-desc { font-family: Inter, system-ui, sans-serif; font-size: 0.8125rem; font-weight: 400; color: #4a4a5a; } .ds-service-row-price { font-family: Inter, system-ui, sans-serif; font-size: 0.8125rem; font-weight: 500; color: #8a8a9a; white-space: nowrap; }"
+    },
+    {
+      "name": "Brand Mark",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Logotype wordmark. Astana Sky for primary word; Fresh Mint for the suffix character.",
+      "html": "<a class=\"ds-brand\" href=\"/\">Shine<span class=\"ds-brand-accent\">X</span></a>",
+      "css": ".ds-brand { font-family: Inter, system-ui, sans-serif; font-size: 1.25rem; font-weight: 800; color: #0088c7; text-decoration: none; letter-spacing: -0.02em; } .ds-brand-accent { color: #24d6c6; }"
+    },
+    {
+      "name": "Error Message",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Inline form error. Red-tinted surface, red text. Shown below the form, not on the field itself.",
+      "html": "<p class=\"ds-error\">Номер телефона не найден. Проверьте формат: +77001234567</p>",
+      "css": ".ds-error { background: #fef2f2; color: #b91c1c; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 400; line-height: 1.5; border-radius: 8px; padding: 12px 16px; margin: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Clear Home",
+    "overview": "The Clear Home is a product UI that reflects the service it delivers: uncluttered, trustworthy, immediately legible. Surfaces are white on a blue-washed page not because white is safe, but because white is what a clean apartment looks like. Every element earns its place on the screen the way every item earns its place in a tidy room.\n\nThis is a platform for busy professionals in Astana who are booking something time-consuming and personal. They are letting a stranger into their home, which means every moment of confusion or inconsistency costs trust. The interface's job is to remove friction and signal reliability, not to impress.\n\nThe reference is top.kz: structured, direct, built for the Kazakh context without pretending to be imported from Silicon Valley. What this system explicitly rejects: the density and low-trust visual language of OLX/Avito classifieds, the cold navy formality of banking interfaces, and the generic aquamarine-and-white SaaS template.",
+    "keyCharacteristics": [
+      "Near-flat surfaces; depth from page-wash vs. white card contrast",
+      "Pill-shaped interactive elements (buttons, chips, tags)",
+      "Restrained color strategy: Astana Sky on actions and brand moments only",
+      "Single typeface (Inter) differentiated by weight and size",
+      "Consistent 16px corner radius across all containers",
+      "Three-language support (ru/kk/en) built into every decision"
+    ],
+    "rules": [
+      {
+        "name": "The One Voice Rule",
+        "body": "Astana Sky (#0088c7) is the only color permitted for interactive CTAs, active selections, and the brand mark. It appears on no more than 10% of any screen.",
+        "section": "colors"
+      },
+      {
+        "name": "The Amber Quarantine Rule",
+        "body": "Social Proof Amber (#f4a261) is for star ratings only. Never apply it to buttons, tags, icons, or any interactive element.",
+        "section": "colors"
+      },
+      {
+        "name": "The No-Stripe Rule",
+        "body": "Colored border-left or border-right accents greater than 1px on cards or list items are prohibited. Use background tints, full borders, or nothing.",
+        "section": "colors"
+      },
+      {
+        "name": "The Flat-by-Default Rule",
+        "body": "Surfaces are flat at rest. Shadows appear only as a response to state (hover, floating, overlay).",
+        "section": "elevation"
+      },
+      {
+        "name": "The One-Family Rule",
+        "body": "Inter is the only typeface. Weight and size create all hierarchy.",
+        "section": "typography"
+      },
+      {
+        "name": "The Label-Above Rule",
+        "body": "Form field labels always appear above the input as visible text, never as placeholder-only labels. Required for WCAG 2.1 AA.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Show pricing tiers before the booking flow. Complete information before the user has to ask.",
+      "Use Astana Sky (#0088c7) only on CTAs, the brand mark, active borders, and focus rings.",
+      "Use pill shapes (50px radius) for all standalone buttons and chip elements.",
+      "Use #f4fafb as the page surface with white cards above it.",
+      "Maintain 16px radius on all containers.",
+      "Place form labels above inputs as visible text, never as placeholder-only labels.",
+      "Keep the booking wizard inside a single persistent container with navigation controls inside it.",
+      "Design and test layouts in all three locales (ru/kk/en). Russian and Kazakh text is longer than English."
+    ],
+    "donts": [
+      "Don't use border-left or border-right greater than 1px as a colored stripe on cards or list items.",
+      "Don't create identical card grids: the same layout (icon + heading + body) repeated 4+ times in a row.",
+      "Don't use Social Proof Amber (#f4a261) anywhere except star ratings.",
+      "Don't use dark navy or heavy blue tones — the anti-reference is corporate cold blue.",
+      "Don't create the OLX/Avito classifieds aesthetic: dense borders, low whitespace, cluttered hierarchy.",
+      "Don't use placeholder text as a label replacement.",
+      "Don't use decorative motion or choreographed page-load sequences. State changes only, 150-200ms.",
+      "Don't use a second typeface. Inter is the only typeface in the system."
+    ]
+  }
+}

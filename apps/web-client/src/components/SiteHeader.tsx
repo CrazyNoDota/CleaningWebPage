@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { LocaleSwitcher } from './LocaleSwitcher';
@@ -18,11 +19,18 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6 md:py-4">
         <Link
           href="/"
-          className="min-w-0 shrink-0 text-xl font-extrabold tracking-tight text-brand-600 sm:text-2xl"
+          aria-label={`${t('brand.first')}${t('brand.second')}`}
+          className="flex min-w-0 shrink-0 items-center"
           onClick={() => setMobileOpen(false)}
         >
-          {t('brand.first')}
-          <span className="text-brand-400">{t('brand.second')}</span>
+          <Image
+            src="/img/shinex-logo.png"
+            alt={`${t('brand.first')}${t('brand.second')}`}
+            width={56}
+            height={56}
+            priority
+            className="size-12 rounded-xl object-cover shadow-soft sm:size-14"
+          />
         </Link>
 
         <nav className="hidden md:flex items-center gap-5 text-sm text-ink-700 ml-6">

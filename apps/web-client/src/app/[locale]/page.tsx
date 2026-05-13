@@ -37,7 +37,7 @@ export default async function HomePage({
               className="absolute inset-0 flex items-end p-5 sm:p-6 md:items-center md:p-12"
               style={{
                 background:
-                  'linear-gradient(135deg, rgba(45,106,79,0.85), rgba(82,183,136,0.55))',
+                  'linear-gradient(135deg, rgba(0,107,159,0.85), rgba(36,214,198,0.55))',
               }}
             >
               <div className="max-w-xl text-white">
@@ -106,11 +106,11 @@ export default async function HomePage({
         {/* WHY US */}
         <section className="mx-auto max-w-6xl px-4 md:px-6 mt-10">
           <h2 className="section-title">{t('home.whyTitle')}</h2>
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4 md:gap-4">
-            <WhyCard icon="🛡️" title={t('home.why.safety.title')} body={t('home.why.safety.body')} />
-            <WhyCard icon="✨" title={t('home.why.quality.title')} body={t('home.why.quality.body')} />
-            <WhyCard icon="⚡" title={t('home.why.convenience.title')} body={t('home.why.convenience.body')} />
-            <WhyCard icon="💚" title={t('home.why.service.title')} body={t('home.why.service.body')} />
+          <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 md:grid-cols-4">
+            <WhyItem icon="🛡️" title={t('home.why.safety.title')} body={t('home.why.safety.body')} />
+            <WhyItem icon="✨" title={t('home.why.quality.title')} body={t('home.why.quality.body')} />
+            <WhyItem icon="⚡" title={t('home.why.convenience.title')} body={t('home.why.convenience.body')} />
+            <WhyItem icon="💚" title={t('home.why.service.title')} body={t('home.why.service.body')} />
           </div>
         </section>
 
@@ -150,28 +150,47 @@ export default async function HomePage({
       </main>
 
       {/* FOOTER */}
-      <footer className="mt-16 bg-white border-t border-slate-200">
-        <div className="mx-auto max-w-6xl px-6 py-8 text-sm text-ink-400">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div className="font-extrabold text-brand-600 text-lg">
-              {t('brand.first')}
-              <span className="text-brand-400">{t('brand.second')}</span>
-            </div>
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs">
-              <Link href="/" className="hover:text-brand-600">
-                {t('footer.agreement')}
-              </Link>
-              <Link href="/" className="hover:text-brand-600">
-                {t('footer.privacy')}
-              </Link>
-              <Link href="/" className="hover:text-brand-600">
-                {t('footer.subscriptionRules')}
-              </Link>
+      <footer className="mt-16">
+        {/* Brand panel — dark surface lets the logo's glow blend naturally */}
+        <div className="bg-ink-900 text-white">
+          <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 py-12 text-center md:flex-row md:items-center md:gap-10 md:text-left">
+            <Image
+              src="/img/shinex-logo.png"
+              alt={`${t('brand.first')}${t('brand.second')}`}
+              width={192}
+              height={192}
+              className="size-36 rounded-3xl object-contain md:size-44"
+            />
+            <div className="max-w-md">
+              <p className="text-xl font-bold leading-snug md:text-2xl">
+                {t('home.heroTitle')}
+              </p>
+              <p className="mt-3 text-sm text-white/70 md:text-base">
+                {t('home.heroSubtitle')}
+              </p>
             </div>
           </div>
-          <div className="mt-4 flex flex-col gap-2 text-xs sm:flex-row sm:justify-between">
-            <span>© 2026 — Астана</span>
-            <span>{t('footer.hours')}</span>
+        </div>
+        {/* Legal & info strip — light */}
+        <div className="bg-white border-t border-slate-200">
+          <div className="mx-auto max-w-6xl px-6 py-6 text-sm text-ink-400">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs">
+                <Link href="/" className="hover:text-brand-600">
+                  {t('footer.agreement')}
+                </Link>
+                <Link href="/" className="hover:text-brand-600">
+                  {t('footer.privacy')}
+                </Link>
+                <Link href="/" className="hover:text-brand-600">
+                  {t('footer.subscriptionRules')}
+                </Link>
+              </div>
+              <div className="flex flex-col gap-2 text-xs sm:flex-row sm:items-center sm:gap-6">
+                <span>© 2026 — Астана</span>
+                <span>{t('footer.hours')}</span>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
@@ -211,8 +230,10 @@ function PricingCard({
 }) {
   return (
     <div
-      className={`rounded-2xl bg-white p-6 shadow-soft border-l-4 ${
-        featured ? 'border-gold' : 'border-brand-400'
+      className={`relative rounded-2xl bg-white p-6 border ${
+        featured
+          ? 'border-brand-600 shadow-soft-md ring-1 ring-brand-600'
+          : 'border-slate-200 shadow-soft'
       }`}
     >
       <h3 className="text-lg font-bold text-ink-900">{name}</h3>
@@ -239,12 +260,16 @@ function PricingCard({
   );
 }
 
-function WhyCard({ icon, title, body }: { icon: string; title: string; body: string }) {
+function WhyItem({ icon, title, body }: { icon: string; title: string; body: string }) {
   return (
-    <div className="rounded-2xl bg-white p-5 text-center shadow-soft">
-      <div className="text-3xl">{icon}</div>
-      <h4 className="mt-2 font-bold text-brand-600">{title}</h4>
-      <p className="mt-1 text-xs md:text-sm text-ink-400 leading-relaxed">{body}</p>
+    <div className="flex items-start gap-3">
+      <span className="text-2xl leading-none shrink-0" aria-hidden>
+        {icon}
+      </span>
+      <div>
+        <h4 className="font-bold text-ink-900">{title}</h4>
+        <p className="mt-1 text-sm text-ink-700 leading-relaxed">{body}</p>
+      </div>
     </div>
   );
 }
