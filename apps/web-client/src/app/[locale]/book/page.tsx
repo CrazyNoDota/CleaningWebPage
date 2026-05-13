@@ -698,7 +698,7 @@ function AddressStep({
             onChange={(v) => setDraft({ ...draft, label: v })}
           />
           <Input
-            label="City (slug)"
+            label={t('wizard.city')}
             value={draft.city}
             onChange={(v) => setDraft({ ...draft, city: v })}
           />
