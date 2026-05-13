@@ -22,8 +22,6 @@ type Step = 'service' | 'configure' | 'address' | 'schedule' | 'confirm';
 const STEPS: Step[] = ['service', 'configure', 'address', 'schedule', 'confirm'];
 
 interface AddressDraft {
-  city: string;
-  label: string;
   street: string;
   building: string;
   apartment: string;
@@ -31,8 +29,6 @@ interface AddressDraft {
 }
 
 const EMPTY_ADDRESS: AddressDraft = {
-  city: 'astana',
-  label: '',
   street: '',
   building: '',
   apartment: '',
@@ -173,8 +169,7 @@ export default function BookPage() {
       let resolvedAddressId: string;
       if (addressMode === 'new') {
         const created = await createAddress({
-          city: draft.city,
-          label: draft.label || undefined,
+          city: 'astana',
           street: draft.street,
           building: draft.building,
           apartment: draft.apartment || undefined,
@@ -506,8 +501,6 @@ function AddressStep({
   function startEdit(a: Address) {
     setEditingId(a.id);
     setEdit({
-      city: 'astana',
-      label: a.label ?? '',
       street: a.street,
       building: a.building,
       apartment: a.apartment ?? '',
@@ -520,7 +513,6 @@ function AddressStep({
     onError(null);
     try {
       const updated = await updateAddress(a.id, {
-        label: edit.label || undefined,
         street: edit.street,
         building: edit.building,
         apartment: edit.apartment || undefined,
@@ -620,11 +612,7 @@ function AddressStep({
                 ) : (
                   <div className="space-y-3">
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      <Input
-                        label={t('wizard.label')}
-                        value={edit.label}
-                        onChange={(v) => setEdit({ ...edit, label: v })}
-                      />
+                      <CityField />
                       <Input
                         label={t('wizard.street')}
                         value={edit.street}
@@ -646,6 +634,7 @@ function AddressStep({
                         label={t('wizard.comment')}
                         value={edit.comment}
                         onChange={(v) => setEdit({ ...edit, comment: v })}
+                        className="sm:col-span-2"
                       />
                     </div>
                     <div className="flex flex-col justify-end gap-2 sm:flex-row">
@@ -692,16 +681,7 @@ function AddressStep({
 
       {mode === 'new' && (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <Input
-            label={t('wizard.label')}
-            value={draft.label}
-            onChange={(v) => setDraft({ ...draft, label: v })}
-          />
-          <Input
-            label={t('wizard.city')}
-            value={draft.city}
-            onChange={(v) => setDraft({ ...draft, city: v })}
-          />
+          <CityField />
           <Input
             label={t('wizard.street')}
             value={draft.street}
@@ -723,6 +703,7 @@ function AddressStep({
             label={t('wizard.comment')}
             value={draft.comment}
             onChange={(v) => setDraft({ ...draft, comment: v })}
+            className="sm:col-span-2"
           />
         </div>
       )}
@@ -864,14 +845,16 @@ function Input({
   value,
   onChange,
   required,
+  className = '',
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   required?: boolean;
+  className?: string;
 }) {
   return (
-    <label className="block">
+    <label className={`block ${className}`}>
       <span className="text-sm font-medium text-slate-700">
         {label}
         {required && <span className="text-red-500"> *</span>}
@@ -883,6 +866,18 @@ function Input({
         className="input mt-1"
       />
     </label>
+  );
+}
+
+function CityField() {
+  const t = useTranslations();
+  return (
+    <div>
+      <span className="text-sm font-medium text-slate-700">{t('wizard.city')}</span>
+      <div className="input mt-1 flex items-center bg-slate-50 text-slate-700">
+        {t('nav.city')}
+      </div>
+    </div>
   );
 }
 
