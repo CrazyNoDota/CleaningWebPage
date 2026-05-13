@@ -47,7 +47,7 @@ export default function OrdersListPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
-      <main className="flex-1 mx-auto max-w-3xl w-full px-6 py-10">
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <h1 className="text-2xl font-bold text-slate-900">{t('orders.title')}</h1>
         <p className="mt-1 text-sm text-slate-500">{t('orders.intro')}</p>
 
@@ -78,8 +78,8 @@ export default function OrdersListPage() {
                   href={`/orders/${o.id}`}
                   className="card flex flex-col gap-2 hover:border-brand-600 transition-colors sm:flex-row sm:items-center sm:justify-between"
                 >
-                  <div>
-                    <div className="flex items-center gap-2">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span
                         className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeClass(o.status)}`}
                       >
@@ -103,7 +103,7 @@ export default function OrdersListPage() {
                       </p>
                     )}
                   </div>
-                  <div className="text-right">
+                  <div className="shrink-0 text-left sm:text-right">
                     <div className="text-lg font-semibold text-slate-900 tabular-nums">
                       {formatMoney(o.total, o.currency, locale)}
                     </div>

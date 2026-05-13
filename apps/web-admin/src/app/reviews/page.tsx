@@ -58,15 +58,15 @@ export default function ReviewsPage() {
 
   return (
     <AdminShell>
-      <div className="px-8 py-8 max-w-6xl">
+      <div className="max-w-6xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <h1 className="text-2xl font-bold text-slate-900">Отзывы</h1>
         <p className="text-sm text-slate-500">
           Очередь модерации. По умолчанию показаны новые отзывы, ожидающие
           проверки.
         </p>
 
-        <div className="mt-6 flex gap-3 text-sm">
-          <label className="flex items-center gap-2">
+        <div className="mt-6 flex flex-col gap-3 text-sm sm:flex-row sm:items-center">
+          <label className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
             <span className="text-slate-500">Статус:</span>
             <select
               value={status}
@@ -99,9 +99,9 @@ export default function ReviewsPage() {
           )}
           {items?.map((r) => (
             <article key={r.id} className="card">
-              <header className="flex items-start justify-between gap-4">
+              <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-amber-500" aria-label={`${r.rating}/5`}>
                       {'★'.repeat(r.rating)}
                       <span className="text-slate-300">

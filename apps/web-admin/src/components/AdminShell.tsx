@@ -34,8 +34,37 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   if (!session) return null;
 
   return (
-    <div className="min-h-screen flex">
-      <aside className="w-60 border-r border-slate-200 bg-white flex flex-col">
+    <div className="min-h-screen bg-slate-50 lg:flex">
+      <header className="border-b border-slate-200 bg-white lg:hidden">
+        <div className="flex items-center justify-between gap-3 px-4 py-3">
+          <Link href="/" className="min-w-0 text-base font-bold text-brand-600">
+            CleaningService
+          </Link>
+          <button onClick={signOut} className="btn-ghost shrink-0">
+            Выйти
+          </button>
+        </div>
+        <nav className="flex gap-2 overflow-x-auto px-4 pb-3 text-sm">
+          {NAV.map((item) => {
+            const active = pathname === item.href || pathname.startsWith(item.href + '/');
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`shrink-0 rounded-lg px-3 py-2 ${
+                  active
+                    ? 'bg-brand-50 text-brand-700 font-medium'
+                    : 'text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </header>
+
+      <aside className="hidden w-60 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
         <div className="px-6 py-5 border-b border-slate-200">
           <Link href="/" className="text-lg font-bold text-brand-600">
             CleaningService
@@ -72,7 +101,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </button>
         </div>
       </aside>
-      <main className="flex-1">{children}</main>
+      <main className="min-w-0 flex-1">{children}</main>
     </div>
   );
 }

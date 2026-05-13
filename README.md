@@ -7,7 +7,7 @@ Architecture and decisions are documented in [`global_plan.md`](./global_plan.md
 
 - **Backend** — NestJS 10, Prisma 6, PostgreSQL 16, Redis 7
 - **Web (client + admin)** — Next.js 15 (App Router), Tailwind, next-intl (ru / kk / en)
-- **Mobile** — React Native + Expo *(planned, not yet scaffolded)*
+- **Mobile** — React Native + Expo (`apps/mobile`)
 - **Monorepo** — pnpm workspaces + Turborepo
 - **Target market** — Kazakhstan; Kaspi Pay, 2GIS, Mobizon SMS
 
@@ -18,7 +18,7 @@ apps/
   api/                 NestJS backend (port 4000)
   web-client/          Public site + client cabinet (port 3000)
   web-admin/           Admin panel (planned)
-  mobile/              React Native + Expo (planned)
+  mobile/              React Native + Expo customer app
 packages/              Shared types / api-client / ui-kit (planned)
 design/reference/      Original static mockup — visual reference only
 docker-compose.yml     Local Postgres + Redis
@@ -54,6 +54,7 @@ pnpm dev
 # Or individually:
 pnpm --filter @cleaning/api dev          # http://localhost:4000
 pnpm --filter @cleaning/web-client dev   # http://localhost:3000
+pnpm --filter @cleaning/mobile dev       # Expo dev server
 ```
 
 - API root: <http://localhost:4000/api/v1>
@@ -61,6 +62,7 @@ pnpm --filter @cleaning/web-client dev   # http://localhost:3000
 - Web (RU): <http://localhost:3000/ru>
 - Web (KK): <http://localhost:3000/kk>
 - Web (EN): <http://localhost:3000/en>
+- Mobile: Expo app configured against <https://cleaning-api-six.vercel.app/api/v1>
 
 ## Auth — phone OTP flow (in dev)
 

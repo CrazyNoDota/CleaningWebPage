@@ -74,15 +74,15 @@ export default function ApplicationsPage() {
 
   return (
     <AdminShell>
-      <div className="px-8 py-8 max-w-6xl">
+      <div className="max-w-6xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <h1 className="text-2xl font-bold text-slate-900">Заявки в клинеры</h1>
         <p className="text-sm text-slate-500">
           Очередь заявок с публичного сайта. Кликните по строке, чтобы
           обновить статус и оставить заметку.
         </p>
 
-        <div className="mt-6 flex flex-wrap gap-3 text-sm">
-          <label className="flex items-center gap-2">
+        <div className="mt-6 flex flex-col gap-3 text-sm sm:flex-row sm:flex-wrap sm:items-center">
+          <label className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
             <span className="text-slate-500">Статус:</span>
             <select
               value={status}
@@ -99,7 +99,7 @@ export default function ApplicationsPage() {
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-2">
+          <label className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
             <span className="text-slate-500">Телефон:</span>
             <input
               type="tel"
@@ -117,8 +117,8 @@ export default function ApplicationsPage() {
           </p>
         )}
 
-        <div className="mt-6 card overflow-hidden p-0">
-          <table className="w-full text-sm">
+        <div className="mt-6 card overflow-x-auto p-0">
+          <table className="min-w-[820px] text-sm">
             <thead className="text-left bg-slate-50 text-slate-500">
               <tr>
                 <th className="px-4 py-3 font-medium">Получена</th>
@@ -245,7 +245,7 @@ export default function ApplicationsPage() {
                                 }))
                               }
                             />
-                            <div className="mt-2 flex justify-end">
+                            <div className="mt-2 flex justify-stretch sm:justify-end">
                               <button
                                 type="button"
                                 disabled={
@@ -255,7 +255,7 @@ export default function ApplicationsPage() {
                                 onClick={() =>
                                   patch(a, { notes: draftNotes[a.id] ?? '' })
                                 }
-                                className="btn-primary"
+                                className="btn-primary w-full sm:w-auto"
                               >
                                 Сохранить заметку
                               </button>

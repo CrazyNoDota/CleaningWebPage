@@ -76,7 +76,7 @@ export default function OrderDetailPage() {
 
   return (
     <AdminShell>
-      <div className="px-8 py-8 max-w-5xl">
+      <div className="max-w-5xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <Link href="/orders" className="text-sm text-slate-500 hover:text-slate-900">
           ← Все заказы
         </Link>
@@ -85,7 +85,7 @@ export default function OrderDetailPage() {
 
         {order && (
           <>
-            <div className="mt-2 flex items-start justify-between">
+            <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-slate-900">
                   {order.service.nameRu}
@@ -97,7 +97,7 @@ export default function OrderDetailPage() {
                   </span>
                 </div>
               </div>
-              <div className="text-right text-sm text-slate-500">
+              <div className="text-left text-sm text-slate-500 sm:text-right">
                 <div className="text-2xl font-bold text-slate-900 tabular-nums">
                   {formatMoneyRu(order.total, order.currency)}
                 </div>
@@ -108,7 +108,7 @@ export default function OrderDetailPage() {
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
               <CustomerCard order={order} />
               <AddressCard order={order} />
               <CleanerCard order={order} onAssign={(cid) =>
@@ -262,7 +262,7 @@ function CleanerCard({
                       </option>
                     ))}
                   </select>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col gap-2 sm:flex-row">
                     <button
                       type="button"
                       onClick={() => onAssign(pick)}
@@ -335,7 +335,7 @@ function EventLog({ events }: { events: AdminOrderFull['events'] }) {
       <ol className="mt-3 space-y-2 text-sm">
         {events.map((e) => (
           <li key={e.id} className="flex items-baseline gap-3">
-            <span className="text-xs text-slate-400 w-36 shrink-0">
+            <span className="w-28 shrink-0 text-xs text-slate-400 sm:w-36">
               {formatDateTimeRu(e.createdAt)}
             </span>
             <span className="font-mono text-xs text-slate-700">{e.type}</span>

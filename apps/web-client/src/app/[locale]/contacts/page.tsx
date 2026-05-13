@@ -26,7 +26,7 @@ export default async function ContactsPage({
               <div className="text-xs text-ink-400 uppercase tracking-wider">📞</div>
               <a
                 href={`tel:${PHONE.replace(/[^+\d]/g, '')}`}
-                className="block mt-1 text-xl font-bold text-brand-600 hover:underline"
+                className="mt-1 block break-words text-xl font-bold text-brand-600 hover:underline"
               >
                 {PHONE}
               </a>
@@ -35,7 +35,7 @@ export default async function ContactsPage({
               <div className="text-xs text-ink-400 uppercase tracking-wider">✉️</div>
               <a
                 href={`mailto:${t('page.contacts.email')}`}
-                className="block mt-1 text-ink-900 hover:text-brand-600"
+                className="mt-1 block break-words text-ink-900 hover:text-brand-600"
               >
                 {t('page.contacts.email')}
               </a>

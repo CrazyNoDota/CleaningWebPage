@@ -98,6 +98,23 @@ enum NotificationStatus {
   skipped
 }
 
+enum PaymentProvider {
+  stub
+  kaspi
+  freedom_pay
+  halyk_epay
+  cloudpayments
+}
+
+enum PaymentStatus {
+  pending
+  requires_action
+  succeeded
+  failed
+  cancelled
+  refunded
+}
+
 // ─────────────────────────────────────────────────────────────────
 // Identity
 // ─────────────────────────────────────────────────────────────────
@@ -125,6 +142,7 @@ model User {
   cleanerProfile Cleaner?
   reviews        Review[]
   notifications  Notification[]
+  payments       Payment[]
 
   @@index([phone])
   @@index([email])
@@ -289,10 +307,35 @@ model Order {
   cleaner Cleaner?     @relation(fields: [cleanerId], references: [id])
   events  OrderEvent[]
   review  Review?
+  payments Payment[]
 
   @@index([userId])
   @@index([status])
   @@index([scheduledAt])
+}
+
+model Payment {
+  id                String          @id @default(uuid())
+  orderId           String
+  userId            String?
+  provider          PaymentProvider
+  status            PaymentStatus   @default(pending)
+  amount            Int
+  currency          String          @default("KZT")
+  providerPaymentId String?
+  paymentUrl        String?
+  idempotencyKey    String?         @unique
+  rawPayload        Json?
+  paidAt            DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user  User? @relation(fields: [userId], references: [id])
+
+  @@index([orderId])
+  @@index([userId])
+  @@index([provider, status])
 }
 
 model OrderEvent {

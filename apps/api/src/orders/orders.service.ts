@@ -5,13 +5,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { OrderStatus, Prisma } from '@prisma/client';
+import { OrderSource, OrderStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { PricingService } from '../pricing/pricing.service';
-import {
-  ORDER_STATE_CHANGED,
-  type OrderStateChangedEvent,
-} from '../realtime/domain-events';
+import { ORDER_STATE_CHANGED, type OrderStateChangedEvent } from '../realtime/domain-events';
 import {
   assertTransition,
   customerCanCancel,
@@ -77,7 +74,7 @@ export class OrdersService {
           addressId: dto.addressId,
           scheduledAt,
           status: OrderStatus.created,
-          source: 'web',
+          source: dto.source ?? OrderSource.web,
           total: quote.total,
           currency: quote.currency,
           notes: dto.notes,
@@ -229,12 +226,7 @@ export class OrdersService {
     return this.publicView(result.updated);
   }
 
-  async transitionByOperator(
-    orderId: string,
-    to: OrderStatus,
-    actor: ActorContext,
-    note?: string,
-  ) {
+  async transitionByOperator(orderId: string, to: OrderStatus, actor: ActorContext, note?: string) {
     return this.applyTransition(orderId, to, { userId: actor.userId, role: actor.role, note });
   }
 
@@ -299,19 +291,22 @@ export class OrdersService {
     return this.publicView(result.updated);
   }
 
-  private publicView<T extends { id: string }>(o: T & {
-    serviceId: string;
-    addressId: string | null;
-    cleanerId: string | null;
-    scheduledAt: Date | null;
-    status: OrderStatus;
-    total: number;
-    currency: string;
-    createdAt: Date;
-    updatedAt: Date;
-    cancelledAt: Date | null;
-    notes: string | null;
-  }) {
+  private publicView<T extends { id: string }>(
+    o: T & {
+      serviceId: string;
+      addressId: string | null;
+      cleanerId: string | null;
+      scheduledAt: Date | null;
+      status: OrderStatus;
+      source: OrderSource;
+      total: number;
+      currency: string;
+      createdAt: Date;
+      updatedAt: Date;
+      cancelledAt: Date | null;
+      notes: string | null;
+    },
+  ) {
     return {
       id: o.id,
       serviceId: o.serviceId,
@@ -319,6 +314,7 @@ export class OrdersService {
       cleanerId: o.cleanerId,
       scheduledAt: o.scheduledAt,
       status: o.status,
+      source: o.source,
       total: o.total,
       currency: o.currency,
       notes: o.notes,

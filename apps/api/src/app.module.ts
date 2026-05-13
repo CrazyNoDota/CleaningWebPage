@@ -15,6 +15,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { ApplicationsModule } from './applications/applications.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { AdminMetricsModule } from './admin-metrics/admin-metrics.module';
+import { PaymentsModule } from './payments/payments.module';
 
 const realtimeEnabled = process.env.DISABLE_REALTIME !== 'true';
 
@@ -39,6 +40,7 @@ const realtimeEnabled = process.env.DISABLE_REALTIME !== 'true';
     ApplicationsModule,
     AddressesModule,
     AdminMetricsModule,
+    PaymentsModule,
   ],
 })
 export class AppModule {}

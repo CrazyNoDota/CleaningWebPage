@@ -44,7 +44,7 @@ export default function NewCleanerPage() {
 
   return (
     <AdminShell>
-      <div className="px-8 py-8 max-w-2xl">
+      <div className="max-w-2xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <Link href="/cleaners" className="text-sm text-slate-500 hover:text-slate-900">
           ← Все клинеры
         </Link>
@@ -55,7 +55,7 @@ export default function NewCleanerPage() {
         </p>
 
         <form onSubmit={onSubmit} className="mt-6 card space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Телефон" hint="+77011234567">
               <input
                 value={phone}
@@ -135,8 +135,8 @@ export default function NewCleanerPage() {
             <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
           )}
 
-          <div className="flex justify-end gap-2">
-            <Link href="/cleaners" className="btn-secondary">
+          <div className="flex flex-col justify-end gap-2 sm:flex-row">
+            <Link href="/cleaners" className="btn-secondary text-center">
               Отмена
             </Link>
             <button type="submit" className="btn-primary" disabled={busy}>

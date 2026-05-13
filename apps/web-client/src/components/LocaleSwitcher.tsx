@@ -21,7 +21,7 @@ export function LocaleSwitcher() {
           router.replace(pathname, { locale: next });
         });
       }}
-      className="text-sm rounded-md border border-slate-300 bg-white px-2 py-1"
+      className="max-w-[6.5rem] rounded-md border border-slate-300 bg-white px-2 py-1 text-sm"
       aria-label="Language"
     >
       {locales.map((l) => (

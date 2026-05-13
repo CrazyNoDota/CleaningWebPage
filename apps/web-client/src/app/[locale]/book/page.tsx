@@ -129,7 +129,14 @@ export default function BookPage() {
   }
 
   function goPrev() {
-    if (!canPrev) return;
+    if (!canPrev) {
+      if (typeof window !== 'undefined' && window.history.length > 1) {
+        router.back();
+      } else {
+        router.push(`/${locale}`);
+      }
+      return;
+    }
     const prev = STEPS[currentIndex - 1];
     if (prev) setStep(prev);
   }
@@ -194,14 +201,14 @@ export default function BookPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
-      <main className="flex-1 mx-auto max-w-3xl w-full px-6 py-10">
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <h1 className="text-2xl font-bold text-slate-900">{t('wizard.title')}</h1>
         <p className="mt-1 text-sm text-slate-500">
           {t('wizard.step', { current: currentIndex + 1, total: STEPS.length })} ·{' '}
           {t(`wizard.step${cap(step)}`)}
         </p>
 
-        <div className="mt-8 card space-y-6">
+        <div className="mt-6 space-y-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-soft sm:mt-8 sm:p-6">
           {step === 'service' && (
             <ServiceStep
               services={services}
@@ -267,18 +274,17 @@ export default function BookPage() {
             <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
           )}
 
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
             <button
               type="button"
               onClick={goPrev}
-              disabled={!canPrev}
-              className="btn-secondary"
+              className="btn-secondary w-full sm:w-auto"
             >
               {t('common.back')}
             </button>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               {quote && (
-                <span className="text-sm text-slate-500">
+                <span className="text-sm text-slate-500 sm:text-right">
                   {t('wizard.estimatedTotal')}:{' '}
                   <strong className="text-slate-900">
                     {formatMoney(quote.total, quote.currency, locale)}
@@ -289,7 +295,7 @@ export default function BookPage() {
                 type="button"
                 onClick={goNext}
                 disabled={!canNext || submitting}
-                className="btn-primary"
+                className="btn-primary w-full sm:w-auto"
               >
                 {submitting
                   ? t('common.loading')
@@ -335,14 +341,14 @@ function ServiceStep({
               : 'border-slate-200 hover:border-slate-300'
           }`}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="font-semibold text-slate-900">{s.name}</div>
               {s.description && (
                 <div className="mt-1 text-sm text-slate-500">{s.description}</div>
               )}
             </div>
-            <div className="text-sm text-slate-500">
+            <div className="text-sm text-slate-500 sm:text-right">
               {t('wizard.estimatedTotal')} от{' '}
               <strong>{formatMoney(s.basePrice, s.currency, locale)}</strong>
             </div>
@@ -377,7 +383,7 @@ function ConfigureStep({
   const t = useTranslations();
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label>
           <span className="text-sm font-medium text-slate-700">{t('wizard.areaM2')}</span>
           <input
@@ -391,46 +397,29 @@ function ConfigureStep({
         </label>
         <div>
           <span className="text-sm font-medium text-slate-700">{t('wizard.rooms')}</span>
-          <div className="mt-1 grid grid-cols-5 gap-1.5">
-            {[1, 2, 3, 4].map((n) => {
-              const active = rooms === n;
-              return (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => setRooms(n)}
-                  className={`rounded-lg py-2 text-sm font-semibold transition ${
-                    active
-                      ? 'bg-brand-600 text-white border border-brand-600'
-                      : 'border border-slate-200 text-slate-700 hover:border-slate-300'
-                  }`}
-                >
-                  {n}
-                </button>
-              );
-            })}
+          <div className="mt-1 flex h-12 overflow-hidden rounded-2xl border border-slate-200 bg-white">
             <button
               type="button"
-              onClick={() => setRooms(rooms < 5 ? 5 : rooms)}
-              className={`rounded-lg py-2 text-sm font-semibold transition ${
-                rooms >= 5
-                  ? 'bg-brand-600 text-white border border-brand-600'
-                  : 'border border-slate-200 text-slate-700 hover:border-slate-300'
-              }`}
+              onClick={() => setRooms(Math.max(1, rooms - 1))}
+              disabled={rooms <= 1}
+              className="flex w-14 items-center justify-center border-r border-slate-200 text-2xl font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-300"
+              aria-label="Decrease rooms"
             >
-              5+
+              -
+            </button>
+            <div className="flex min-w-0 flex-1 items-center justify-center text-lg font-semibold text-slate-900">
+              {rooms}
+            </div>
+            <button
+              type="button"
+              onClick={() => setRooms(Math.min(20, rooms + 1))}
+              disabled={rooms >= 20}
+              className="flex w-14 items-center justify-center border-l border-slate-200 bg-brand-600 text-2xl font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-slate-200"
+              aria-label="Increase rooms"
+            >
+              +
             </button>
           </div>
-          {rooms >= 5 && (
-            <input
-              type="number"
-              min={5}
-              max={20}
-              value={rooms}
-              onChange={(e) => setRooms(Math.max(5, Number(e.target.value)))}
-              className="input mt-2"
-            />
-          )}
         </div>
       </div>
 
@@ -582,7 +571,7 @@ function AddressStep({
                 }`}
               >
                 {!isEditing ? (
-                  <div className="flex items-start gap-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
                     <input
                       type="radio"
                       checked={mode === 'pick' && addressId === a.id}
@@ -601,7 +590,7 @@ function AddressStep({
                         <p className="mt-1 text-xs text-slate-500">{a.comment}</p>
                       )}
                     </div>
-                    <div className="flex flex-col items-end gap-1 text-xs">
+                    <div className="flex gap-3 text-xs sm:flex-col sm:items-end sm:gap-1">
                       <button
                         type="button"
                         onClick={() => startEdit(a)}
@@ -622,7 +611,7 @@ function AddressStep({
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <Input
                         label={t('wizard.label')}
                         value={edit.label}
@@ -651,12 +640,12 @@ function AddressStep({
                         onChange={(v) => setEdit({ ...edit, comment: v })}
                       />
                     </div>
-                    <div className="flex justify-end gap-2">
+                    <div className="flex flex-col justify-end gap-2 sm:flex-row">
                       <button
                         type="button"
                         onClick={() => setEditingId(null)}
                         disabled={busyId === a.id}
-                        className="btn-secondary"
+                        className="btn-secondary w-full sm:w-auto"
                       >
                         {t('wizardAddress.cancel')}
                       </button>
@@ -668,7 +657,7 @@ function AddressStep({
                           edit.street.length === 0 ||
                           edit.building.length === 0
                         }
-                        className="btn-primary"
+                        className="btn-primary w-full sm:w-auto"
                       >
                         {t('wizardAddress.save')}
                       </button>
@@ -694,7 +683,7 @@ function AddressStep({
       )}
 
       {mode === 'new' && (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Input
             label={t('wizard.label')}
             value={draft.label}
@@ -847,11 +836,13 @@ function Row({
   emphasize?: boolean;
 }) {
   return (
-    <div className="flex items-baseline justify-between py-3">
+    <div className="flex flex-col gap-1 py-3 sm:flex-row sm:items-baseline sm:justify-between">
       <dt className="text-slate-500">{label}</dt>
       <dd
         className={
-          emphasize ? 'font-bold text-slate-900 text-lg' : 'font-medium text-slate-900'
+          emphasize
+            ? 'break-words font-bold text-slate-900 sm:text-right text-lg'
+            : 'break-words font-medium text-slate-900 sm:text-right'
         }
       >
         {value}

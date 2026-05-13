@@ -38,7 +38,7 @@ export default function CleanerEditPage() {
 
   return (
     <AdminShell>
-      <div className="px-8 py-8 max-w-3xl">
+      <div className="max-w-3xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <Link href="/cleaners" className="text-sm text-slate-500 hover:text-slate-900">
           ← Все клинеры
         </Link>
@@ -49,7 +49,7 @@ export default function CleanerEditPage() {
 
         {cleaner && (
           <>
-            <div className="mt-2 flex items-start justify-between">
+            <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-slate-900">
                   {cleaner.user.name ?? cleaner.user.phone}
@@ -62,7 +62,7 @@ export default function CleanerEditPage() {
                   />
                 </div>
               </div>
-              <div className="text-right text-sm text-slate-500">
+              <div className="text-left text-sm text-slate-500 sm:text-right">
                 <div>Завершённых заказов: <strong className="text-slate-900">{cleaner.completedOrdersCount}</strong></div>
                 <div>
                   Рейтинг:{' '}
@@ -97,7 +97,7 @@ export default function CleanerEditPage() {
                   ),
                 )}
               </div>
-              <div className="mt-3 flex gap-2">
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                 {cleaner.isActive ? (
                   <button
                     type="button"
@@ -168,7 +168,7 @@ function ProfileForm({
   return (
     <form onSubmit={onSubmit} className="mt-6 card space-y-4">
       <h2 className="font-semibold text-slate-900">Профиль</h2>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Полное имя">
           <input
             value={name}
@@ -231,8 +231,8 @@ function ProfileForm({
           className="input"
         />
       </Field>
-      <div className="flex justify-end">
-        <button type="submit" className="btn-primary" disabled={busy}>
+      <div className="flex justify-stretch sm:justify-end">
+        <button type="submit" className="btn-primary w-full sm:w-auto" disabled={busy}>
           {busy ? 'Сохраняем…' : 'Сохранить'}
         </button>
       </div>

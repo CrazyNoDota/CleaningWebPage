@@ -36,14 +36,14 @@ export default function OrdersPage() {
 
   return (
     <AdminShell>
-      <div className="px-8 py-8 max-w-7xl">
+      <div className="max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <h1 className="text-2xl font-bold text-slate-900">Заказы</h1>
         <p className="text-sm text-slate-500">
           Все заказы в системе. Кликните по строке, чтобы открыть детали.
         </p>
 
-        <div className="mt-6 flex gap-3 text-sm">
-          <label className="flex items-center gap-2">
+        <div className="mt-6 flex flex-col gap-3 text-sm sm:flex-row sm:flex-wrap sm:items-center">
+          <label className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
             <span className="text-slate-500">Статус:</span>
             <select
               value={status}
@@ -58,7 +58,7 @@ export default function OrdersPage() {
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-2">
+          <label className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
             <span className="text-slate-500">Телефон клиента:</span>
             <input
               type="tel"
@@ -76,8 +76,8 @@ export default function OrdersPage() {
           </p>
         )}
 
-        <div className="mt-6 card overflow-hidden p-0">
-          <table className="w-full text-sm">
+        <div className="mt-6 card overflow-x-auto p-0">
+          <table className="min-w-[920px] text-sm">
             <thead className="text-left bg-slate-50 text-slate-500">
               <tr>
                 <th className="px-4 py-3 font-medium">Создан</th>

@@ -10,6 +10,22 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class CleanersController {
   constructor(private readonly cleaners: CleanersService) {}
 
+  @Get('cleaners')
+  @ApiOperation({ summary: 'Public active cleaner profiles (sanitized — no PII)' })
+  list(
+    @Query('take') take: string | undefined,
+    @Query('skip') skip: string | undefined,
+    @Query('locale') localeQuery: string | undefined,
+    @Headers('accept-language') al: string | undefined,
+  ) {
+    const locale = resolveLocale(localeQuery, al);
+    return this.cleaners.listPublic({
+      take: clamp(intOrDefault(take, 12), 1, 50),
+      skip: Math.max(intOrDefault(skip, 0), 0),
+      locale,
+    });
+  }
+
   @Get('cleaners/:id')
   @ApiOperation({ summary: 'Public cleaner profile (sanitized — no PII)' })
   getProfile(
@@ -34,4 +50,14 @@ export class CleanersController {
     const locale = resolveLocale(localeQuery, al);
     return this.cleaners.getOrderCleaner(orderId, req.user!.sub, locale);
   }
+}
+
+function clamp(n: number, lo: number, hi: number): number {
+  return Math.max(lo, Math.min(hi, n));
+}
+
+function intOrDefault(s: string | undefined, d: number): number {
+  if (s === undefined || s === '') return d;
+  const n = Number(s);
+  return Number.isFinite(n) ? Math.trunc(n) : d;
 }

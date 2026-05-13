@@ -17,19 +17,19 @@ export default async function AboutPage({
         <h1 className="text-3xl md:text-4xl font-extrabold text-ink-900">
           {t('page.about.title')}
         </h1>
-        <p className="mt-4 text-ink-700">{t('page.about.intro')}</p>
-        <div className="mt-8 grid grid-cols-3 gap-4">
+        <p className="mt-4 max-w-2xl text-lg leading-8 text-ink-700">{t('page.about.intro')}</p>
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="card text-center">
-            <div className="text-2xl font-extrabold text-brand-600">8</div>
-            <div className="mt-1 text-xs text-ink-400">{t('home.stats.experience')}</div>
+            <div className="text-5xl font-extrabold leading-none text-brand-600 md:text-6xl">8</div>
+            <div className="mt-3 text-sm text-ink-400">{t('home.stats.experience')}</div>
           </div>
           <div className="card text-center">
-            <div className="text-2xl font-extrabold text-brand-600">1 000+</div>
-            <div className="mt-1 text-xs text-ink-400">{t('home.stats.cleaners')}</div>
+            <div className="text-5xl font-extrabold leading-none text-brand-600 md:text-6xl">1 000+</div>
+            <div className="mt-3 text-sm text-ink-400">{t('home.stats.cleaners')}</div>
           </div>
           <div className="card text-center">
-            <div className="text-2xl font-extrabold text-brand-600">16M ₸</div>
-            <div className="mt-1 text-xs text-ink-400">Centras Insurance</div>
+            <div className="text-5xl font-extrabold leading-none text-brand-600 md:text-6xl">16M ₸</div>
+            <div className="mt-3 text-sm text-ink-400">Centras Insurance</div>
           </div>
         </div>
       </main>

@@ -53,7 +53,7 @@ export default function DashboardPage() {
 
   return (
     <AdminShell>
-      <div className="px-8 py-8 max-w-5xl">
+      <div className="max-w-5xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <h1 className="text-2xl font-bold text-slate-900">Дашборд</h1>
         <p className="mt-2 text-sm text-slate-500">
           Сводка по операционной нагрузке. Цифры обновляются при заходе на
@@ -66,7 +66,7 @@ export default function DashboardPage() {
           </p>
         )}
 
-        <div className="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             href="/orders"
             label="Заказы сегодня"
@@ -99,7 +99,7 @@ export default function DashboardPage() {
           <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
             Быстрый доступ
           </h2>
-          <div className="mt-3 grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+          <div className="mt-3 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2 md:grid-cols-3">
             <Link href="/cleaners/new" className="card hover:border-brand-600">
               <div className="text-slate-500">Действие</div>
               <div className="mt-1 font-semibold text-slate-900">

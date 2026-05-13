@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
+  IsEnum,
   IsInt,
   IsObject,
   IsOptional,
@@ -10,6 +11,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+import { OrderSource } from '@prisma/client';
 
 export class CreateOrderOptionDto {
   @ApiProperty({ example: 'windows' })
@@ -51,4 +53,9 @@ export class CreateOrderDto {
   @IsOptional()
   @IsString()
   notes?: string;
+
+  @ApiProperty({ required: false, enum: OrderSource, default: OrderSource.web })
+  @IsOptional()
+  @IsEnum(OrderSource)
+  source?: OrderSource;
 }

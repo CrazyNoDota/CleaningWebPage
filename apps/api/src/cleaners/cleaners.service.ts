@@ -122,10 +122,25 @@ export class CleanersService {
 
   // ── public-side (existing) ──────────────────────────────────────
 
+  async listPublic(opts: { take: number; skip: number; locale: Locale }) {
+    const cleaners = await this.prisma.cleaner.findMany({
+      where: { isActive: true },
+      include: { user: { select: { name: true } } },
+      orderBy: [
+        { ratingAvg: 'desc' },
+        { ratingCount: 'desc' },
+        { completedOrdersCount: 'desc' },
+      ],
+      take: opts.take,
+      skip: opts.skip,
+    });
+    return cleaners.map((c) => this.projectPublic(c, opts.locale));
+  }
+
   async getPublicProfile(id: string, locale: Locale) {
     const cleaner = await this.prisma.cleaner.findUnique({
       where: { id },
-      include: { user: true },
+      include: { user: { select: { name: true } } },
     });
     if (!cleaner || !cleaner.isActive) {
       throw new NotFoundException(`cleaner "${id}" not found`);
@@ -154,9 +169,7 @@ export class CleanersService {
   }
 
   private projectPublic(
-    c: NonNullable<Awaited<ReturnType<PrismaService['cleaner']['findUnique']>>> & {
-      user: NonNullable<Awaited<ReturnType<PrismaService['user']['findUnique']>>>;
-    },
+    c: Cleaner & { user: { name: string | null } },
     locale: Locale,
   ) {
     return {

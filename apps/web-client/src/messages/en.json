@@ -38,13 +38,14 @@
       "home": "🏠 For home",
       "business": "🏢 For business"
     },
-    "insurance": "Your property is insured up to 16M ₸ — Centras Insurance",
     "servicesTitle": "What we offer",
     "services": {
       "apartment": "Apartment cleaning",
       "cottage": "Cottage cleaning",
       "house": "House cleaning",
-      "office": "Offices"
+      "office": "Offices",
+      "commercial": "Commercial spaces",
+      "afterHours": "After-hours cleaning"
     },
     "from": "from",
     "roomsTitle": "What's included",
@@ -117,7 +118,7 @@
     },
     "about": {
       "title": "About",
-      "intro": "We are a professional cleaning company in Kazakhstan."
+      "intro": "We clean apartments, houses and offices in Astana. A cleaner arrives on time, follows a checklist, and a manager stays in touch until the job is finished."
     },
     "contacts": {
       "title": "Contacts",
@@ -185,6 +186,17 @@
     "experience": "{years} years of experience",
     "verified": "Verified",
     "live": "Status updates arrive in real time"
+  },
+  "cleanerProfile": {
+    "back": "Back to specialists",
+    "about": "About the specialist",
+    "specialization": "Specialization",
+    "languages": "Languages",
+    "orders": "completed orders",
+    "reviews": "Reviews",
+    "noReviews": "No published reviews yet.",
+    "verified": "Verified",
+    "book": "Book cleaning"
   },
   "review": {
     "prompt": "Rate your cleaning",

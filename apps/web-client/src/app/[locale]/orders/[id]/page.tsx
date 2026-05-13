@@ -9,8 +9,10 @@ import { ReviewForm, ReviewThanks } from '@/components/ReviewForm';
 import {
   ApiError,
   WS_BASE,
+  confirmStubPayment,
   getOrder,
   getOrderCleaner,
+  initiatePayment,
 } from '@/lib/api';
 import { formatMoney } from '@/lib/format';
 import { useSession } from '@/lib/use-session';
@@ -38,6 +40,7 @@ export default function OrderPage() {
   const [cleaner, setCleaner] = useState<CleanerCard | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [liveBadge, setLiveBadge] = useState(false);
+  const [paying, setPaying] = useState(false);
 
   // Redirect to login if not authed.
   useEffect(() => {
@@ -98,6 +101,28 @@ export default function OrderPage() {
     return STATUS_ORDER.indexOf(order.status);
   }, [order]);
 
+  async function onPay() {
+    if (!order) return;
+    setPaying(true);
+    setError(null);
+    try {
+      const payment = await initiatePayment(order.id, `web-${order.id}`);
+      if (payment.nextAction === 'stub_confirm') {
+        await confirmStubPayment(payment.id);
+        const next = await getOrder(order.id);
+        setOrder(next);
+        return;
+      }
+      if (payment.paymentUrl) {
+        window.location.href = payment.paymentUrl;
+      }
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : 'payment failed');
+    } finally {
+      setPaying(false);
+    }
+  }
+
   if (!hydrated || !session) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -112,8 +137,8 @@ export default function OrderPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
-      <main className="flex-1 mx-auto max-w-3xl w-full px-6 py-10 space-y-6">
-        <div className="flex items-center justify-between">
+      <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 px-4 py-8 sm:px-6 sm:py-10">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold text-slate-900">{t('order.title')}</h1>
           {liveBadge && (
             <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full">
@@ -145,7 +170,7 @@ export default function OrderPage() {
                 />
               )}
               {/* Status timeline */}
-              <ol className="mt-6 grid grid-cols-7 gap-1">
+              <ol className="mt-6 grid grid-cols-7 gap-1 overflow-hidden">
                 {STATUS_ORDER.map((s, i) => (
                   <li
                     key={s}
@@ -156,6 +181,16 @@ export default function OrderPage() {
                   />
                 ))}
               </ol>
+              {order.status === 'created' && (
+                <button
+                  type="button"
+                  onClick={onPay}
+                  disabled={paying}
+                  className="btn-primary mt-6 w-full sm:w-auto"
+                >
+                  {paying ? t('common.loading') : 'Оплатить'}
+                </button>
+              )}
             </section>
 
             <section className="card">
@@ -184,12 +219,12 @@ export default function OrderPage() {
 function CleanerCardView({ cleaner }: { cleaner: CleanerCard }) {
   const t = useTranslations();
   return (
-    <div className="mt-3 flex gap-4 items-start">
-      <div className="size-16 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-2xl font-bold">
+    <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-start">
+      <div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-brand-100 text-2xl font-bold text-brand-700">
         {cleaner.displayName.charAt(0)}
       </div>
       <div className="flex-1">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <strong className="text-slate-900">{cleaner.displayName}</strong>
           {cleaner.verified && (
             <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
@@ -221,13 +256,13 @@ function Row({
   emphasize?: boolean;
 }) {
   return (
-    <div className="flex items-baseline justify-between py-2">
+    <div className="flex flex-col gap-1 py-2 sm:flex-row sm:items-baseline sm:justify-between">
       <dt className="text-sm text-slate-500">{label}</dt>
       <dd
         className={
           emphasize
-            ? 'font-bold text-slate-900 text-lg'
-            : 'font-medium text-slate-900 text-sm'
+            ? 'break-words font-bold text-slate-900 sm:text-right text-lg'
+            : 'break-words font-medium text-slate-900 sm:text-right text-sm'
         }
       >
         {value}

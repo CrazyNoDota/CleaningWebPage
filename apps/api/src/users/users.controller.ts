@@ -1,10 +1,22 @@
-import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AuthService } from '../auth/auth.service';
 import { UpdateMeDto } from './dto/update-me.dto';
+import { DeviceTokenDto } from './dto/device-token.dto';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -30,6 +42,37 @@ export class UsersController {
       data: body,
     });
     return this.publicView(updated);
+  }
+
+  @Post('me/device-tokens')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Register a mobile push token for the current user' })
+  async registerDeviceToken(@Req() req: Request, @Body() body: DeviceTokenDto) {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: req.user!.sub },
+      select: { deviceTokens: true },
+    });
+    const deviceTokens = Array.from(new Set([body.token, ...user.deviceTokens])).slice(0, 10);
+    await this.prisma.user.update({
+      where: { id: req.user!.sub },
+      data: { deviceTokens },
+    });
+    return { registered: true };
+  }
+
+  @Delete('me/device-tokens')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Remove a mobile push token from the current user' })
+  async unregisterDeviceToken(@Req() req: Request, @Body() body: DeviceTokenDto) {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: req.user!.sub },
+      select: { deviceTokens: true },
+    });
+    await this.prisma.user.update({
+      where: { id: req.user!.sub },
+      data: { deviceTokens: user.deviceTokens.filter((token) => token !== body.token) },
+    });
+    return { registered: false };
   }
 
   private publicView(u: {

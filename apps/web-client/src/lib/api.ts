@@ -2,8 +2,10 @@ import { clearSession, getAccessToken, loadSession, saveSession } from './auth';
 import type {
   Address,
   CleanerCard,
+  CleanerReview,
   Locale,
   Order,
+  Payment,
   Quote,
   Service,
   Session,
@@ -206,6 +208,44 @@ export function getOrderCleaner(id: string, locale: Locale) {
     `/orders/${id}/cleaner?locale=${locale}`,
     { locale },
   );
+}
+
+export function listCleaners(locale: Locale, take = 12, skip = 0) {
+  const qs = new URLSearchParams({
+    locale,
+    take: String(take),
+    skip: String(skip),
+  }).toString();
+  return request<CleanerCard[]>(`/cleaners?${qs}`, { auth: false, locale });
+}
+
+export function getCleaner(id: string, locale: Locale) {
+  return request<CleanerCard>(`/cleaners/${id}?locale=${locale}`, {
+    auth: false,
+    locale,
+  });
+}
+
+export function listCleanerReviews(id: string, take = 20, skip = 0) {
+  const qs = new URLSearchParams({
+    take: String(take),
+    skip: String(skip),
+  }).toString();
+  return request<CleanerReview[]>(`/cleaners/${id}/reviews?${qs}`, { auth: false });
+}
+
+// Payments
+export function initiatePayment(orderId: string, idempotencyKey?: string) {
+  return request<Payment>(`/orders/${orderId}/payments`, {
+    method: 'POST',
+    body: { idempotencyKey },
+  });
+}
+
+export function confirmStubPayment(paymentId: string) {
+  return request<Payment>(`/payments/${paymentId}/stub/confirm`, {
+    method: 'POST',
+  });
 }
 
 // ── Job applications (cleaner careers form) ────────────────────────

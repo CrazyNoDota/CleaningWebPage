@@ -24,20 +24,20 @@ export default function CleanersPage() {
 
   return (
     <AdminShell>
-      <div className="px-8 py-8 max-w-6xl">
-        <div className="flex items-center justify-between">
+      <div className="max-w-6xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Клинеры</h1>
             <p className="text-sm text-slate-500">
               Учётные записи и статус верификации.
             </p>
           </div>
-          <Link href="/cleaners/new" className="btn-primary">
+          <Link href="/cleaners/new" className="btn-primary text-center">
             + Добавить клинера
           </Link>
         </div>
 
-        <div className="mt-6 flex gap-3 text-sm">
+        <div className="mt-6 flex flex-col gap-3 text-sm sm:flex-row sm:flex-wrap">
           <Filter
             label="Статус"
             options={[
@@ -82,8 +82,8 @@ export default function CleanersPage() {
           <p className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
         )}
 
-        <div className="mt-6 card overflow-hidden p-0">
-          <table className="w-full text-sm">
+        <div className="mt-6 card overflow-x-auto p-0">
+          <table className="min-w-[860px] text-sm">
             <thead className="text-left bg-slate-50 text-slate-500">
               <tr>
                 <th className="px-4 py-3 font-medium">Имя</th>
@@ -163,7 +163,7 @@ function Filter({
   onChange: (v: string) => void;
 }) {
   return (
-    <label className="flex items-center gap-2">
+    <label className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
       <span className="text-slate-500">{label}:</span>
       <select
         value={value}
