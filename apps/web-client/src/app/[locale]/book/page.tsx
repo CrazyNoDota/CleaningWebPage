@@ -49,7 +49,7 @@ export default function BookPage() {
   const [step, setStep] = useState<Step>('service');
   const [services, setServices] = useState<Service[] | null>(null);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
-  const [areaM2, setAreaM2] = useState(60);
+  const [areaM2Input, setAreaM2Input] = useState('60');
   const [rooms, setRooms] = useState(2);
   const [chosen, setChosen] = useState<Record<string, number>>({});
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -68,6 +68,10 @@ export default function BookPage() {
     () => services?.find((s) => s.slug === selectedSlug) ?? null,
     [services, selectedSlug],
   );
+  const areaM2 = useMemo(() => {
+    const parsed = Number(areaM2Input);
+    return Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
+  }, [areaM2Input]);
 
   // Load services
   useEffect(() => {
@@ -92,6 +96,10 @@ export default function BookPage() {
   // Recompute quote whenever inputs change
   useEffect(() => {
     if (!selectedSlug) return;
+    if (areaM2 <= 0 || rooms <= 0) {
+      setQuote(null);
+      return;
+    }
     const opts = Object.entries(chosen)
       .filter(([, qty]) => qty > 0)
       .map(([key, qty]) => ({ key, qty }));
@@ -220,8 +228,8 @@ export default function BookPage() {
           {step === 'configure' && selectedService && (
             <ConfigureStep
               service={selectedService}
-              areaM2={areaM2}
-              setAreaM2={setAreaM2}
+              areaM2Input={areaM2Input}
+              setAreaM2Input={setAreaM2Input}
               rooms={rooms}
               setRooms={setRooms}
               chosen={chosen}
@@ -361,8 +369,8 @@ function ServiceStep({
 
 function ConfigureStep({
   service,
-  areaM2,
-  setAreaM2,
+  areaM2Input,
+  setAreaM2Input,
   rooms,
   setRooms,
   chosen,
@@ -371,8 +379,8 @@ function ConfigureStep({
   locale,
 }: {
   service: Service;
-  areaM2: number;
-  setAreaM2: (n: number) => void;
+  areaM2Input: string;
+  setAreaM2Input: (value: string) => void;
   rooms: number;
   setRooms: (n: number) => void;
   chosen: Record<string, number>;
@@ -390,8 +398,8 @@ function ConfigureStep({
             type="number"
             min={10}
             max={500}
-            value={areaM2}
-            onChange={(e) => setAreaM2(Math.max(0, Number(e.target.value)))}
+            value={areaM2Input}
+            onChange={(e) => setAreaM2Input(e.target.value)}
             className="input mt-1"
           />
         </label>
