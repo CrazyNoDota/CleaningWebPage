@@ -463,3 +463,13 @@ model Notification {
   @@index([kind])
   @@index([status])
 }
+
+// ─────────────────────────────────────────────────────────────────
+// Settings (admin-tunable runtime config — key/value JSON)
+// ─────────────────────────────────────────────────────────────────
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}

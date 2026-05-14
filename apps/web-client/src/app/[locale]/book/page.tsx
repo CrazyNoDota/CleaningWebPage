@@ -9,6 +9,7 @@ import {
   createAddress,
   createOrder,
   deleteAddress,
+  getDirectorSettings,
   listAddresses,
   listServices,
   quote as quoteApi,
@@ -16,7 +17,7 @@ import {
 } from '@/lib/api';
 import { formatMoney } from '@/lib/format';
 import { useSession } from '@/lib/use-session';
-import type { Address, Locale, Quote, Service } from '@/lib/types';
+import type { Address, DirectorSettings, Locale, Quote, Service } from '@/lib/types';
 
 type Step = 'service' | 'configure' | 'address' | 'schedule' | 'confirm';
 const STEPS: Step[] = ['service', 'configure', 'address', 'schedule', 'confirm'];
@@ -33,7 +34,11 @@ const EMPTY_ADDRESS: AddressDraft = {
   apartment: '',
 };
 
-const WHATSAPP_ORDER_PHONE = '77055975056';
+const FALLBACK_DIRECTOR: DirectorSettings = {
+  channel: 'whatsapp',
+  whatsappPhone: '77055975056',
+  telegramUsername: '',
+};
 
 export default function BookPage() {
   const t = useTranslations();
@@ -59,6 +64,7 @@ export default function BookPage() {
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [director, setDirector] = useState<DirectorSettings>(FALLBACK_DIRECTOR);
 
   const selectedService = useMemo(
     () => services?.find((s) => s.slug === selectedSlug) ?? null,
@@ -73,6 +79,15 @@ export default function BookPage() {
   useEffect(() => {
     listServices(locale).then(setServices).catch((e: ApiError) => setError(e.message));
   }, [locale]);
+
+  // Load director routing settings (which messenger to open after submit)
+  useEffect(() => {
+    getDirectorSettings()
+      .then(setDirector)
+      .catch(() => {
+        /* keep fallback */
+      });
+  }, []);
 
   // Load saved addresses once authed
   useEffect(() => {
@@ -194,7 +209,8 @@ export default function BookPage() {
       });
 
       if (typeof window !== 'undefined' && quote) {
-        window.location.href = buildWhatsAppOrderUrl({
+        window.location.href = buildDirectorOrderUrl({
+          director,
           orderId: order.id,
           service: selectedService,
           quote,
@@ -883,7 +899,8 @@ function CityField() {
   );
 }
 
-function buildWhatsAppOrderUrl({
+function buildDirectorOrderUrl({
+  director,
   orderId,
   service,
   quote,
@@ -896,6 +913,7 @@ function buildWhatsAppOrderUrl({
   locale,
   customerPhone,
 }: {
+  director: DirectorSettings;
   orderId: string;
   service: Service | null;
   quote: Quote;
@@ -928,7 +946,20 @@ function buildWhatsAppOrderUrl({
     customerPhone ? `Телефон клиента: ${customerPhone}` : null,
   ].filter(Boolean);
 
-  return `https://wa.me/${WHATSAPP_ORDER_PHONE}?text=${encodeURIComponent(lines.join('\n'))}`;
+  const text = encodeURIComponent(lines.join('\n'));
+  // Fall back to WhatsApp if Telegram is configured but has no username yet —
+  // the director still needs to receive the order.
+  const useTelegram =
+    director.channel === 'telegram' && director.telegramUsername.trim().length > 0;
+  if (useTelegram) {
+    const username = director.telegramUsername.trim().replace(/^@+/, '');
+    return `https://t.me/${username}?text=${text}`;
+  }
+  const phone = (director.whatsappPhone || FALLBACK_DIRECTOR.whatsappPhone).replace(
+    /[^\d]/g,
+    '',
+  );
+  return `https://wa.me/${phone}?text=${text}`;
 }
 
 function formatAddressForMessage(address: Address | AddressDraft | null): string {

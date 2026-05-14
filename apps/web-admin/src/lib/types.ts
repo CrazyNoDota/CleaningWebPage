@@ -137,6 +137,14 @@ export interface AdminMetrics {
   generatedAt: string;
 }
 
+export type DirectorChannel = 'whatsapp' | 'telegram';
+
+export interface DirectorSettings {
+  channel: DirectorChannel;
+  whatsappPhone: string;
+  telegramUsername: string;
+}
+
 export interface AdminOrderFull {
   id: string;
   status: OrderStatus;

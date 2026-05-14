@@ -103,6 +103,14 @@ export type Session = {
   };
 };
 
+export type DirectorChannel = 'whatsapp' | 'telegram';
+
+export type DirectorSettings = {
+  channel: DirectorChannel;
+  whatsappPhone: string;
+  telegramUsername: string;
+};
+
 export type Payment = {
   id: string;
   orderId: string;

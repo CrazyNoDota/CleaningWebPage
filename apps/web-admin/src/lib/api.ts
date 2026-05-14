@@ -8,6 +8,7 @@ import type {
   AdminOrderListItem,
   AdminReview,
   CreateCleanerBody,
+  DirectorSettings,
   JobApplicationStatusValue,
   OrderStatus,
   ReviewStatusValue,
@@ -238,4 +239,17 @@ export function adminUpdateApplication(
 
 export function adminGetMetrics() {
   return request<AdminMetrics>('/admin/metrics');
+}
+
+// ── Admin · Settings (director channel) ────────────────────────────
+
+export function adminGetDirectorSettings() {
+  return request<DirectorSettings>('/admin/settings/director');
+}
+
+export function adminUpdateDirectorSettings(body: Partial<DirectorSettings>) {
+  return request<DirectorSettings>('/admin/settings/director', {
+    method: 'PATCH',
+    body,
+  });
 }

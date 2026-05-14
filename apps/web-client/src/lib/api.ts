@@ -3,6 +3,7 @@ import type {
   Address,
   CleanerCard,
   CleanerReview,
+  DirectorSettings,
   Locale,
   Order,
   Payment,
@@ -266,6 +267,12 @@ export function submitApplication(body: SubmitApplicationBody) {
     '/applications',
     { method: 'POST', body, auth: false },
   );
+}
+
+// ── Public settings (director routing) ─────────────────────────────
+
+export function getDirectorSettings() {
+  return request<DirectorSettings>('/public/settings/director', { auth: false });
 }
 
 // ── Reviews ─────────────────────────────────────────────────────────
