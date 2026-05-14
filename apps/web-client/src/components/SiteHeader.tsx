@@ -26,10 +26,10 @@ export function SiteHeader() {
           <Image
             src="/img/shinex-logo.png"
             alt={`${t('brand.first')}${t('brand.second')}`}
-            width={56}
-            height={56}
+            width={80}
+            height={80}
             priority
-            className="size-12 rounded-xl object-cover shadow-soft sm:size-14"
+            className="size-16 object-contain sm:size-20"
           />
         </Link>
 

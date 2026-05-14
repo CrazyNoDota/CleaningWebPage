@@ -159,7 +159,7 @@ export default async function HomePage({
               alt={`${t('brand.first')}${t('brand.second')}`}
               width={192}
               height={192}
-              className="size-36 rounded-3xl object-contain md:size-44"
+              className="size-36 object-contain md:size-44"
             />
             <div className="max-w-md">
               <p className="text-xl font-bold leading-snug md:text-2xl">
