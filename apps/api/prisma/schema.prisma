@@ -285,6 +285,9 @@ model ServiceOption {
 
 model Order {
   id          String       @id @default(uuid())
+  // Human-friendly sequential reference (e.g. shown to customers / staff).
+  // The uuid `id` stays the primary key; this is just a readable handle.
+  orderNumber Int          @unique @default(autoincrement())
   userId      String?      // null = guest order
   guestPhone  String?
   guestEmail  String?
