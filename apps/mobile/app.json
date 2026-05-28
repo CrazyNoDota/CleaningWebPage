@@ -1,28 +1,60 @@
 {
   "expo": {
-    "name": "Cleaning Service",
-    "slug": "cleaning-service",
-    "scheme": "cleaning",
-    "version": "0.1.0",
+    "name": "Shinex",
+    "slug": "shinex",
+    "scheme": "shinex",
+    "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "icon": "./assets/icon.png",
     "assetBundlePatterns": ["**/*"],
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "kz.shinex.app"
     },
     "android": {
+      "package": "kz.shinex.app",
+      "versionCode": 3,
       "adaptiveIcon": {
-        "backgroundColor": "#2d6a4f"
-      }
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#2ecc71"
+      },
+      "permissions": ["POST_NOTIFICATIONS"],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro"
     },
-    "plugins": ["expo-router", "expo-notifications"],
+    "plugins": [
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#2d6a4f",
+          "androidMode": "default",
+          "androidCollapsedTitle": "Shinex"
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
     "extra": {
-      "apiUrl": "https://cleaning-api-six.vercel.app/api/v1",
-      "wsUrl": "https://cleaning-api-six.vercel.app"
+      "apiUrl": "https://shinex.kz/api/v1",
+      "wsUrl": "https://shinex.kz"
     }
   }
 }
