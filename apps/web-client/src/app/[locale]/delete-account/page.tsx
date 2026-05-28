@@ -135,7 +135,7 @@ export default async function DeleteAccountPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const c = CONTENT[locale] ?? CONTENT['ru'];
+  const c = CONTENT[locale] ?? CONTENT['ru']!;
 
   return (
     <div className="min-h-screen flex flex-col">
