@@ -94,6 +94,40 @@ In production, set `OTP_DEV_MODE=false` and `SMS_PROVIDER=mobizon` with a real `
 - [x] `GET /users/me` protected by JWT guard
 - [x] Next.js client with ru/kk/en routing and a placeholder home page
 
+## CI/CD
+
+### Auto-deploy (push to `main`)
+GitHub Actions detects which app changed and only rebuilds that service on the VPS:
+
+| Changed path | What redeploys |
+|---|---|
+| `apps/api/**` | `shinex_api` container |
+| `apps/web-client/**` | `shinex_web` container |
+| `apps/web-admin/**` | `shinex_admin` container |
+| `pnpm-lock.yaml` | whichever service changed alongside it |
+
+The runner rsyncs the changed files to the VPS (`/opt/shinex/src/`), then SSHes in to `docker compose build + up`. Typical deploy time: ~3 min.
+
+### Mobile builds (push a version tag)
+```bash
+git tag v1.0.1 && git push --tags
+```
+Triggers EAS Build for Android (AAB) and iOS (IPA) on Expo's cloud. Builds appear at [expo.dev](https://expo.dev) and can be submitted to Google Play / TestFlight from there.
+
+### Secrets (stored in GitHub repo → Settings → Secrets)
+`VPS_HOST` · `VPS_USER` · `VPS_SSH_KEY` · `EXPO_TOKEN`
+
+### Manual emergency deploy
+```bash
+# Upload a single file (use this for paths with brackets like [locale])
+ssh -i ~/.ssh/shinex_id_ed25519 ubuntu@213.155.22.202 \
+  "cat > '/opt/shinex/src/path/to/file'" < ./local/path/to/file
+
+# Rebuild a service
+ssh -i ~/.ssh/shinex_id_ed25519 ubuntu@213.155.22.202 \
+  "cd /opt/shinex && sudo docker compose --env-file .env build web-client && sudo docker compose --env-file .env up -d web-client"
+```
+
 ## What's next (per `global_plan.md` Phase 2)
 
 1. Catalog module + pricing engine (DSL evaluator)
