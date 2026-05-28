@@ -60,6 +60,30 @@ export class UsersController {
     return { registered: true };
   }
 
+  @Delete('me')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Permanently delete account — anonymises PII and revokes all sessions' })
+  async deleteMe(@Req() req: Request) {
+    const userId = req.user!.sub;
+    await this.prisma.$transaction([
+      this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          phone: null,
+          email: null,
+          name: null,
+          telegramChatId: null,
+          deviceTokens: [],
+          isActive: false,
+          deletedAt: new Date(),
+        },
+      }),
+      this.prisma.refreshToken.deleteMany({ where: { userId } }),
+      this.prisma.order.updateMany({ where: { userId }, data: { userId: null } }),
+      this.prisma.payment.updateMany({ where: { userId }, data: { userId: null } }),
+    ]);
+  }
+
   @Delete('me/device-tokens')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Remove a mobile push token from the current user' })

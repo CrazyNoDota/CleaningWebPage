@@ -3,6 +3,7 @@ import { clearSession, loadSession, saveSession } from './auth';
 import type {
   Address,
   CleanerCard,
+  CleanerReview,
   Locale,
   Order,
   Payment,
@@ -157,6 +158,20 @@ export function getOrder(id: string) {
   return request<Order & { events?: Array<{ type: string; createdAt: string }> }>(`/orders/${id}`);
 }
 
+export function listCleaners(locale: Locale = 'ru', take = 12, skip = 0) {
+  const qs = new URLSearchParams({ locale, take: String(take), skip: String(skip) }).toString();
+  return request<CleanerCard[]>(`/cleaners?${qs}`, { auth: false, locale });
+}
+
+export function getCleaner(id: string, locale: Locale = 'ru') {
+  return request<CleanerCard>(`/cleaners/${id}?locale=${locale}`, { auth: false, locale });
+}
+
+export function listCleanerReviews(id: string, take = 20, skip = 0) {
+  const qs = new URLSearchParams({ take: String(take), skip: String(skip) }).toString();
+  return request<CleanerReview[]>(`/cleaners/${id}/reviews?${qs}`, { auth: false });
+}
+
 export function getOrderCleaner(id: string, locale: Locale = 'ru') {
   return request<{ status: string; cleaner: CleanerCard | null }>(
     `/orders/${id}/cleaner?locale=${locale}`,
@@ -177,6 +192,28 @@ export function confirmStubPayment(paymentId: string) {
   });
 }
 
+export function getPaymentStatus(paymentId: string) {
+  return request<Payment>(`/payments/${paymentId}`, { method: 'GET' });
+}
+
+export interface SubmitApplicationBody {
+  fullName: string;
+  phone: string;
+  cityFreeText?: string;
+  age?: number;
+  experience?: string;
+  resumeUrl?: string;
+  source?: string;
+}
+
+export function submitApplication(body: SubmitApplicationBody) {
+  return request<{ id: string; fullName: string; createdAt: string }>('/applications', {
+    method: 'POST',
+    body: { ...body, source: body.source ?? 'mobile' },
+    auth: false,
+  });
+}
+
 export function registerDeviceToken(token: string) {
   return request<{ registered: true }>('/users/me/device-tokens', {
     method: 'POST',
@@ -189,4 +226,8 @@ export function unregisterDeviceToken(token: string) {
     method: 'DELETE',
     body: { token },
   });
+}
+
+export function deleteAccount() {
+  return request<void>('/users/me', { method: 'DELETE' });
 }

@@ -1,0 +1,45 @@
+name: EAS Build
+
+on:
+  push:
+    tags:
+      - 'v*'   # trigger on v1.0.0, v1.2.3, etc.
+
+jobs:
+  build-android:
+    name: Android (AAB → Google Play)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android
+        working-directory: apps/mobile
+        run: eas build --platform android --profile production --non-interactive
+
+  build-ios:
+    name: iOS (IPA → TestFlight)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build iOS
+        working-directory: apps/mobile
+        run: eas build --platform ios --profile production --non-interactive
