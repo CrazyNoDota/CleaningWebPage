@@ -8,7 +8,9 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "icon": "./assets/icon.png",
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -25,7 +27,9 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#2ecc71"
       },
-      "permissions": ["POST_NOTIFICATIONS"],
+      "permissions": [
+        "POST_NOTIFICATIONS"
+      ],
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -54,7 +58,12 @@
     ],
     "extra": {
       "apiUrl": "https://shinex.kz/api/v1",
-      "wsUrl": "https://shinex.kz"
-    }
+      "wsUrl": "https://shinex.kz",
+      "router": {},
+      "eas": {
+        "projectId": "96700395-7c03-4f49-9400-33dbcbc58f08"
+      }
+    },
+    "owner": "crazynodota3"
   }
 }
