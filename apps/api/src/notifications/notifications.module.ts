@@ -4,11 +4,11 @@ import { SettingsModule } from '../settings/settings.module';
 import { NotificationsService } from './notifications.service';
 import { OrderEventsListener } from './order-events.listener';
 import {
-  PushStubChannel,
   WhatsappStubChannel,
   TelegramStubChannel,
   EmailStubChannel,
 } from './channels/stub-channels';
+import { FcmChannel } from './channels/fcm-channel';
 import { SmsChannel } from './channels/sms-channel';
 import { WhatsappService } from './whatsapp/whatsapp.service';
 import { OrderCreatedWhatsappListener } from './whatsapp/order-created-whatsapp.listener';
@@ -16,7 +16,7 @@ import { OrderCreatedWhatsappListener } from './whatsapp/order-created-whatsapp.
 @Module({
   imports: [SmsModule, SettingsModule],
   providers: [
-    PushStubChannel,
+    FcmChannel,
     WhatsappStubChannel,
     TelegramStubChannel,
     EmailStubChannel,

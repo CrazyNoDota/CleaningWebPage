@@ -176,13 +176,13 @@ export default async function HomePage({
           <div className="mx-auto max-w-6xl px-6 py-6 text-sm text-ink-400">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs">
-                <Link href="/" className="hover:text-brand-600">
+                <Link href="/terms" className="hover:text-brand-600">
                   {t('footer.agreement')}
                 </Link>
-                <Link href="/" className="hover:text-brand-600">
+                <Link href="/privacy" className="hover:text-brand-600">
                   {t('footer.privacy')}
                 </Link>
-                <Link href="/" className="hover:text-brand-600">
+                <Link href="/terms" className="hover:text-brand-600">
                   {t('footer.subscriptionRules')}
                 </Link>
               </div>

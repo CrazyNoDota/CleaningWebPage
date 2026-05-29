@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "brand-dark": "#52B788",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#b1f0ce",
+                    "on-secondary-container": "#6b3100",
+                    "secondary-fixed": "#ffdbc7",
+                    "inverse-on-surface": "#eff1ed",
+                    "inverse-surface": "#2e312f",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#f2f4f0",
+                    "surface-bright": "#f8faf6",
+                    "bg-page-light": "#FAFAF7",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#e7e9e5",
+                    "surface": "#f8faf6",
+                    "outline": "#707973",
+                    "ink-primary-dark": "#F0EBDF",
+                    "on-error-container": "#93000a",
+                    "accent-dark": "#F0935A",
+                    "surface-dim": "#d8dbd7",
+                    "on-surface": "#191c1a",
+                    "outline-variant": "#bfc9c1",
+                    "secondary-container": "#ff9243",
+                    "bg-sunken-light": "#F1EFE9",
+                    "on-tertiary-fixed-variant": "#6f3537",
+                    "surface-container-highest": "#e1e3df",
+                    "on-primary-fixed-variant": "#0e5138",
+                    "on-secondary-fixed-variant": "#733600",
+                    "secondary-fixed-dim": "#ffb688",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#0f5238",
+                    "tertiary-fixed-dim": "#ffb3b3",
+                    "on-error": "#ffffff",
+                    "on-tertiary-container": "#ffcfce",
+                    "background": "#f8faf6",
+                    "primary-container": "#2d6a4f",
+                    "on-primary-fixed": "#002114",
+                    "on-primary": "#ffffff",
+                    "bg-page-dark": "#0F1411",
+                    "line-hairline-light": "#E6E2D7",
+                    "bg-surface-dark": "#161C18",
+                    "inverse-primary": "#95d4b3",
+                    "tertiary-fixed": "#ffdad9",
+                    "ink-primary-light": "#16201A",
+                    "on-surface-variant": "#404943",
+                    "secondary": "#974800",
+                    "surface-variant": "#e1e3df",
+                    "tertiary-container": "#8d4d4e",
+                    "tertiary": "#713638",
+                    "on-tertiary-fixed": "#390b0e",
+                    "on-background": "#191c1a",
+                    "on-secondary-fixed": "#311300",
+                    "surface-container": "#eceeea",
+                    "on-primary-container": "#a8e7c5",
+                    "primary-fixed-dim": "#95d4b3",
+                    "ink-secondary-light": "#5A6661",
+                    "surface-tint": "#2c694e",
+                    "error-container": "#ffdad6",
+                    "bg-elevated-dark": "#1E2622"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "1rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "space-2": "8px",
+                    "space-9": "56px",
+                    "space-5": "20px",
+                    "space-10": "72px",
+                    "space-8": "40px",
+                    "space-4": "16px",
+                    "space-1": "4px",
+                    "space-6": "24px",
+                    "space-7": "32px",
+                    "space-3": "12px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-xl": ["Inter"],
+                    "title-sm": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["15px", {"lineHeight": "22px", "fontWeight": "400"}],
+                    "body-lg": ["17px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-xl": ["40px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "title-sm": ["17px", {"lineHeight": "22px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "title-lg": ["24px", {"lineHeight": "30px", "fontWeight": "600"}],
+                    "title-md": ["20px", {"lineHeight": "26px", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "label-lg": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "display-lg": ["32px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .tab-active { position: relative; }
+        .tab-active::after { content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); width: 24px; height: 3px; background: currentColor; border-radius: 99px; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+        .haptic-medium:active { transform: scale(0.97); transition: transform 0.1s ease; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-background dark:bg-bg-page-dark">
+<div class="flex justify-between items-center px-4 h-16 w-full max-w-[600px] mx-auto">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+<h1 class="font-display-lg text-display-lg font-bold text-primary dark:text-brand-dark tracking-tight">Shine X</h1>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed">
+<img alt="User" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgto5_h1ocIRsk0XC-vkovN_5scbBw3lpEjlZUbd3nYQvuefAS_Hd1mJfo-Xu5BLKsz8nsnMEDsJtOk8x1viAmhX1npsjJAQR9kpFrJRiExq8Ws1gBspoYTro7ab776_PaqcmYYLSq2rqPnNrFc-HCQex1UCtLYZ-svB8xUBF0ps7s2NZK06afp3fowPtI24a7yX_W7LdQ7qZAegqKBXzJVaZXJXYUH8B1ZdJPEVu1ZEZYlG3kh2t-FmPwTlHReU_wa4erdy5-WO_A"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<main class="pt-20 pb-24 px-4 w-full max-w-[600px] mx-auto">
+<!-- Header Section -->
+<div class="mb-8 mt-4">
+<h2 class="font-display-lg text-display-lg text-primary mb-1">Заказы</h2>
+<p class="font-body-md text-on-surface-variant">Управляйте вашим комфортом в Астане</p>
+</div>
+<!-- Order Tabs -->
+<div class="flex space-x-8 mb-8 border-b border-outline-variant/30 pb-3">
+<button class="font-title-sm text-primary tab-active transition-all" id="tab-upcoming" onclick="switchTab('upcoming')">Предстоящие</button>
+<button class="font-title-sm text-on-surface-variant hover:text-primary transition-all" id="tab-past" onclick="switchTab('past')">Прошлые</button>
+</div>
+<!-- Upcoming View -->
+<div class="space-y-6" id="upcoming-view">
+<!-- Hero Order Card -->
+<div class="relative overflow-hidden rounded-xl bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-surface-variant">
+<div class="p-6">
+<div class="flex justify-between items-start mb-6">
+<div>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-primary-fixed text-primary font-label-sm uppercase tracking-wider mb-3">
+                                Подтверждено
+                            </span>
+<h3 class="font-title-lg text-primary">Генеральная уборка</h3>
+<p class="font-body-md text-on-surface-variant">Завтра, 14 Сентября • 10:00</p>
+</div>
+<div class="text-right">
+<p class="font-title-lg text-primary">18 500 ₸</p>
+<p class="font-label-sm text-on-surface-variant">Элит-ЖК "Highvill"</p>
+</div>
+</div>
+<!-- Cleaner Assignment -->
+<div class="flex items-center p-4 bg-surface-container rounded-lg group cursor-pointer hover:bg-surface-container-high transition-colors">
+<div class="w-14 h-14 rounded-full overflow-hidden mr-4 ring-2 ring-white">
+<img alt="Cleaner" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnQvpiHTTs-STTIVJ4j6V36tIv7-PpHzQuMDBvxF0svrj3leU2_q2-MHkNLkZ4hPPgez-lNSxFMaTR4o85JkvCARt2R62TiuhDZf-ej06VTd1komcBsPnFcDHmCu0lHjA8NMglBgYkDI1pgkdoHMFVLtd3JvqTg2fiDa9vWTrP71Vg8Il5CwXxtI4Tz2kXpyEvBsCM3SqwJ9MzC-nkcYcKUJZPXArfnJUz7aoIsxk7N5gaTyyaVuI7wj3jPaN1qg92WB1bkAuRwlIt"/>
+</div>
+<div class="flex-1">
+<p class="font-label-sm text-on-surface-variant">Клинер</p>
+<p class="font-title-sm text-primary">Айгерим К.</p>
+<div class="flex items-center mt-1">
+<span class="material-symbols-outlined text-[16px] text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-sm ml-1 text-on-surface">4.9</span>
+<span class="text-label-sm ml-2 text-on-surface-variant">(124 отзыва)</span>
+</div>
+</div>
+<button class="w-10 h-10 flex items-center justify-center bg-white rounded-full text-primary shadow-sm haptic-medium">
+<span class="material-symbols-outlined">chat_bubble</span>
+</button>
+</div>
+<div class="mt-6 flex space-x-3">
+<button class="flex-1 py-4 bg-primary text-white rounded-lg font-label-lg haptic-medium shadow-md shadow-primary/20">
+                            Детали заказа
+                        </button>
+<button class="w-14 h-14 flex items-center justify-center border border-outline-variant text-on-surface-variant rounded-lg hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Subtle decorative background element -->
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-primary-fixed/20 rounded-full blur-3xl pointer-events-none"></div>
+</div>
+<!-- Bento Info Grid -->
+<div class="grid grid-cols-2 gap-4">
+<div class="p-5 bg-secondary-fixed rounded-xl flex flex-col justify-between aspect-square">
+<span class="material-symbols-outlined text-secondary text-3xl">loyalty</span>
+<div>
+<p class="font-title-sm text-on-secondary-container">Ваш кэшбэк</p>
+<p class="font-display-lg text-on-secondary-container text-2xl">2 400 ₸</p>
+</div>
+</div>
+<div class="p-5 bg-primary-container text-on-primary-container rounded-xl flex flex-col justify-between aspect-square">
+<span class="material-symbols-outlined text-on-primary-container text-3xl">verified</span>
+<div>
+<p class="font-title-sm">Гарантия Shine</p>
+<p class="font-body-sm opacity-80">Страхование на 5млн ₸ включено</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Past View (Hidden by default) -->
+<div class="hidden space-y-4" id="past-view">
+<!-- Order Item -->
+<div class="p-4 bg-white border border-outline-variant/30 rounded-xl flex items-center justify-between hover:bg-surface-container-lowest transition-colors">
+<div class="flex items-center">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center mr-4">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+</div>
+<div>
+<h4 class="font-title-sm text-primary">Поддерживающая</h4>
+<p class="font-body-sm text-on-surface-variant">28 Августа • 12 000 ₸</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+<!-- Empty State Illustration Placeholder (Hidden if list has items) -->
+<div class="hidden flex flex-col items-center justify-center py-20 text-center" id="empty-state">
+<div class="w-48 h-48 bg-surface-container rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-7xl text-outline-variant" style="font-variation-settings: 'wght' 200;">receipt_long</span>
+</div>
+<h3 class="font-title-lg text-primary mb-2">История пуста</h3>
+<p class="font-body-md text-on-surface-variant max-w-[280px] mx-auto">Здесь появятся ваши завершенные заказы после выполнения.</p>
+<button class="mt-8 px-8 py-3 bg-primary text-white rounded-full font-label-lg haptic-medium">
+                    Заказать уборку
+                </button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface dark:bg-bg-surface-dark shadow-[0_-8px_24px_rgba(22,32,26,0.06)]">
+<div class="flex justify-around items-center h-20 w-full max-w-[600px] mx-auto px-6 pb-safe">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:opacity-80" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-sm text-label-sm">Booking</span>
+</a>
+<a class="flex flex-col items-center justify-center text-brand-dark dark:text-brand-dark font-bold scale-110" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="font-label-sm text-label-sm">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:opacity-80" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</div>
+</nav>
+<script>
+        function switchTab(tab) {
+            const upcomingView = document.getElementById('upcoming-view');
+            const pastView = document.getElementById('past-view');
+            const tabUpcoming = document.getElementById('tab-upcoming');
+            const tabPast = document.getElementById('tab-past');
+
+            if (tab === 'upcoming') {
+                upcomingView.classList.remove('hidden');
+                pastView.classList.add('hidden');
+                tabUpcoming.classList.add('tab-active', 'text-primary');
+                tabUpcoming.classList.remove('text-on-surface-variant');
+                tabPast.classList.remove('tab-active', 'text-primary');
+                tabPast.classList.add('text-on-surface-variant');
+            } else {
+                upcomingView.classList.add('hidden');
+                pastView.classList.remove('hidden');
+                tabPast.classList.add('tab-active', 'text-primary');
+                tabPast.classList.remove('text-on-surface-variant');
+                tabUpcoming.classList.remove('tab-active', 'text-primary');
+                tabUpcoming.classList.add('text-on-surface-variant');
+                
+                // Demo logic for empty state
+                const pastOrders = document.querySelectorAll('#past-view > div:not(#empty-state)');
+                if (pastOrders.length === 0) {
+                    document.getElementById('empty-state').classList.remove('hidden');
+                }
+            }
+        }
+
+        // Simple enter animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const main = document.querySelector('main');
+            main.style.opacity = '0';
+            main.style.transform = 'translateY(10px)';
+            main.style.transition = 'all 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+            
+            setTimeout(() => {
+                main.style.opacity = '1';
+                main.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body></html>

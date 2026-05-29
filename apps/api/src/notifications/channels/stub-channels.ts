@@ -8,21 +8,9 @@ import type {
 
 /**
  * Stub drivers: log to stdout instead of calling a real provider.
- * Replace with real adapters (FCM, Twilio, SendGrid, Telegram bot) when chosen.
+ * Replace with real adapters (Twilio, SendGrid, Telegram bot) when chosen.
+ * Real push delivery lives in ./fcm-channel.ts.
  */
-
-@Injectable()
-export class PushStubChannel implements NotificationChannelDriver {
-  readonly channel = NotificationChannel.push;
-  private readonly log = new Logger('Push');
-  async send(msg: ChannelMessage): Promise<ChannelDispatchResult> {
-    this.log.log(`[STUB-PUSH] -> ${msg.recipient} :: ${msg.body}`);
-    return { recipient: msg.recipient, delivered: true };
-  }
-  resolveRecipient(u: { deviceTokens: string[] }): string | null {
-    return u.deviceTokens[0] ?? null;
-  }
-}
 
 @Injectable()
 export class WhatsappStubChannel implements NotificationChannelDriver {

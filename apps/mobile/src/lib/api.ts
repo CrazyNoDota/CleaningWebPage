@@ -110,6 +110,14 @@ export function verifyOtp(phone: string, code: string, name?: string) {
   });
 }
 
+export function googleLogin(idToken: string) {
+  return request<Session>('/auth/google', {
+    method: 'POST',
+    body: { idToken },
+    auth: false,
+  });
+}
+
 export function listServices(locale: Locale = 'ru', city = 'astana') {
   const qs = `city=${encodeURIComponent(city)}&locale=${encodeURIComponent(locale)}`;
   return request<Service[]>(`/services?${qs}`, { auth: false, locale });

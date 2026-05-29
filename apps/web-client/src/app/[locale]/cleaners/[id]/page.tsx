@@ -36,7 +36,7 @@ export default async function CleanerProfilePage({
               fill
               priority
               sizes="(max-width: 768px) 100vw, 768px"
-              className="object-cover"
+              className="object-cover object-top"
             />
           </div>
           <div className="p-5 sm:p-7">

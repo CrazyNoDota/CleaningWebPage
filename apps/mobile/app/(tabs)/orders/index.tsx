@@ -1,18 +1,25 @@
-import { useCallback, useState } from 'react';
-import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { Button, Card, ErrorText, Muted, Screen, Title } from '@/components/ui';
+import { ChevronRight, Inbox } from 'lucide-react-native';
+import { Button, Card, ErrorText, Muted, Screen, StatusChip, Title } from '@/components/ui';
 import { ApiError, listOrders } from '@/lib/api';
 import { formatMoney, localeTag, statusLabel } from '@/lib/format';
 import { useSession } from '@/lib/session';
-import { colors } from '@/lib/theme';
-import type { Order } from '@/lib/types';
+import { useTheme } from '@/lib/theme-provider';
+import type { Order, OrderStatus } from '@/lib/types';
+
+type Tab = 'upcoming' | 'past';
+
+const PAST_STATUSES: OrderStatus[] = ['done', 'reviewed', 'cancelled'];
 
 export default function OrdersScreen() {
+  const t = useTheme();
   const { hydrated, session } = useSession();
   const [orders, setOrders] = useState<Order[] | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [tab, setTab] = useState<Tab>('upcoming');
 
   const load = useCallback(async () => {
     if (!session) return;
@@ -36,10 +43,20 @@ export default function OrdersScreen() {
     setRefreshing(false);
   }
 
+  const { upcoming, past } = useMemo(() => {
+    const list = orders ?? [];
+    return {
+      upcoming: list.filter((o) => !PAST_STATUSES.includes(o.status)),
+      past: list.filter((o) => PAST_STATUSES.includes(o.status)),
+    };
+  }, [orders]);
+
+  const visible = tab === 'upcoming' ? upcoming : past;
+
   if (!hydrated) {
     return (
       <Screen>
-        <ActivityIndicator color={colors.brand} />
+        <ActivityIndicator color={t.color.brand[500]} />
       </Screen>
     );
   }
@@ -49,11 +66,9 @@ export default function OrdersScreen() {
       <Screen>
         <Card>
           <Title>Заказы</Title>
-          <View style={styles.stack}>
+          <View style={{ gap: t.space[3], marginTop: t.space[2] }}>
             <Muted>Войдите, чтобы видеть историю и отслеживать статусы.</Muted>
-            <Button onPress={() => router.push({ pathname: '/login', params: { next: '/orders' } })}>
-              Войти
-            </Button>
+            <Button onPress={() => router.push({ pathname: '/login', params: { next: '/orders' } })}>Войти</Button>
           </View>
         </Card>
       </Screen>
@@ -63,74 +78,262 @@ export default function OrdersScreen() {
   return (
     <Screen padded={false}>
       <ScrollView
-        contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
+        contentContainerStyle={{ padding: t.space[4], paddingBottom: t.space[8], gap: t.space[4] }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={t.color.brand[500]} />}
       >
-        <Title>Мои заказы</Title>
+        <View style={{ gap: t.space[1] }}>
+          <Title>Заказы</Title>
+          <Muted>Управляйте уборками в Астане</Muted>
+        </View>
+
+        <Segmented tab={tab} onChange={setTab} upcomingCount={upcoming.length} pastCount={past.length} />
+
         <ErrorText>{error}</ErrorText>
-        {orders === null && !error && <ActivityIndicator color={colors.brand} />}
-        {orders?.length === 0 && (
-          <Card>
-            <View style={styles.stack}>
-              <Muted>У вас пока нет заказов.</Muted>
-              <Button onPress={() => router.push('/')}>Заказать уборку</Button>
-            </View>
-          </Card>
+
+        {orders === null && !error && <ActivityIndicator color={t.color.brand[500]} />}
+
+        {orders !== null && visible.length === 0 && (
+          <EmptyState
+            kind={tab}
+            onCreate={() => router.push('/(tabs)/book')}
+          />
         )}
-        {orders?.map((order) => (
-          <Pressable key={order.id} onPress={() => router.push(`/orders/${order.id}`)}>
-            <Card>
-              <View style={styles.orderHead}>
-                <Text style={styles.status}>{statusLabel(order.status)}</Text>
-                <Text style={styles.total}>{formatMoney(order.total, order.currency)}</Text>
-              </View>
-              <Text style={styles.date}>
-                {order.scheduledAt
-                  ? new Date(order.scheduledAt).toLocaleString(localeTag('ru'))
-                  : new Date(order.createdAt).toLocaleDateString(localeTag('ru'))}
-              </Text>
-              <Text style={styles.id}>#{order.id.slice(0, 8)}</Text>
-            </Card>
-          </Pressable>
+
+        {visible.map((order) => (
+          <OrderCard key={order.id} order={order} variant={tab} onPress={() => router.push(`/orders/${order.id}`)} />
         ))}
       </ScrollView>
     </Screen>
   );
 }
 
-const styles = StyleSheet.create({
-  content: {
-    gap: 12,
-    padding: 16,
-    paddingBottom: 32,
-  },
-  stack: {
-    gap: 14,
-  },
-  orderHead: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  status: {
-    color: colors.brand,
-    fontSize: 15,
-    fontWeight: '800',
-  },
-  total: {
-    color: colors.ink,
-    fontSize: 18,
-    fontWeight: '900',
-  },
-  date: {
-    color: colors.ink,
-    fontSize: 14,
-    marginTop: 8,
-  },
-  id: {
-    color: colors.muted,
-    fontSize: 12,
-    marginTop: 4,
-  },
-});
+function Segmented({
+  tab,
+  onChange,
+  upcomingCount,
+  pastCount,
+}: {
+  tab: Tab;
+  onChange: (t: Tab) => void;
+  upcomingCount: number;
+  pastCount: number;
+}) {
+  const t = useTheme();
+  const buttons: { value: Tab; label: string; count: number }[] = [
+    { value: 'upcoming', label: 'Предстоящие', count: upcomingCount },
+    { value: 'past', label: 'Прошлые', count: pastCount },
+  ];
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        padding: t.space[1],
+        backgroundColor: t.color.bg.sunken,
+        borderRadius: t.radius.pill,
+      }}
+    >
+      {buttons.map((b) => {
+        const active = tab === b.value;
+        return (
+          <Pressable
+            key={b.value}
+            onPress={() => onChange(b.value)}
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: t.space[2],
+              paddingVertical: t.space[2],
+              borderRadius: t.radius.pill,
+              backgroundColor: active ? t.color.bg.surface : 'transparent',
+            }}
+          >
+            <Text
+              style={{
+                color: active ? t.color.ink.primary : t.color.ink.secondary,
+                fontSize: t.type.labelLg.fontSize,
+                fontWeight: t.type.labelLg.fontWeight,
+              }}
+            >
+              {b.label}
+            </Text>
+            {b.count > 0 && (
+              <View
+                style={{
+                  backgroundColor: active ? t.color.brand[500] : t.color.line.hairline,
+                  borderRadius: t.radius.pill,
+                  minWidth: 22,
+                  paddingHorizontal: 6,
+                  paddingVertical: 2,
+                  alignItems: 'center',
+                }}
+              >
+                <Text
+                  style={{
+                    color: active ? t.color.ink.onBrand : t.color.ink.secondary,
+                    fontSize: 11,
+                    fontWeight: '700',
+                  }}
+                >
+                  {b.count}
+                </Text>
+              </View>
+            )}
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+function OrderCard({ order, variant, onPress }: { order: Order; variant: Tab; onPress: () => void }) {
+  const t = useTheme();
+  const tone: 'brand' | 'warn' = order.status === 'created' ? 'warn' : 'brand';
+
+  if (variant === 'past') {
+    return (
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [
+          {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: t.space[3],
+            backgroundColor: t.color.bg.surface,
+            borderColor: t.color.line.hairline,
+            borderRadius: t.radius.md,
+            borderWidth: 1,
+            paddingHorizontal: t.space[4],
+            paddingVertical: t.space[3],
+            opacity: pressed ? 0.7 : 1,
+          },
+        ]}
+      >
+        <View style={{ flex: 1, gap: 2 }}>
+          <Text
+            style={{
+              color: t.color.ink.primary,
+              fontSize: t.type.labelLg.fontSize,
+              fontWeight: t.type.labelLg.fontWeight,
+            }}
+          >
+            {statusLabel(order.status)}
+          </Text>
+          <Text style={{ color: t.color.ink.secondary, fontSize: t.type.bodySm.fontSize }}>
+            {formatDateMd(order.scheduledAt ?? order.createdAt)} • {formatMoney(order.total, order.currency)}
+          </Text>
+        </View>
+        <ChevronRight color={t.color.ink.tertiary} size={18} strokeWidth={2} />
+      </Pressable>
+    );
+  }
+
+  return (
+    <Pressable onPress={onPress}>
+      <View
+        style={{
+          backgroundColor: t.color.bg.surface,
+          borderColor: t.color.line.hairline,
+          borderRadius: t.radius.lg,
+          borderWidth: 1,
+          padding: t.space[4],
+          gap: t.space[3],
+        }}
+      >
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <View style={{ gap: t.space[2], flex: 1 }}>
+            <StatusChip label={statusLabel(order.status)} tone={tone} />
+            <Text
+              style={{
+                color: t.color.ink.primary,
+                fontSize: t.type.titleSm.fontSize,
+                lineHeight: t.type.titleSm.lineHeight,
+                fontWeight: t.type.titleSm.fontWeight,
+              }}
+            >
+              Заказ #{order.id.slice(0, 6).toUpperCase()}
+            </Text>
+            <Text style={{ color: t.color.ink.secondary, fontSize: t.type.bodyMd.fontSize }}>
+              {formatScheduledAt(order.scheduledAt)}
+            </Text>
+          </View>
+          <Text
+            style={{
+              color: t.color.ink.primary,
+              fontSize: t.type.titleSm.fontSize,
+              fontWeight: t.type.titleLg.fontWeight,
+              fontVariant: ['tabular-nums'],
+            }}
+          >
+            {formatMoney(order.total, order.currency)}
+          </Text>
+        </View>
+      </View>
+    </Pressable>
+  );
+}
+
+function EmptyState({ kind, onCreate }: { kind: Tab; onCreate: () => void }) {
+  const t = useTheme();
+  const text = kind === 'upcoming' ? 'Нет предстоящих заказов' : 'История пуста';
+  const sub =
+    kind === 'upcoming'
+      ? 'Закажите уборку — мы найдём свободного клинера.'
+      : 'Здесь появятся ваши завершённые заказы.';
+  return (
+    <View
+      style={{
+        alignItems: 'center',
+        gap: t.space[3],
+        backgroundColor: t.color.bg.surface,
+        borderColor: t.color.line.hairline,
+        borderRadius: t.radius.lg,
+        borderWidth: 1,
+        paddingHorizontal: t.space[5],
+        paddingVertical: t.space[7],
+      }}
+    >
+      <View
+        style={{
+          width: 56,
+          height: 56,
+          borderRadius: t.radius.pill,
+          backgroundColor: t.color.brand[100],
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Inbox color={t.color.brand[500]} size={28} strokeWidth={2} />
+      </View>
+      <Text
+        style={{
+          color: t.color.ink.primary,
+          fontSize: t.type.titleSm.fontSize,
+          fontWeight: t.type.titleSm.fontWeight,
+          textAlign: 'center',
+        }}
+      >
+        {text}
+      </Text>
+      <Text style={{ color: t.color.ink.secondary, fontSize: t.type.bodyMd.fontSize, textAlign: 'center' }}>{sub}</Text>
+      {kind === 'upcoming' && (
+        <View style={{ marginTop: t.space[2] }}>
+          <Button onPress={onCreate}>Заказать уборку</Button>
+        </View>
+      )}
+    </View>
+  );
+}
+
+function formatScheduledAt(iso: string | null) {
+  if (!iso) return 'Время уточняется';
+  const d = new Date(iso);
+  const date = d.toLocaleDateString(localeTag('ru'), { day: 'numeric', month: 'long' });
+  const time = d.toLocaleTimeString(localeTag('ru'), { hour: '2-digit', minute: '2-digit' });
+  return `${date} • ${time}`;
+}
+
+function formatDateMd(iso: string) {
+  return new Date(iso).toLocaleDateString(localeTag('ru'), { day: 'numeric', month: 'short' });
+}

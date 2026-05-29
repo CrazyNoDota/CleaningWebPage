@@ -2,3 +2,13 @@ node_modules/
 .expo/
 dist/
 web-build/
+
+# Android release signing — keep keystore + secrets out of git
+android/app/*.jks
+android/keystore.properties
+android/.gradle/
+android/build/
+android/app/build/
+
+# Closed testing tester list — not for source control
+testers.csv

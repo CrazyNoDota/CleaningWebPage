@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "brand-dark": "#52B788",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#b1f0ce",
+                    "on-secondary-container": "#6b3100",
+                    "secondary-fixed": "#ffdbc7",
+                    "inverse-on-surface": "#eff1ed",
+                    "inverse-surface": "#2e312f",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#f2f4f0",
+                    "surface-bright": "#f8faf6",
+                    "bg-page-light": "#FAFAF7",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#e7e9e5",
+                    "surface": "#f8faf6",
+                    "outline": "#707973",
+                    "ink-primary-dark": "#F0EBDF",
+                    "on-error-container": "#93000a",
+                    "accent-dark": "#F0935A",
+                    "surface-dim": "#d8dbd7",
+                    "on-surface": "#191c1a",
+                    "outline-variant": "#bfc9c1",
+                    "secondary-container": "#ff9243",
+                    "bg-sunken-light": "#F1EFE9",
+                    "on-tertiary-fixed-variant": "#6f3537",
+                    "surface-container-highest": "#e1e3df",
+                    "on-primary-fixed-variant": "#0e5138",
+                    "on-secondary-fixed-variant": "#733600",
+                    "secondary-fixed-dim": "#ffb688",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#0f5238",
+                    "tertiary-fixed-dim": "#ffb3b3",
+                    "on-error": "#ffffff",
+                    "on-tertiary-container": "#ffcfce",
+                    "background": "#f8faf6",
+                    "primary-container": "#2d6a4f",
+                    "on-primary-fixed": "#002114",
+                    "on-primary": "#ffffff",
+                    "bg-page-dark": "#0F1411",
+                    "line-hairline-light": "#E6E2D7",
+                    "bg-surface-dark": "#161C18",
+                    "inverse-primary": "#95d4b3",
+                    "tertiary-fixed": "#ffdad9",
+                    "ink-primary-light": "#16201A",
+                    "on-surface-variant": "#404943",
+                    "secondary": "#974800",
+                    "surface-variant": "#e1e3df",
+                    "tertiary-container": "#8d4d4e",
+                    "tertiary": "#713638",
+                    "on-tertiary-fixed": "#390b0e",
+                    "on-background": "#191c1a",
+                    "on-secondary-fixed": "#311300",
+                    "surface-container": "#eceeea",
+                    "on-primary-container": "#a8e7c5",
+                    "primary-fixed-dim": "#95d4b3",
+                    "ink-secondary-light": "#5A6661",
+                    "surface-tint": "#2c694e",
+                    "error-container": "#ffdad6",
+                    "bg-elevated-dark": "#1E2622"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "space-2": "8px",
+                    "space-9": "56px",
+                    "space-5": "20px",
+                    "space-10": "72px",
+                    "space-8": "40px",
+                    "space-4": "16px",
+                    "space-1": "4px",
+                    "space-6": "24px",
+                    "space-7": "32px",
+                    "space-3": "12px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-xl": ["Inter"],
+                    "title-sm": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["15px", {"lineHeight": "22px", "fontWeight": "400"}],
+                    "body-lg": ["17px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-xl": ["40px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "title-sm": ["17px", {"lineHeight": "22px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "title-lg": ["24px", {"lineHeight": "30px", "fontWeight": "600"}],
+                    "title-md": ["20px", {"lineHeight": "26px", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "label-lg": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "display-lg": ["32px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .haptic-medium:active { transform: scale(0.97); transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1); }
+        .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .bg-mesh { background: radial-gradient(at 0% 0%, #E7F5EE 0%, transparent 50%), radial-gradient(at 100% 0%, #F1EFE9 0%, transparent 50%); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-page-light min-h-screen pb-24 selection:bg-primary-fixed">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-lg">
+<div class="flex justify-between items-center px-4 h-16 w-full max-w-[600px] mx-auto">
+<span class="font-display-lg text-display-lg font-bold text-primary tracking-tight">Shine X</span>
+<div class="flex items-center gap-space-4">
+<button class="h-10 w-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-primary">notifications</span>
+</button>
+</div>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-[600px] mx-auto space-y-space-6">
+<!-- Hero Profile Section -->
+<section class="relative overflow-hidden rounded-xl p-space-6 bg-mesh border border-line-hairline-light">
+<div class="flex flex-col items-center gap-space-4">
+<div class="relative">
+<div class="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden ring-2 ring-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a stylish man in his late 20s with a clean, groomed appearance. He is set against a soft, out-of-focus urban Astana architecture background during the golden hour. The lighting is warm and premium, reflecting a high-end lifestyle. The image follows a modern editorial aesthetic with a soft color palette of whites, greens, and warm sunlight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgo3VjZlI1Zu7xqYLzvI81-d1dsiqkMbZ4nry7llJZGKabzyiwgWfXzDrz1fJgFT_gM2ct4Ff9sx-F21hhIkLJ5E9nkHkh4edxYpCm8rSsLszktXciL9kHwvAU7eQ0j26RVB7aOEOjc8dXFLNKAalJnV0DZeOIwp96bdIWRWNW3R6cVMxr9HeVs-CxFAYO0I-r92wMQEL36E7pCnfp3hqFl8a_0prLNazTxTL_2Xk0DDP2PCQvg4sky8u-RfMWvuC7Yg0IReRw-Muq"/>
+</div>
+<button class="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full shadow-md haptic-medium">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+</div>
+<div class="text-center">
+<h1 class="font-title-lg text-title-lg text-ink-primary-light">Арман Ибраев</h1>
+<p class="font-body-sm text-body-sm text-ink-secondary-light">+7 777 ••• •• 88</p>
+</div>
+<div class="flex gap-space-2 mt-space-2">
+<span class="px-space-3 py-1 bg-primary-container text-on-primary-container rounded-full font-label-sm text-label-sm">Premium Plus</span>
+<span class="px-space-3 py-1 bg-secondary-fixed text-on-secondary-fixed-variant rounded-full font-label-sm text-label-sm">4.9 ★</span>
+</div>
+</div>
+</section>
+<!-- Profile Bento Grid -->
+<div class="grid grid-cols-2 gap-space-4">
+<!-- Addresses Card -->
+<button class="col-span-2 flex items-center justify-between p-space-5 bg-surface rounded-xl border border-line-hairline-light haptic-medium hover:bg-surface-container transition-all">
+<div class="flex items-center gap-space-4">
+<div class="w-12 h-12 bg-primary-fixed/30 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">location_on</span>
+</div>
+<div class="text-left">
+<h3 class="font-label-lg text-label-lg text-ink-primary-light">Мои адреса</h3>
+<p class="font-body-sm text-body-sm text-ink-secondary-light">3 сохраненных места</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</button>
+<!-- Payments Card -->
+<button class="col-span-2 flex items-center justify-between p-space-5 bg-surface rounded-xl border border-line-hairline-light haptic-medium hover:bg-surface-container transition-all">
+<div class="flex items-center gap-space-4">
+<div class="w-12 h-12 bg-secondary-fixed/30 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">payments</span>
+</div>
+<div class="text-left">
+<h3 class="font-label-lg text-label-lg text-ink-primary-light">Способы оплаты</h3>
+<p class="font-body-sm text-body-sm text-ink-secondary-light">Kaspi Gold •••• 1245</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</button>
+<!-- Language Selection -->
+<div class="p-space-5 bg-surface rounded-xl border border-line-hairline-light">
+<div class="flex items-center gap-space-2 mb-space-3">
+<span class="material-symbols-outlined text-primary text-[20px]">language</span>
+<h3 class="font-label-lg text-label-lg text-ink-primary-light">Язык</h3>
+</div>
+<div class="flex flex-col gap-space-2">
+<button class="flex items-center justify-between py-2 px-3 rounded-lg bg-primary-container text-on-primary-container haptic-medium">
+<span class="font-body-md text-body-md">Русский</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<button class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-surface-container-low transition-colors">
+<span class="font-body-md text-body-md text-ink-secondary-light">Қазақша</span>
+</button>
+<button class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-surface-container-low transition-colors">
+<span class="font-body-md text-body-md text-ink-secondary-light">English</span>
+</button>
+</div>
+</div>
+<!-- Theme Selection -->
+<div class="p-space-5 bg-surface rounded-xl border border-line-hairline-light">
+<div class="flex items-center gap-space-2 mb-space-3">
+<span class="material-symbols-outlined text-primary text-[20px]">palette</span>
+<h3 class="font-label-lg text-label-lg text-ink-primary-light">Тема</h3>
+</div>
+<div class="flex flex-col gap-space-2" id="theme-selector">
+<button class="theme-btn active flex items-center gap-space-3 py-2 px-3 rounded-lg bg-primary-container text-on-primary-container haptic-medium" onclick="setTheme('light')">
+<span class="material-symbols-outlined text-[18px]">light_mode</span>
+<span class="font-body-md text-body-md">Светлая</span>
+</button>
+<button class="theme-btn flex items-center gap-space-3 py-2 px-3 rounded-lg hover:bg-surface-container-low transition-colors" onclick="setTheme('dark')">
+<span class="material-symbols-outlined text-[18px] text-ink-secondary-light">dark_mode</span>
+<span class="font-body-md text-body-md text-ink-secondary-light">Темная</span>
+</button>
+<button class="theme-btn flex items-center gap-space-3 py-2 px-3 rounded-lg hover:bg-surface-container-low transition-colors" onclick="setTheme('system')">
+<span class="material-symbols-outlined text-[18px] text-ink-secondary-light">settings_brightness</span>
+<span class="font-body-md text-body-md text-ink-secondary-light">Система</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Secondary Actions -->
+<section class="space-y-space-2 pb-space-10">
+<button class="w-full flex items-center gap-space-4 p-space-4 hover:bg-surface-container-low rounded-xl transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">verified_user</span>
+<span class="font-body-lg text-body-lg flex-grow text-left">Конфиденциальность</span>
+</button>
+<button class="w-full flex items-center gap-space-4 p-space-4 hover:bg-surface-container-low rounded-xl transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">help</span>
+<span class="font-body-lg text-body-lg flex-grow text-left">Служба поддержки</span>
+</button>
+<button class="w-full flex items-center gap-space-4 p-space-4 hover:bg-error-container/20 text-error rounded-xl transition-colors">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-body-lg text-body-lg flex-grow text-left">Выйти</span>
+</button>
+<div class="text-center pt-space-6 pb-space-4">
+<p class="font-label-sm text-label-sm text-outline-variant">Version 2.4.0 (Build 891)</p>
+<p class="font-label-sm text-label-sm text-outline-variant mt-1">Shine X Kazakhstan • 2024</p>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Anchored -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface shadow-[0_-8px_24px_rgba(22,32,26,0.06)]">
+<div class="flex justify-around items-center h-20 w-full max-w-[600px] mx-auto px-6 pb-safe">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:opacity-80 transition-all" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-sm text-label-sm mt-1">Booking</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:opacity-80 transition-all" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-sm text-label-sm mt-1">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-brand-dark font-bold scale-110 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-sm text-label-sm mt-1">Profile</span>
+</a>
+</div>
+</nav>
+<script>
+        function setTheme(theme) {
+            const buttons = document.querySelectorAll('.theme-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-primary-container', 'text-on-primary-container');
+                btn.classList.add('hover:bg-surface-container-low');
+                const span = btn.querySelector('span:not(.material-symbols-outlined)');
+                const icon = btn.querySelector('.material-symbols-outlined');
+                if(span) span.classList.add('text-ink-secondary-light');
+                if(icon) icon.classList.add('text-ink-secondary-light');
+            });
+
+            const activeBtn = event.currentTarget;
+            activeBtn.classList.add('bg-primary-container', 'text-on-primary-container');
+            activeBtn.classList.remove('hover:bg-surface-container-low');
+            const activeSpan = activeBtn.querySelector('span:not(.material-symbols-outlined)');
+            const activeIcon = activeBtn.querySelector('.material-symbols-outlined');
+            if(activeSpan) activeSpan.classList.remove('text-ink-secondary-light');
+            if(activeIcon) activeIcon.classList.remove('text-ink-secondary-light');
+            
+            // Interaction logic for demo
+            console.log('Setting theme to:', theme);
+        }
+
+        // Simple smooth entrance
+        document.addEventListener('DOMContentLoaded', () => {
+            const main = document.querySelector('main');
+            main.style.opacity = '0';
+            main.style.transform = 'translateY(10px)';
+            main.style.transition = 'all 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+            
+            setTimeout(() => {
+                main.style.opacity = '1';
+                main.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body></html>

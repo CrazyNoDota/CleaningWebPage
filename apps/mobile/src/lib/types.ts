@@ -78,6 +78,19 @@ export type CleanerCard = {
   verified: boolean;
 };
 
+export type CleanerReview = {
+  id: string;
+  orderId: string;
+  cleanerId: string | null;
+  rating: number;
+  comment: string | null;
+  tags: string[];
+  photos: string[];
+  status: string;
+  publishedAt: string | null;
+  createdAt: string;
+};
+
 export type Session = {
   accessToken: string;
   refreshToken: string;
@@ -95,11 +108,19 @@ export type Payment = {
   id: string;
   orderId: string;
   provider: 'stub' | 'kaspi' | 'freedom_pay' | 'halyk_epay' | 'cloudpayments';
-  status: 'pending' | 'requires_action' | 'succeeded' | 'failed' | 'cancelled' | 'refunded';
+  status:
+    | 'pending'
+    | 'requires_action'
+    | 'succeeded'
+    | 'failed'
+    | 'cancelled'
+    | 'refunded'
+    | 'expired';
   amount: number;
   currency: string;
   paymentUrl: string | null;
   nextAction: 'stub_confirm' | 'redirect' | null;
+  expiresAt: string | null;
   paidAt: string | null;
   createdAt: string;
 };

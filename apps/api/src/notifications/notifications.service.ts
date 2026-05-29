@@ -5,11 +5,11 @@ import { renderOrderTemplate, type TemplateContext } from './templates/order-tem
 import type { Locale } from '../common/locale';
 import type { NotificationChannelDriver } from './channels/types';
 import {
-  PushStubChannel,
   WhatsappStubChannel,
   TelegramStubChannel,
   EmailStubChannel,
 } from './channels/stub-channels';
+import { DeadDeviceTokenError, FcmChannel } from './channels/fcm-channel';
 import { SmsChannel } from './channels/sms-channel';
 
 interface DispatchInput {
@@ -26,7 +26,7 @@ export class NotificationsService {
 
   constructor(
     private readonly prisma: PrismaService,
-    push: PushStubChannel,
+    push: FcmChannel,
     wa: WhatsappStubChannel,
     tg: TelegramStubChannel,
     email: EmailStubChannel,
@@ -103,6 +103,11 @@ export class NotificationsService {
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
         this.log.warn(`channel ${channel} failed for user ${user.id}: ${message}`);
+
+        if (err instanceof DeadDeviceTokenError) {
+          await this.pruneDeviceToken(user.id, err.token);
+        }
+
         await this.recordAttempt({
           userId: user.id,
           kind: input.kind,
@@ -116,6 +121,18 @@ export class NotificationsService {
         });
       }
     }
+  }
+
+  private async pruneDeviceToken(userId: string, token: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { deviceTokens: true },
+    });
+    if (!user) return;
+    const next = user.deviceTokens.filter((t) => t !== token);
+    if (next.length === user.deviceTokens.length) return;
+    await this.prisma.user.update({ where: { id: userId }, data: { deviceTokens: next } });
+    this.log.log(`pruned dead device token for user ${userId} (${token.slice(0, 12)}…)`);
   }
 
   private async recordAttempt(data: {

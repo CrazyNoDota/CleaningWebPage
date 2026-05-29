@@ -28,6 +28,13 @@ export class VerifyOtpDto {
   name?: string;
 }
 
+export class GoogleLoginDto {
+  @ApiProperty({ description: 'Google ID token (JWT) obtained on the client via Sign in with Google' })
+  @IsString()
+  @IsNotEmpty()
+  idToken!: string;
+}
+
 export class RefreshDto {
   @ApiProperty()
   @IsString()

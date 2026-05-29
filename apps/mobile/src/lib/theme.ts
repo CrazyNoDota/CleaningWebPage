@@ -1,20 +1,28 @@
+// Legacy flat exports kept for screens that haven't migrated to useTheme() yet.
+// New code should consume tokens via `useTheme()` from '@/lib/theme-provider'.
+// These values mirror the LIGHT token map in '@/lib/tokens'.
+
+import { colorTokens, radius as radiusTokens } from '@/lib/tokens';
+
+const light = colorTokens.light;
+
 export const colors = {
-  page: '#f7f8fa',
-  card: '#ffffff',
-  ink: '#1a1a2e',
-  muted: '#6b7280',
-  faint: '#e5e7eb',
-  brand: '#2d6a4f',
-  brandDark: '#1b4332',
-  brandSoft: '#d8f3dc',
-  danger: '#b91c1c',
-  dangerSoft: '#fee2e2',
-  amber: '#92400e',
-  amberSoft: '#fef3c7',
+  page: light.bg.page,
+  card: light.bg.surface,
+  ink: light.ink.primary,
+  muted: light.ink.secondary,
+  faint: light.line.hairline,
+  brand: light.brand[500],
+  brandDark: light.brand[600],
+  brandSoft: light.brand[100],
+  danger: light.danger[500],
+  dangerSoft: light.danger[100],
+  amber: light.warn[500],
+  amberSoft: light.accent[100],
 };
 
 export const radius = {
-  card: 14,
-  field: 12,
-  pill: 999,
+  card: radiusTokens.md,
+  field: radiusTokens.sm,
+  pill: radiusTokens.pill,
 };

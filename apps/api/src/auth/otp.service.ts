@@ -29,7 +29,19 @@ export class OtpService {
     return (this.config.get<string>('OTP_DEV_MODE') ?? 'true') === 'true';
   }
 
+  private isReviewAccount(phone: string): boolean {
+    const reviewPhone = this.config.get<string>('REVIEW_PHONE');
+    const reviewOtp = this.config.get<string>('REVIEW_OTP');
+    return Boolean(reviewPhone && reviewOtp && phone === reviewPhone);
+  }
+
   async issue(phone: string): Promise<void> {
+    // Google Play / App Store review account — skip SMS, fixed code is accepted in verify().
+    if (this.isReviewAccount(phone)) {
+      this.logger.warn(`[REVIEW-OTP] short-circuit issue for ${phone}`);
+      return;
+    }
+
     const code = this.generateCode();
     const codeHash = await argon2.hash(code, { type: argon2.argon2id });
     const expiresAt = new Date(Date.now() + this.ttlSeconds * 1000);
@@ -53,6 +65,15 @@ export class OtpService {
   }
 
   async verify(phone: string, code: string): Promise<void> {
+    if (this.isReviewAccount(phone)) {
+      const reviewOtp = this.config.get<string>('REVIEW_OTP');
+      if (code !== reviewOtp) {
+        throw new UnauthorizedException('invalid code');
+      }
+      this.logger.warn(`[REVIEW-OTP] accepted fixed code for ${phone}`);
+      return;
+    }
+
     const record = await this.prisma.otpCode.findFirst({
       where: { phone, consumedAt: null },
       orderBy: { createdAt: 'desc' },

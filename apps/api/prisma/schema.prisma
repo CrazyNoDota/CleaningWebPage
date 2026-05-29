@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -113,6 +113,13 @@ enum PaymentStatus {
   failed
   cancelled
   refunded
+  expired
+}
+
+enum RefundStatus {
+  pending
+  succeeded
+  failed
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -329,16 +336,36 @@ model Payment {
   paymentUrl        String?
   idempotencyKey    String?         @unique
   rawPayload        Json?
+  expiresAt         DateTime?
   paidAt            DateTime?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  user  User? @relation(fields: [userId], references: [id])
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user    User?    @relation(fields: [userId], references: [id])
+  refunds Refund[]
 
   @@index([orderId])
   @@index([userId])
   @@index([provider, status])
+  @@index([status, expiresAt])
+}
+
+model Refund {
+  id               String       @id @default(uuid())
+  paymentId        String
+  amount           Int
+  reason           String?
+  status           RefundStatus @default(pending)
+  providerRefundId String?
+  rawPayload       Json?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId])
+  @@index([status])
 }
 
 model OrderEvent {

@@ -1,0 +1,130 @@
+name: shinex
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: shinex_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - /opt/shinex/postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [shinex_net]
+
+  redis:
+    image: redis:7-alpine
+    container_name: shinex_redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - /opt/shinex/redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks: [shinex_net]
+
+  api:
+    image: shinex/api:latest
+    build:
+      context: /opt/shinex/src
+      dockerfile: infra/api.Dockerfile
+    container_name: shinex_api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      API_PORT: 4000
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+      DIRECT_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+      REDIS_URL: redis://redis:6379
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_ACCESS_TTL: 15m
+      JWT_REFRESH_TTL: 30d
+      OTP_DEV_MODE: "false"
+      OTP_TTL_SECONDS: "300"
+      OTP_LENGTH: "6"
+      SMS_PROVIDER: ${SMS_PROVIDER:-mobizon}
+      MOBIZON_API_KEY: ${MOBIZON_API_KEY}
+      MOBIZON_SENDER: ${MOBIZON_SENDER:-}
+      GOOGLE_CLIENT_IDS: ${GOOGLE_CLIENT_IDS:-}
+      ADMIN_LOGIN: ${ADMIN_LOGIN}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-stub}
+      BLOB_READ_WRITE_TOKEN: ${BLOB_READ_WRITE_TOKEN}
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${FIREBASE_SERVICE_ACCOUNT_JSON}
+      DISABLE_REALTIME: "false"
+    networks: [shinex_net]
+
+  web-client:
+    image: shinex/web-client:latest
+    build:
+      context: /opt/shinex/src
+      dockerfile: infra/web-client.Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${PUBLIC_API_URL}
+        NEXT_PUBLIC_WS_URL: ${PUBLIC_WS_URL}
+    container_name: shinex_web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_API_URL: ${PUBLIC_API_URL}
+      NEXT_PUBLIC_WS_URL: ${PUBLIC_WS_URL}
+    networks: [shinex_net]
+
+  web-admin:
+    image: shinex/web-admin:latest
+    build:
+      context: /opt/shinex/src
+      dockerfile: infra/web-admin.Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${PUBLIC_API_URL}
+        NEXT_PUBLIC_WS_URL: ${PUBLIC_WS_URL}
+    container_name: shinex_admin
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_API_URL: ${PUBLIC_API_URL}
+      NEXT_PUBLIC_WS_URL: ${PUBLIC_WS_URL}
+    networks: [shinex_net]
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: shinex_caddy
+    restart: unless-stopped
+    depends_on:
+      - api
+      - web-client
+      - web-admin
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - /opt/shinex/Caddyfile:/etc/caddy/Caddyfile:ro
+      - /opt/shinex/caddy_data:/data
+      - /opt/shinex/caddy_config:/config
+    networks: [shinex_net]
+
+networks:
+  shinex_net:
+    name: shinex_net
+    driver: bridge

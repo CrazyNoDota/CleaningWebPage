@@ -5,6 +5,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { OtpService } from './otp.service';
 import { TokenService } from './token.service';
+import { GoogleAuthService } from './google.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { SmsModule } from '../notifications/sms/sms.module';
 
@@ -21,7 +22,7 @@ import { SmsModule } from '../notifications/sms/sms.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, OtpService, TokenService, JwtAuthGuard],
+  providers: [AuthService, OtpService, TokenService, GoogleAuthService, JwtAuthGuard],
   exports: [AuthService, TokenService, JwtModule, JwtAuthGuard],
 })
 export class AuthModule {}

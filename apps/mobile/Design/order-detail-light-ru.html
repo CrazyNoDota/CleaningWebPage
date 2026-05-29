@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "brand-dark": "#52B788",
+                  "error": "#ba1a1a",
+                  "primary-fixed": "#b1f0ce",
+                  "on-secondary-container": "#6b3100",
+                  "secondary-fixed": "#ffdbc7",
+                  "inverse-on-surface": "#eff1ed",
+                  "inverse-surface": "#2e312f",
+                  "on-secondary": "#ffffff",
+                  "surface-container-low": "#f2f4f0",
+                  "surface-bright": "#f8faf6",
+                  "bg-page-light": "#FAFAF7",
+                  "on-tertiary": "#ffffff",
+                  "surface-container-high": "#e7e9e5",
+                  "surface": "#f8faf6",
+                  "outline": "#707973",
+                  "ink-primary-dark": "#F0EBDF",
+                  "on-error-container": "#93000a",
+                  "accent-dark": "#F0935A",
+                  "surface-dim": "#d8dbd7",
+                  "on-surface": "#191c1a",
+                  "outline-variant": "#bfc9c1",
+                  "secondary-container": "#ff9243",
+                  "bg-sunken-light": "#F1EFE9",
+                  "on-tertiary-fixed-variant": "#6f3537",
+                  "surface-container-highest": "#e1e3df",
+                  "on-primary-fixed-variant": "#0e5138",
+                  "on-secondary-fixed-variant": "#733600",
+                  "secondary-fixed-dim": "#ffb688",
+                  "surface-container-lowest": "#ffffff",
+                  "primary": "#0f5238",
+                  "tertiary-fixed-dim": "#ffb3b3",
+                  "on-error": "#ffffff",
+                  "on-tertiary-container": "#ffcfce",
+                  "background": "#f8faf6",
+                  "primary-container": "#2d6a4f",
+                  "on-primary-fixed": "#002114",
+                  "on-primary": "#ffffff",
+                  "bg-page-dark": "#0F1411",
+                  "line-hairline-light": "#E6E2D7",
+                  "bg-surface-dark": "#161C18",
+                  "inverse-primary": "#95d4b3",
+                  "tertiary-fixed": "#ffdad9",
+                  "ink-primary-light": "#16201A",
+                  "on-surface-variant": "#404943",
+                  "secondary": "#974800",
+                  "surface-variant": "#e1e3df",
+                  "tertiary-container": "#8d4d4e",
+                  "tertiary": "#713638",
+                  "on-tertiary-fixed": "#390b0e",
+                  "on-background": "#191c1a",
+                  "on-secondary-fixed": "#311300",
+                  "surface-container": "#eceeea",
+                  "on-primary-container": "#a8e7c5",
+                  "primary-fixed-dim": "#95d4b3",
+                  "ink-secondary-light": "#5A6661",
+                  "surface-tint": "#2c694e",
+                  "error-container": "#ffdad6",
+                  "bg-elevated-dark": "#1E2622"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "space-2": "8px",
+                  "space-9": "56px",
+                  "space-5": "20px",
+                  "space-10": "72px",
+                  "space-8": "40px",
+                  "space-4": "16px",
+                  "space-1": "4px",
+                  "space-6": "24px",
+                  "space-7": "32px",
+                  "space-3": "12px"
+          },
+          "fontFamily": {
+                  "body-md": ["Inter"],
+                  "body-lg": ["Inter"],
+                  "display-xl": ["Inter"],
+                  "title-sm": ["Inter"],
+                  "label-sm": ["Inter"],
+                  "title-lg": ["Inter"],
+                  "title-md": ["Inter"],
+                  "body-sm": ["Inter"],
+                  "label-lg": ["Inter"],
+                  "display-lg": ["Inter"]
+          },
+          "fontSize": {
+                  "body-md": ["15px", {"lineHeight": "22px", "fontWeight": "400"}],
+                  "body-lg": ["17px", {"lineHeight": "24px", "fontWeight": "400"}],
+                  "display-xl": ["40px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "title-sm": ["17px", {"lineHeight": "22px", "fontWeight": "600"}],
+                  "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                  "title-lg": ["24px", {"lineHeight": "30px", "fontWeight": "600"}],
+                  "title-md": ["20px", {"lineHeight": "26px", "fontWeight": "600"}],
+                  "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                  "label-lg": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                  "display-lg": ["32px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #bfc9c1; border-radius: 10px; }
+    @keyframes pulse-ring { 0% { transform: scale(.33); opacity: 1; } 80%, 100% { opacity: 0; } }
+    .active-dot::before {
+      content: ''; position: absolute; width: 12px; height: 12px; background-color: #52B788;
+      border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+    }
+  </style>
+</head>
+<body class="bg-background font-body-md text-on-background min-h-screen">
+<header class="fixed top-0 w-full z-50 bg-background flex justify-between items-center px-4 h-16 max-w-[600px] mx-auto left-0 right-0">
+<div class="flex items-center gap-space-3">
+<button class="material-symbols-outlined text-primary p-2 hover:bg-surface-container rounded-full transition-colors" data-icon="arrow_back">arrow_back</button>
+<h1 class="font-display-lg text-display-lg font-bold text-primary tracking-tight">Shine X</h1>
+</div>
+<div class="h-10 w-10 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant">
+<img alt="User" class="w-full h-full object-cover" data-alt="A close-up professional headshot of a stylish middle-aged man with a friendly expression. He is wearing a minimalist, high-quality linen shirt. The background is a soft-focus modern office interior with warm, natural lighting that emphasizes a clean and premium aesthetic. The color palette is composed of soft beige and white tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3i9TtZQtUO7Lkl5VHhICc7DhpSIpBWPiqIFp-BA31WNWLo0vysWeDKgNKTLZtVLHKc1aMtN0bFdCdFniezSNgyQNePjkS-W7FUnhtQ89B3TQrxevAYOrPZTL1Q5zHy-EJKdkJ5_TVCuIwuGPVjKrqdsZWM4jrygtdvqZ0EZCIynechAWnJQlJqUbq-BoOQtMLbKzCn8X6UjyJ_dvjlygtNcm4dIhyp-zNXu3TBdFN8obNH7xnFUCwqy0LIvbrJY6rOmWGU2keeTmH"/>
+</div>
+</header>
+<main class="pt-20 pb-40 px-4 max-w-[600px] mx-auto space-y-space-6">
+<section class="bg-surface p-space-6 rounded-xl space-y-space-5">
+<div class="flex justify-between items-center">
+<h2 class="font-title-lg text-title-lg text-primary">Заказ #SX-4821</h2>
+<span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full font-label-sm text-label-sm">В процессе</span>
+</div>
+<div class="relative py-space-4">
+<div class="absolute left-[7px] top-space-4 bottom-space-4 w-[2px] bg-outline-variant"></div>
+<div class="space-y-space-6">
+<div class="flex gap-space-4 relative">
+<div class="z-10 w-4 h-4 rounded-full bg-primary mt-1 shadow-sm"></div>
+<div>
+<p class="font-title-sm text-title-sm text-on-surface">Заказ размещен</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Сегодня, 09:15</p>
+</div>
+</div>
+<div class="flex gap-space-4 relative">
+<div class="z-10 w-4 h-4 rounded-full bg-primary mt-1 shadow-sm"></div>
+<div>
+<p class="font-title-sm text-title-sm text-on-surface">Подтверждено</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Сегодня, 09:45</p>
+</div>
+</div>
+<div class="flex gap-space-4 relative">
+<div class="z-10 w-4 h-4 rounded-full bg-primary mt-1 shadow-sm"></div>
+<div>
+<p class="font-title-sm text-title-sm text-on-surface">Клинер в пути</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Сегодня, 10:30</p>
+</div>
+</div>
+<div class="flex gap-space-4 relative items-start">
+<div class="z-10 w-4 h-4 rounded-full bg-brand-dark mt-1 active-dot relative"></div>
+<div>
+<p class="font-title-sm text-title-sm text-brand-dark">Выполняется</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Начало в 11:00</p>
+</div>
+</div>
+<div class="flex gap-space-4 relative opacity-40">
+<div class="z-10 w-4 h-4 rounded-full bg-outline-variant mt-1"></div>
+<div>
+<p class="font-title-sm text-title-sm text-on-surface">Завершено</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Ожидаемое время: 14:00</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="bg-surface-container-low rounded-xl overflow-hidden group active:scale-[0.98] transition-transform duration-200">
+<div class="flex gap-space-4 p-space-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden border border-outline-variant">
+<img alt="Cleaner Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnQvpiHTTs-STTIVJ4j6V36tIv7-PpHzQuMDBvxF0svrj3leU2_q2-MHkNLkZ4hPPgez-lNSxFMaTR4o85JkvCARt2R62TiuhDZf-ej06VTd1komcBsPnFcDHmCu0lHjA8NMglBgYkDI1pgkdoHMFVLtd3JvqTg2fiDa9vWTrP71Vg8Il5CwXxtI4Tz2kXpyEvBsCM3SqwJ9MzC-nkcYcKUJZPXArfnJUz7aoIsxk7N5gaTyyaVuI7wj3jPaN1qg92WB1bkAuRwlIt"/>
+</div>
+<div class="flex-1 flex flex-col justify-center">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-title-md text-title-md text-on-surface">Айгерим К.</h3>
+<div class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-lg text-label-lg">4.98</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">(124 отзыва)</span>
+</div>
+</div>
+<div class="flex gap-space-2">
+<button class="bg-surface-bright p-2 rounded-full border border-outline-variant text-primary hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+</button>
+<button class="bg-surface-bright p-2 rounded-full border border-outline-variant text-primary hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="call">call</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="space-y-space-4">
+<div class="bg-surface p-space-5 rounded-xl border border-line-hairline-light">
+<div class="flex gap-space-3 items-start">
+<span class="material-symbols-outlined text-on-surface-variant mt-1" data-icon="location_on">location_on</span>
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface">Адрес уборки</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">ул. Достык 16, блок С, кв. 42<br/>Нур-Султан (Астана)</p>
+</div>
+</div>
+</div>
+<div class="bg-surface p-space-5 rounded-xl border border-line-hairline-light">
+<h4 class="font-label-lg text-label-lg text-on-surface mb-space-3">Детали услуги</h4>
+<div class="space-y-space-3">
+<div class="flex justify-between items-center py-space-2 border-b border-line-hairline-light">
+<span class="font-body-md text-body-md text-on-surface-variant">Генеральная уборка (2-комн)</span>
+<span class="font-title-sm text-title-sm text-on-surface">₸ 9 500</span>
+</div>
+<div class="flex justify-between items-center py-space-2 border-b border-line-hairline-light">
+<span class="font-body-md text-body-md text-on-surface-variant">Мойка окон (3 шт)</span>
+<span class="font-title-sm text-title-sm text-on-surface">₸ 2 000</span>
+</div>
+<div class="flex justify-between items-center py-space-2">
+<span class="font-body-md text-body-md text-on-surface-variant">Эко-средства ShineX</span>
+<span class="font-title-sm text-title-sm text-on-surface">₸ 1 000</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<nav class="fixed bottom-0 w-full z-50 bg-surface rounded-t-xl max-w-[600px] mx-auto left-0 right-0 shadow-[0_-8px_24px_rgba(22,32,26,0.06)] px-6 pb-safe border-t border-line-hairline-light">
+<div class="h-20 flex justify-between items-center">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">К оплате</span>
+<span class="font-display-lg text-display-lg font-bold text-primary tracking-tighter" id="price-block">₸ 12 500</span>
+</div>
+<button class="bg-primary hover:bg-primary-container text-white px-space-8 h-14 rounded-xl font-title-sm text-title-sm flex items-center justify-center gap-space-2 active:scale-95 transition-all duration-200" id="pay-button">
+<span>Оплатить</span>
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</nav>
+<script>
+    const priceBlock = document.getElementById('price-block');
+    const payButton = document.getElementById('pay-button');
+
+    payButton.addEventListener('click', () => {
+      payButton.innerHTML = `
+        <div class="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+        <span>Обработка...</span>
+      `;
+      setTimeout(() => {
+        payButton.classList.replace('bg-primary', 'bg-brand-dark');
+        payButton.innerHTML = `
+          <span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+          <span>Оплачено</span>
+        `;
+      }, 1500);
+    });
+
+    // Subtle number animation effect on load
+    let current = 10000;
+    const target = 12500;
+    const duration = 800;
+    const stepTime = 15;
+    const increment = (target - current) / (duration / stepTime);
+
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        priceBlock.textContent = `₸ ${target.toLocaleString('ru-RU')}`;
+        clearInterval(timer);
+      } else {
+        priceBlock.textContent = `₸ ${Math.floor(current).toLocaleString('ru-RU')}`;
+      }
+    }, stepTime);
+  </script>
+</body></html>

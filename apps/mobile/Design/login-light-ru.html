@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "brand-dark": "#52B788",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#b1f0ce",
+                    "on-secondary-container": "#6b3100",
+                    "secondary-fixed": "#ffdbc7",
+                    "inverse-on-surface": "#eff1ed",
+                    "inverse-surface": "#2e312f",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#f2f4f0",
+                    "surface-bright": "#f8faf6",
+                    "bg-page-light": "#FAFAF7",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#e7e9e5",
+                    "surface": "#f8faf6",
+                    "outline": "#707973",
+                    "ink-primary-dark": "#F0EBDF",
+                    "on-error-container": "#93000a",
+                    "accent-dark": "#F0935A",
+                    "surface-dim": "#d8dbd7",
+                    "on-surface": "#191c1a",
+                    "outline-variant": "#bfc9c1",
+                    "secondary-container": "#ff9243",
+                    "bg-sunken-light": "#F1EFE9",
+                    "on-tertiary-fixed-variant": "#6f3537",
+                    "surface-container-highest": "#e1e3df",
+                    "on-primary-fixed-variant": "#0e5138",
+                    "on-secondary-fixed-variant": "#733600",
+                    "secondary-fixed-dim": "#ffb688",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#0f5238",
+                    "tertiary-fixed-dim": "#ffb3b3",
+                    "on-error": "#ffffff",
+                    "on-tertiary-container": "#ffcfce",
+                    "background": "#f8faf6",
+                    "primary-container": "#2d6a4f",
+                    "on-primary-fixed": "#002114",
+                    "on-primary": "#ffffff",
+                    "bg-page-dark": "#0F1411",
+                    "line-hairline-light": "#E6E2D7",
+                    "bg-surface-dark": "#161C18",
+                    "inverse-primary": "#95d4b3",
+                    "tertiary-fixed": "#ffdad9",
+                    "ink-primary-light": "#16201A",
+                    "on-surface-variant": "#404943",
+                    "secondary": "#974800",
+                    "surface-variant": "#e1e3df",
+                    "tertiary-container": "#8d4d4e",
+                    "tertiary": "#713638",
+                    "on-tertiary-fixed": "#390b0e",
+                    "on-background": "#191c1a",
+                    "on-secondary-fixed": "#311300",
+                    "surface-container": "#eceeea",
+                    "on-primary-container": "#a8e7c5",
+                    "primary-fixed-dim": "#95d4b3",
+                    "ink-secondary-light": "#5A6661",
+                    "surface-tint": "#2c694e",
+                    "error-container": "#ffdad6",
+                    "bg-elevated-dark": "#1E2622"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "space-2": "8px",
+                    "space-9": "56px",
+                    "space-5": "20px",
+                    "space-10": "72px",
+                    "space-8": "40px",
+                    "space-4": "16px",
+                    "space-1": "4px",
+                    "space-6": "24px",
+                    "space-7": "32px",
+                    "space-3": "12px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-xl": ["Inter"],
+                    "title-sm": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["15px", {"lineHeight": "22px", "fontWeight": "400"}],
+                    "body-lg": ["17px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-xl": ["40px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "title-sm": ["17px", {"lineHeight": "22px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "title-lg": ["24px", {"lineHeight": "30px", "fontWeight": "600"}],
+                    "title-md": ["20px", {"lineHeight": "26px", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "label-lg": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "display-lg": ["32px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .haptic-medium:active {
+            transform: scale(0.97);
+            transition: transform 0.1s ease-out;
+        }
+        input:focus ~ label,
+        input:not(:placeholder-shown) ~ label {
+            transform: translateY(-24px) scale(0.85);
+            color: #0f5238;
+        }
+        .otp-input:focus {
+            border-color: #0f5238;
+            box-shadow: 0 0 0 1px #0f5238;
+        }
+    </style>
+</head>
+<body class="bg-bg-page-light font-body-md text-on-background selection:bg-primary-fixed antialiased overflow-hidden">
+<!-- Hero Background (Editorial Aesthetic) -->
+<div class="fixed inset-0 z-0">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-bg-page-light/90 z-10"></div>
+<div class="w-full h-full bg-cover bg-center opacity-40 mix-blend-multiply" data-alt="An expansive, sun-drenched minimalist penthouse in Astana with floor-to-ceiling windows overlooking the modern skyline. The interior features pristine white marble floors and high-end contemporary furniture, bathed in soft, ethereal natural light. The atmosphere is quiet, luxurious, and exceptionally clean, reflecting a high-confidence editorial vibe with a professional green and copper color palette." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA-7a-uagMdsbssc6SpueRCbOcrmtM5Tq_4iwUICkLvW8BBSVGnJGBfjm10nnF-znk0C7w5c05XH1pUvQMLnAzC3c-d-xxekQLr5bvzL1JLTZYE4GbJDQdiQjmQXP4cLOq3mg_sJHOUzihUW7-K5u2JxaFIpyLdUvGW288eNNspbrjl0MDA1_jjp8_KnKKsMhqHOQziru3VCkQaE6A5Hnb8PXWrUjrvosJvfDvrF8UBaxUJd_cVWOPpPmbEtPmV6rgKc-GBJUkYKz5A')"></div>
+</div>
+<main class="relative z-20 min-h-screen flex flex-col items-center px-space-4 pt-space-10 max-w-[600px] mx-auto">
+<!-- Logo & Branding -->
+<div class="flex flex-col items-center mb-space-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+<img alt="Shine X Logo" class="w-24 h-24 mb-space-4 rounded-xl shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvcDGM-x-RITUQ9NFzdTRADUM-7X2YvcODisHNxcWB-4dKOD3uInQhxy6JHg_6S2bvTs8SSHi9oIjPUYce66WbhcTcoEdDjX4iasJ-fwyUlPlfDX2fGtcs60gWxVsBABUFVvmEr737BF4lxSttXi0qaWp67WCXWDBRsvKu2hxAr_xFZqlShIu-Ou3Wp0dri_tbkXbpuO7DRhd-WpRB5Q81NKsWOFYcu9CLXropy1EAAteJMU-x2rEZj0ysNLyTd-6s0KI-dXEnhZK1"/>
+<h1 class="font-display-lg text-display-lg text-primary tracking-tight">Shine X</h1>
+<p class="text-on-surface-variant font-body-md mt-space-1 opacity-80">Профессиональный клининг в Астане</p>
+</div>
+<!-- Phone Input Stage -->
+<div class="w-full space-y-space-6 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200" id="phone-stage">
+<div class="bg-surface p-space-6 rounded-xl shadow-[0_24_48_rgba(22,32,26,0.08)] border border-line-hairline-light">
+<h2 class="font-title-md text-title-md text-on-surface mb-space-4">Добро пожаловать</h2>
+<p class="text-on-surface-variant font-body-md mb-space-6">Введите номер телефона, чтобы войти или зарегистрироваться</p>
+<!-- Floating Label Phone Input -->
+<div class="relative group h-14 w-full">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center space-x-2 pointer-events-none">
+<span class="text-on-surface-variant font-title-sm">+7</span>
+<div class="w-[1px] h-4 bg-outline-variant"></div>
+</div>
+<input class="w-full h-full pl-14 pr-4 bg-surface-container-lowest border-2 border-outline-variant rounded-lg font-title-sm text-on-surface transition-all focus:border-primary focus:ring-0 peer outline-none" id="phone-input" maxlength="10" placeholder=" " type="tel"/>
+<label class="absolute left-14 top-1/2 -translate-y-1/2 text-on-surface-variant font-body-md transition-all duration-200 pointer-events-none origin-left">Номер телефона</label>
+</div>
+<div class="hidden flex items-center gap-space-2 mt-space-3 text-error" id="error-message">
+<span class="material-symbols-outlined text-[20px]">error</span>
+<span class="text-label-sm">Пожалуйста, введите корректный номер</span>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full h-14 bg-primary text-on-primary font-label-lg rounded-lg shadow-md haptic-medium flex items-center justify-center space-x-2 active:scale-95 transition-all overflow-hidden relative" id="send-code-btn" onclick="requestOTP()">
+<span id="btn-text">Получить код</span>
+<div class="hidden" id="loading-spinner">
+<svg class="animate-spin h-5 w-5 text-white" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+<path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
+</svg>
+</div>
+</button>
+</div>
+<!-- OTP Input Stage (Hidden Initially) -->
+<div class="hidden w-full space-y-space-6" id="otp-stage">
+<div class="bg-surface p-space-6 rounded-xl shadow-[0_24_48_rgba(22,32,26,0.08)] border border-line-hairline-light">
+<button class="flex items-center text-primary font-label-sm mb-space-5 hover:opacity-70 transition-opacity" onclick="backToPhone()">
+<span class="material-symbols-outlined mr-1">arrow_back</span>
+                    Назад
+                </button>
+<h2 class="font-title-md text-title-md text-on-surface mb-space-2">Подтверждение</h2>
+<p class="text-on-surface-variant font-body-md mb-space-6">
+                    Мы отправили SMS с кодом на <br/><span class="font-bold text-on-surface" id="display-phone">+7 (707) 123-45-67</span>
+</p>
+<!-- OTP Digits -->
+<div class="flex justify-between gap-space-2 mb-space-6">
+<input class="otp-input w-12 h-14 text-center text-title-lg font-bold border-2 border-outline-variant rounded-lg bg-surface-container-lowest focus:border-primary focus:ring-0 outline-none transition-all" maxlength="1" type="text"/>
+<input class="otp-input w-12 h-14 text-center text-title-lg font-bold border-2 border-outline-variant rounded-lg bg-surface-container-lowest focus:border-primary focus:ring-0 outline-none transition-all" maxlength="1" type="text"/>
+<input class="otp-input w-12 h-14 text-center text-title-lg font-bold border-2 border-outline-variant rounded-lg bg-surface-container-lowest focus:border-primary focus:ring-0 outline-none transition-all" maxlength="1" type="text"/>
+<input class="otp-input w-12 h-14 text-center text-title-lg font-bold border-2 border-outline-variant rounded-lg bg-surface-container-lowest focus:border-primary focus:ring-0 outline-none transition-all" maxlength="1" type="text"/>
+</div>
+<div class="flex justify-center">
+<button class="text-on-surface-variant font-label-sm disabled:opacity-50" disabled="" id="resend-timer">
+                        Отправить код повторно через <span id="timer-sec">59</span>с
+                    </button>
+</div>
+</div>
+<button class="w-full h-14 bg-primary text-on-primary font-label-lg rounded-lg shadow-md haptic-medium flex items-center justify-center active:scale-95 transition-all" onclick="verifyOTP()">
+                Войти
+            </button>
+</div>
+<!-- Terms & Footer -->
+<footer class="mt-auto pb-space-8 text-center px-space-4">
+<p class="text-label-sm text-on-surface-variant opacity-60 leading-relaxed">
+                Нажимая «Получить код», вы соглашаетесь с <br/>
+<a class="underline hover:text-primary transition-colors" href="#">Пользовательским соглашением</a> и <br/>
+<a class="underline hover:text-primary transition-colors" href="#">Политикой конфиденциальности</a>
+</p>
+</footer>
+</main>
+<!-- Visual Success Overlay (Atmospheric) -->
+<div class="fixed inset-0 z-50 bg-primary/95 flex flex-col items-center justify-center text-on-primary opacity-0 pointer-events-none transition-all duration-500" id="success-overlay">
+<div class="scale-0 transition-transform duration-700 delay-100 ease-out" id="success-icon-box">
+<span class="material-symbols-outlined text-[80px]" style="font-variation-settings: 'wght' 200;">check_circle</span>
+</div>
+<h3 class="font-display-lg text-display-lg mt-space-6">Успешно</h3>
+<p class="font-body-lg mt-space-2 opacity-80">Добро пожаловать в Shine X</p>
+</div>
+<script>
+        const phoneStage = document.getElementById('phone-stage');
+        const otpStage = document.getElementById('otp-stage');
+        const phoneInput = document.getElementById('phone-input');
+        const sendBtn = document.getElementById('send-code-btn');
+        const btnText = document.getElementById('btn-text');
+        const spinner = document.getElementById('loading-spinner');
+        const errorMsg = document.getElementById('error-message');
+        const displayPhone = document.getElementById('display-phone');
+        const otpInputs = document.querySelectorAll('.otp-input');
+        const timerSec = document.getElementById('timer-sec');
+        const resendBtn = document.getElementById('resend-timer');
+
+        // Simple Mask & Limit
+        phoneInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+            errorMsg.classList.add('hidden');
+        });
+
+        function requestOTP() {
+            const val = phoneInput.value;
+            if (val.length < 10) {
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            // Loading state
+            btnText.classList.add('hidden');
+            spinner.classList.remove('hidden');
+            sendBtn.classList.add('opacity-80', 'pointer-events-none');
+
+            // Simulate Network Delay
+            setTimeout(() => {
+                displayPhone.innerText = `+7 (${val.slice(0, 3)}) ${val.slice(3, 6)}-${val.slice(6, 8)}-${val.slice(8, 10)}`;
+                phoneStage.classList.add('hidden');
+                otpStage.classList.remove('hidden');
+                otpStage.classList.add('animate-in', 'fade-in', 'slide-in-from-right-8', 'duration-500');
+                
+                startTimer();
+                otpInputs[0].focus();
+
+                // Reset loading state for later
+                btnText.classList.remove('hidden');
+                spinner.classList.add('hidden');
+                sendBtn.classList.remove('opacity-80', 'pointer-events-none');
+            }, 1200);
+        }
+
+        function backToPhone() {
+            otpStage.classList.add('hidden');
+            phoneStage.classList.remove('hidden');
+            phoneStage.classList.add('animate-in', 'fade-in', 'slide-in-from-left-8', 'duration-500');
+        }
+
+        // OTP Auto-focus logic
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+        });
+
+        function startTimer() {
+            let timeLeft = 59;
+            resendBtn.disabled = true;
+            const interval = setInterval(() => {
+                timeLeft--;
+                timerSec.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = 'Отправить код повторно';
+                    resendBtn.classList.add('text-primary');
+                }
+            }, 1000);
+        }
+
+        function verifyOTP() {
+            const overlay = document.getElementById('success-overlay');
+            const iconBox = document.getElementById('success-icon-box');
+            
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            iconBox.classList.remove('scale-0');
+            iconBox.classList.add('scale-100');
+
+            setTimeout(() => {
+                // In real app: navigate to dashboard
+                alert('Переход на главный экран...');
+            }, 2000);
+        }
+    </script>
+</body></html>

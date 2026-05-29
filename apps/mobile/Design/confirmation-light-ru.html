@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Shine X — Заказ подтвержден</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "brand-dark": "#52B788",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#b1f0ce",
+                    "on-secondary-container": "#6b3100",
+                    "secondary-fixed": "#ffdbc7",
+                    "inverse-on-surface": "#eff1ed",
+                    "inverse-surface": "#2e312f",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#f2f4f0",
+                    "surface-bright": "#f8faf6",
+                    "bg-page-light": "#FAFAF7",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#e7e9e5",
+                    "surface": "#f8faf6",
+                    "outline": "#707973",
+                    "ink-primary-dark": "#F0EBDF",
+                    "on-error-container": "#93000a",
+                    "accent-dark": "#F0935A",
+                    "surface-dim": "#d8dbd7",
+                    "on-surface": "#191c1a",
+                    "outline-variant": "#bfc9c1",
+                    "secondary-container": "#ff9243",
+                    "bg-sunken-light": "#F1EFE9",
+                    "on-tertiary-fixed-variant": "#6f3537",
+                    "surface-container-highest": "#e1e3df",
+                    "on-primary-fixed-variant": "#0e5138",
+                    "on-secondary-fixed-variant": "#733600",
+                    "secondary-fixed-dim": "#ffb688",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#0f5238",
+                    "tertiary-fixed-dim": "#ffb3b3",
+                    "on-error": "#ffffff",
+                    "on-tertiary-container": "#ffcfce",
+                    "background": "#f8faf6",
+                    "primary-container": "#2d6a4f",
+                    "on-primary-fixed": "#002114",
+                    "on-primary": "#ffffff",
+                    "bg-page-dark": "#0F1411",
+                    "line-hairline-light": "#E6E2D7",
+                    "bg-surface-dark": "#161C18",
+                    "inverse-primary": "#95d4b3",
+                    "tertiary-fixed": "#ffdad9",
+                    "ink-primary-light": "#16201A",
+                    "on-surface-variant": "#404943",
+                    "secondary": "#974800",
+                    "surface-variant": "#e1e3df",
+                    "tertiary-container": "#8d4d4e",
+                    "tertiary": "#713638",
+                    "on-tertiary-fixed": "#390b0e",
+                    "on-background": "#191c1a",
+                    "on-secondary-fixed": "#311300",
+                    "surface-container": "#eceeea",
+                    "on-primary-container": "#a8e7c5",
+                    "primary-fixed-dim": "#95d4b3",
+                    "ink-secondary-light": "#5A6661",
+                    "surface-tint": "#2c694e",
+                    "error-container": "#ffdad6",
+                    "bg-elevated-dark": "#1E2622"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "space-2": "8px",
+                    "space-9": "56px",
+                    "space-5": "20px",
+                    "space-10": "72px",
+                    "space-8": "40px",
+                    "space-4": "16px",
+                    "space-1": "4px",
+                    "space-6": "24px",
+                    "space-7": "32px",
+                    "space-3": "12px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-xl": ["Inter"],
+                    "title-sm": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["15px", {"lineHeight": "22px", "fontWeight": "400"}],
+                    "body-lg": ["17px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-xl": ["40px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "title-sm": ["17px", {"lineHeight": "22px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "title-lg": ["24px", {"lineHeight": "30px", "fontWeight": "600"}],
+                    "title-md": ["20px", {"lineHeight": "26px", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "label-lg": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "display-lg": ["32px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        @keyframes check-bloom {
+            0% { transform: scale(0.6); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes confetti-pop {
+            0% { transform: translateY(0) rotate(0); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        .animate-bloom {
+            animation: check-bloom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .haptic-medium:active {
+            transform: scale(0.97);
+            transition: transform 0.1s ease;
+        }
+
+        .success-glow {
+            box-shadow: 0 0 40px rgba(82, 183, 136, 0.2);
+        }
+        
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-bg-page-light text-on-surface font-body-md antialiased min-h-screen flex flex-col items-center">
+<!-- Success Hero Canvas -->
+<main class="w-full max-w-[600px] flex-grow flex flex-col px-space-6 pt-space-10 pb-space-10 overflow-x-hidden">
+<!-- Bloom Animation Section -->
+<div class="flex flex-col items-center justify-center mb-space-8">
+<div class="relative flex items-center justify-center w-24 h-24 mb-space-6">
+<!-- Background Pulse Rings -->
+<div class="absolute inset-0 bg-brand-dark opacity-10 rounded-full animate-ping"></div>
+<div class="absolute inset-0 bg-brand-dark opacity-20 rounded-full scale-110"></div>
+<!-- Main Circle -->
+<div class="relative w-20 h-20 bg-brand-dark rounded-full flex items-center justify-center animate-bloom success-glow">
+<span class="material-symbols-outlined text-white text-5xl" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+</div>
+<h1 class="font-display-lg text-display-lg text-center mb-space-2 text-primary">Ваш заказ принят!</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant text-center px-space-4">Мы уже готовимся сделать ваш дом безупречно чистым.</p>
+</div>
+<!-- Order Information Bento Block -->
+<div class="space-y-space-4">
+<!-- Primary Details -->
+<div class="bg-surface-container-lowest border border-line-hairline-light rounded-xl p-space-5 shadow-sm">
+<div class="flex justify-between items-start mb-space-4">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-space-1">ID Заказа</span>
+<p class="font-title-md text-title-md text-primary">#SX-88290</p>
+</div>
+<div class="bg-primary-fixed text-on-primary-fixed-variant px-space-3 py-space-1 rounded-full font-label-sm text-label-sm">
+                        Оплачено
+                    </div>
+</div>
+<div class="flex items-center gap-space-4 pt-space-4 border-t border-line-hairline-light">
+<div class="w-12 h-12 bg-surface-container flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-brand-dark">calendar_today</span>
+</div>
+<div>
+<p class="font-title-sm text-title-sm">Завтра, 14:00</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Дата и время визита</p>
+</div>
+</div>
+</div>
+<!-- Service Summary Card -->
+<div class="grid grid-cols-2 gap-space-4">
+<div class="bg-surface-container-low p-space-4 rounded-xl">
+<span class="material-symbols-outlined text-brand-dark mb-space-2">cleaning_services</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant block">Услуга</p>
+<p class="font-title-sm text-title-sm leading-tight">Генеральная уборка</p>
+</div>
+<div class="bg-surface-container-low p-space-4 rounded-xl">
+<span class="material-symbols-outlined text-brand-dark mb-space-2">home</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant block">Объект</p>
+<p class="font-title-sm text-title-sm leading-tight">Квартира, 75 м²</p>
+</div>
+</div>
+<!-- Editorial Moment -->
+<div class="relative h-48 rounded-xl overflow-hidden group cursor-pointer shadow-md">
+<img alt="Cleaning Professional" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A professional cleaner in a crisp white uniform with a subtle green Shine X logo, meticulously polishing a modern glass surface in a high-end Astana penthouse. The lighting is soft morning sunlight filtering through large floor-to-ceiling windows, highlighting a pristine, minimalist interior with marble accents. The mood is calm, professional, and reflects premium service quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbHChqbFnsIDCikdhtm9onC7ByRU_Z-WvpqcgqOGqwynWCRAN3ftFkD9byfy6BBBHwq9iLnYYAMKD-cw1_EA7zkGg9oUpj1ibA2hYEd2hF40YcVssjLx35adVKy1hAKyA5OUrlxpAGhwTBzrtrwskzTSRC0EBl845rrBtQA86S091W35yJqykt1NH1Tf0THWFsK2lWm1K3lL-E5XftAzdpR-n14nWQbShGGZpHxgiMU3UpL70pcBavuc0XpC6H5yMP_v6O34enkDNg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-space-4 text-white">
+<p class="font-title-sm text-title-sm">Ваш клинер: Айжан</p>
+<p class="font-body-sm text-body-sm opacity-90">Топ-специалист месяца • 4.98 ★</p>
+</div>
+<div class="absolute top-space-4 right-space-4">
+<div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+<span class="material-symbols-outlined text-white">verified_user</span>
+</div>
+</div>
+</div>
+<!-- Help/Security Info -->
+<div class="flex items-start gap-space-3 p-space-4 bg-bg-sunken-light rounded-lg">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mt-1">info</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                    Наш специалист прибудет за 10 минут до назначенного времени. Все чистящие средства включены в стоимость.
+                </p>
+</div>
+</div>
+</main>
+<!-- Sticky Bottom Actions -->
+<footer class="w-full max-w-[600px] sticky bottom-0 bg-surface px-space-6 pt-space-4 pb-space-8 shadow-[0_-8px_24px_rgba(22,32,26,0.06)] z-50 rounded-t-2xl">
+<div class="flex flex-col gap-space-3">
+<button class="w-full bg-brand-dark text-white font-label-lg text-label-lg h-space-9 rounded-lg flex items-center justify-center gap-space-2 haptic-medium transition-all shadow-lg active:scale-95">
+                Посмотреть заказ
+                <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="w-full bg-transparent text-primary font-label-lg text-label-lg h-space-9 rounded-lg flex items-center justify-center hover:bg-surface-container-low transition-colors haptic-medium active:scale-95">
+                Забронировать еще
+            </button>
+</div>
+<div class="mt-space-4 flex justify-center items-center gap-space-2 opacity-40">
+<span class="w-1 h-1 bg-on-surface-variant rounded-full"></span>
+<p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Shine X Astana Premium</p>
+<span class="w-1 h-1 bg-on-surface-variant rounded-full"></span>
+</div>
+</footer>
+<script>
+        // Simple haptic feel for buttons
+        document.querySelectorAll('.haptic-medium').forEach(button => {
+            button.addEventListener('touchstart', () => {
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(10);
+                }
+            });
+        });
+
+        // Entrance animation logic
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Success screen loaded: Shine X Premium Confirmation");
+            // Optional: trigger confetti effect via JS if desired
+        });
+    </script>
+</body></html>

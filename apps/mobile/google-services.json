@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1028866954430",
+    "project_id": "cleaningapp-b24a4",
+    "storage_bucket": "cleaningapp-b24a4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1028866954430:android:4f91b0dc8e0351db6ebaef",
+        "android_client_info": {
+          "package_name": "kz.shinex.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoaEyxPrBrG0RCeMvEoxiiFn5K122ULxY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

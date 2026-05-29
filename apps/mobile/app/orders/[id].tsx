@@ -1,32 +1,35 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import { ArrowLeft, Check, MapPin, MessageCircle, Phone, ShieldCheck, Star } from 'lucide-react-native';
 import { io, type Socket } from 'socket.io-client';
-import { Button, Card, ErrorText, Muted, Screen, Title } from '@/components/ui';
+import { BottomActionBar, Button, ErrorText, Muted, Screen, StatusChip, Title } from '@/components/ui';
 import {
   ApiError,
   WS_BASE,
   confirmStubPayment,
   getOrder,
   getOrderCleaner,
+  getPaymentStatus,
   initiatePayment,
 } from '@/lib/api';
+import { openPaymentAndAwait } from '@/lib/payment-flow';
 import { formatMoney, localeTag, statusLabel } from '@/lib/format';
 import { useSession } from '@/lib/session';
-import { colors } from '@/lib/theme';
+import { useTheme } from '@/lib/theme-provider';
 import type { CleanerCard, Order, OrderStatus } from '@/lib/types';
 
-const STATUS_ORDER: OrderStatus[] = [
-  'created',
-  'paid',
-  'assigned',
-  'en_route',
-  'in_progress',
-  'done',
-  'reviewed',
+const TIMELINE: { status: OrderStatus; label: string }[] = [
+  { status: 'created', label: 'Заказ размещён' },
+  { status: 'paid', label: 'Подтверждено' },
+  { status: 'assigned', label: 'Клинер назначен' },
+  { status: 'en_route', label: 'Клинер в пути' },
+  { status: 'in_progress', label: 'Выполняется' },
+  { status: 'done', label: 'Завершено' },
 ];
 
 export default function OrderDetailsScreen() {
+  const t = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { session } = useSession();
   const [order, setOrder] = useState<Order | null>(null);
@@ -72,7 +75,7 @@ export default function OrderDetailsScreen() {
 
   const stepIndex = useMemo(() => {
     if (!order) return -1;
-    return STATUS_ORDER.indexOf(order.status);
+    return TIMELINE.findIndex((s) => s.status === order.status);
   }, [order]);
 
   async function pay() {
@@ -83,8 +86,13 @@ export default function OrderDetailsScreen() {
       const payment = await initiatePayment(order.id, `mobile-${order.id}`);
       if (payment.nextAction === 'stub_confirm') {
         await confirmStubPayment(payment.id);
-        setOrder(await getOrder(order.id));
+      } else if (payment.nextAction === 'redirect' && payment.paymentUrl) {
+        const final = await openPaymentAndAwait(payment.paymentUrl, payment.id, getPaymentStatus);
+        if (final.status === 'failed' || final.status === 'expired' || final.status === 'cancelled') {
+          setError('Оплата не прошла. Попробуйте ещё раз.');
+        }
       }
+      setOrder(await getOrder(order.id));
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'Не удалось оплатить');
     } finally {
@@ -92,161 +100,350 @@ export default function OrderDetailsScreen() {
     }
   }
 
+  const showPayBar = order?.status === 'created';
+
   return (
     <Screen padded={false}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <Title>Заказ</Title>
-          {live && <Text style={styles.live}>● Live</Text>}
+      <ScrollView contentContainerStyle={{ padding: t.space[4], paddingBottom: showPayBar ? 140 : t.space[8], gap: t.space[4] }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Pressable onPress={() => router.back()} hitSlop={10} style={{ flexDirection: 'row', alignItems: 'center', gap: t.space[2] }}>
+            <ArrowLeft color={t.color.brand[500]} size={20} strokeWidth={2} />
+            <Text style={{ color: t.color.brand[500], fontSize: t.type.labelLg.fontSize, fontWeight: t.type.labelLg.fontWeight }}>Назад</Text>
+          </Pressable>
+          {live && (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+                backgroundColor: t.color.brand[100],
+                paddingHorizontal: t.space[3],
+                paddingVertical: 4,
+                borderRadius: t.radius.pill,
+              }}
+            >
+              <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: t.color.brand[500] }} />
+              <Text style={{ color: t.color.brand[500], fontSize: t.type.labelSm.fontSize, fontWeight: t.type.labelSm.fontWeight }}>Live</Text>
+            </View>
+          )}
         </View>
+
         <ErrorText>{error}</ErrorText>
-        {!order && !error && <ActivityIndicator color={colors.brand} />}
+
+        {!order && !error && <ActivityIndicator color={t.color.brand[500]} />}
+
         {order && (
           <>
-            <Card>
-              <View style={styles.row}>
-                <Text style={styles.label}>Статус</Text>
-                <Text style={styles.value}>{statusLabel(order.status)}</Text>
-              </View>
-              <View style={styles.row}>
-                <Text style={styles.label}>Сумма</Text>
-                <Text style={styles.value}>{formatMoney(order.total, order.currency)}</Text>
-              </View>
-              {order.scheduledAt && (
-                <View style={styles.row}>
-                  <Text style={styles.label}>Время</Text>
-                  <Text style={styles.value}>
-                    {new Date(order.scheduledAt).toLocaleString(localeTag('ru'))}
-                  </Text>
-                </View>
-              )}
-              <View style={styles.timeline}>
-                {STATUS_ORDER.map((status, index) => (
-                  <View
-                    key={status}
-                    style={[
-                      styles.timelineSegment,
-                      index <= stepIndex && styles.timelineSegmentActive,
-                    ]}
-                  />
-                ))}
-              </View>
-              {order.status === 'created' && (
-                <View style={styles.payAction}>
-                  <Button onPress={pay} disabled={paying}>
-                    {paying ? 'Оплачиваем...' : 'Оплатить'}
-                  </Button>
-                </View>
-              )}
-            </Card>
+            <View style={{ gap: t.space[2] }}>
+              <Title>Заказ #{order.id.slice(0, 6).toUpperCase()}</Title>
+              <StatusChip label={statusLabel(order.status)} tone={order.status === 'created' ? 'warn' : 'brand'} />
+            </View>
 
-            <Card>
-              <Text style={styles.cardTitle}>Клинер</Text>
-              {cleaner ? (
-                <View style={styles.cleaner}>
-                  <View style={styles.avatar}>
-                    <Text style={styles.avatarText}>{cleaner.displayName.charAt(0)}</Text>
-                  </View>
-                  <View style={styles.cleanerText}>
-                    <Text style={styles.cleanerName}>{cleaner.displayName}</Text>
-                    <Muted>
-                      ★ {cleaner.ratingAvg.toFixed(1)} · опыт {cleaner.yearsOfExperience} лет
-                    </Muted>
-                  </View>
-                </View>
-              ) : (
-                <Muted>Клинер еще не назначен.</Muted>
-              )}
-            </Card>
+            <Timeline stepIndex={stepIndex} order={order} />
+
+            <CleanerBlock cleaner={cleaner} />
+
+            <AddressBlock order={order} />
+
+            <SummaryBlock order={order} />
           </>
         )}
       </ScrollView>
+
+      {showPayBar && (
+        <BottomActionBar>
+          <Button onPress={pay} disabled={paying}>
+            {paying ? 'Обработка…' : `Оплатить ${formatMoney(order!.total, order!.currency)}`}
+          </Button>
+        </BottomActionBar>
+      )}
     </Screen>
   );
 }
 
-const styles = StyleSheet.create({
-  content: {
-    gap: 14,
-    padding: 16,
-    paddingBottom: 32,
-  },
-  header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  live: {
-    backgroundColor: '#ecfdf5',
-    borderRadius: 999,
-    color: '#047857',
-    fontSize: 12,
-    fontWeight: '800',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-    paddingVertical: 8,
-  },
-  label: {
-    color: colors.muted,
-  },
-  value: {
-    color: colors.ink,
-    flex: 1,
-    fontWeight: '800',
-    textAlign: 'right',
-  },
-  timeline: {
-    flexDirection: 'row',
-    gap: 4,
-    marginTop: 14,
-  },
-  timelineSegment: {
-    backgroundColor: colors.faint,
-    borderRadius: 999,
-    flex: 1,
-    height: 7,
-  },
-  timelineSegmentActive: {
-    backgroundColor: colors.brand,
-  },
-  payAction: {
-    marginTop: 16,
-  },
-  cardTitle: {
-    color: colors.ink,
-    fontSize: 16,
-    fontWeight: '800',
-    marginBottom: 10,
-  },
-  cleaner: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  avatar: {
-    alignItems: 'center',
-    backgroundColor: colors.brandSoft,
-    borderRadius: 28,
-    height: 56,
-    justifyContent: 'center',
-    width: 56,
-  },
-  avatarText: {
-    color: colors.brand,
-    fontSize: 24,
-    fontWeight: '900',
-  },
-  cleanerText: {
-    flex: 1,
-    gap: 4,
-  },
-  cleanerName: {
-    color: colors.ink,
-    fontSize: 16,
-    fontWeight: '800',
-  },
-});
+function Timeline({ stepIndex, order }: { stepIndex: number; order: Order }) {
+  const t = useTheme();
+  return (
+    <View
+      style={{
+        backgroundColor: t.color.bg.surface,
+        borderColor: t.color.line.hairline,
+        borderRadius: t.radius.lg,
+        borderWidth: 1,
+        padding: t.space[4],
+        gap: t.space[3],
+      }}
+    >
+      <Text style={{ color: t.color.ink.primary, fontSize: t.type.titleSm.fontSize, fontWeight: t.type.titleSm.fontWeight }}>
+        Статус заказа
+      </Text>
+      <View style={{ gap: t.space[4] }}>
+        {TIMELINE.map((step, i) => {
+          const done = i < stepIndex;
+          const current = i === stepIndex;
+          const upcoming = i > stepIndex;
+          const dotBg = done || current ? t.color.brand[500] : t.color.line.hairline;
+          const labelColor = upcoming ? t.color.ink.tertiary : t.color.ink.primary;
+          const isLast = i === TIMELINE.length - 1;
+          return (
+            <View key={step.status} style={{ flexDirection: 'row', gap: t.space[3], alignItems: 'flex-start' }}>
+              <View style={{ alignItems: 'center', width: 20 }}>
+                <View
+                  style={{
+                    width: 18,
+                    height: 18,
+                    borderRadius: 9,
+                    backgroundColor: dotBg,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {done && <Check color={t.color.ink.onBrand} size={12} strokeWidth={3} />}
+                  {current && <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: t.color.ink.onBrand }} />}
+                </View>
+                {!isLast && (
+                  <View
+                    style={{
+                      width: 2,
+                      flex: 1,
+                      minHeight: 16,
+                      marginTop: 4,
+                      backgroundColor: done ? t.color.brand[500] : t.color.line.hairline,
+                    }}
+                  />
+                )}
+              </View>
+              <View style={{ flex: 1, gap: 2, paddingBottom: isLast ? 0 : t.space[3] }}>
+                <Text
+                  style={{
+                    color: labelColor,
+                    fontSize: t.type.labelLg.fontSize,
+                    fontWeight: current ? t.type.titleSm.fontWeight : t.type.labelLg.fontWeight,
+                  }}
+                >
+                  {step.label}
+                </Text>
+                {current && order.scheduledAt && step.status !== 'created' && (
+                  <Text style={{ color: t.color.ink.secondary, fontSize: t.type.bodySm.fontSize }}>
+                    {new Date(order.scheduledAt).toLocaleString(localeTag('ru'), { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </Text>
+                )}
+                {step.status === 'created' && (
+                  <Text style={{ color: t.color.ink.secondary, fontSize: t.type.bodySm.fontSize }}>
+                    {new Date(order.createdAt).toLocaleString(localeTag('ru'), { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </Text>
+                )}
+              </View>
+            </View>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+function CleanerBlock({ cleaner }: { cleaner: CleanerCard | null }) {
+  const t = useTheme();
+  if (!cleaner) {
+    return (
+      <View
+        style={{
+          backgroundColor: t.color.bg.surface,
+          borderColor: t.color.line.hairline,
+          borderRadius: t.radius.lg,
+          borderWidth: 1,
+          padding: t.space[4],
+          gap: t.space[2],
+        }}
+      >
+        <Text style={{ color: t.color.ink.primary, fontSize: t.type.titleSm.fontSize, fontWeight: t.type.titleSm.fontWeight }}>
+          Клинер
+        </Text>
+        <Muted>Клинер ещё не назначен.</Muted>
+      </View>
+    );
+  }
+  return (
+    <View
+      style={{
+        backgroundColor: t.color.bg.surface,
+        borderColor: t.color.line.hairline,
+        borderRadius: t.radius.lg,
+        borderWidth: 1,
+        padding: t.space[4],
+        gap: t.space[3],
+      }}
+    >
+      <View style={{ flexDirection: 'row', gap: t.space[3], alignItems: 'center' }}>
+        <View
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: 28,
+            backgroundColor: t.color.brand[100],
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text style={{ color: t.color.brand[500], fontSize: 24, fontWeight: '700' }}>
+            {cleaner.displayName.charAt(0)}
+          </Text>
+        </View>
+        <View style={{ flex: 1, gap: 2 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Text
+              style={{
+                color: t.color.ink.primary,
+                fontSize: t.type.titleSm.fontSize,
+                fontWeight: t.type.titleSm.fontWeight,
+              }}
+            >
+              {cleaner.displayName}
+            </Text>
+            {cleaner.verified && <ShieldCheck color={t.color.brand[500]} size={16} strokeWidth={2} />}
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.space[2] }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <Star color={t.color.accent[500]} size={14} fill={t.color.accent[500]} />
+              <Text style={{ color: t.color.ink.primary, fontSize: t.type.labelSm.fontSize, fontWeight: '600' }}>
+                {cleaner.ratingAvg.toFixed(2)}
+              </Text>
+            </View>
+            <Muted>({cleaner.ratingCount} отзывов)</Muted>
+          </View>
+        </View>
+      </View>
+      <View style={{ flexDirection: 'row', gap: t.space[3] }}>
+        <IconAction icon={<MessageCircle color={t.color.brand[500]} size={18} strokeWidth={2} />} label="Чат" />
+        <IconAction icon={<Phone color={t.color.brand[500]} size={18} strokeWidth={2} />} label="Звонок" />
+      </View>
+    </View>
+  );
+}
+
+function IconAction({ icon, label }: { icon: React.ReactNode; label: string }) {
+  const t = useTheme();
+  return (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: 'row',
+        gap: t.space[2],
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: t.space[3],
+        borderRadius: t.radius.md,
+        borderWidth: 1,
+        borderColor: t.color.line.hairline,
+        backgroundColor: t.color.bg.surface,
+      }}
+    >
+      {icon}
+      <Text style={{ color: t.color.brand[500], fontSize: t.type.labelLg.fontSize, fontWeight: t.type.labelLg.fontWeight }}>
+        {label}
+      </Text>
+    </View>
+  );
+}
+
+function AddressBlock({ order: _order }: { order: Order }) {
+  const t = useTheme();
+  return (
+    <View
+      style={{
+        backgroundColor: t.color.bg.surface,
+        borderColor: t.color.line.hairline,
+        borderRadius: t.radius.lg,
+        borderWidth: 1,
+        padding: t.space[4],
+        flexDirection: 'row',
+        gap: t.space[3],
+        alignItems: 'flex-start',
+      }}
+    >
+      <View
+        style={{
+          width: 36,
+          height: 36,
+          borderRadius: t.radius.sm,
+          backgroundColor: t.color.brand[100],
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <MapPin color={t.color.brand[500]} size={18} strokeWidth={2} />
+      </View>
+      <View style={{ flex: 1, gap: 2 }}>
+        <Text style={{ color: t.color.ink.secondary, fontSize: t.type.labelSm.fontSize, fontWeight: t.type.labelSm.fontWeight }}>
+          АДРЕС УБОРКИ
+        </Text>
+        <Text style={{ color: t.color.ink.primary, fontSize: t.type.bodyLg.fontSize, fontWeight: '600' }}>
+          Астана, Казахстан
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+function SummaryBlock({ order }: { order: Order }) {
+  const t = useTheme();
+  return (
+    <View
+      style={{
+        backgroundColor: t.color.bg.surface,
+        borderColor: t.color.line.hairline,
+        borderRadius: t.radius.lg,
+        borderWidth: 1,
+        padding: t.space[4],
+        gap: t.space[3],
+      }}
+    >
+      <Text style={{ color: t.color.ink.primary, fontSize: t.type.titleSm.fontSize, fontWeight: t.type.titleSm.fontWeight }}>
+        Детали услуги
+      </Text>
+      <View style={{ gap: t.space[2] }}>
+        {order.notes && (
+          <Row label="Комментарий" value={order.notes} />
+        )}
+        {order.scheduledAt && (
+          <Row
+            label="Время визита"
+            value={new Date(order.scheduledAt).toLocaleString(localeTag('ru'), {
+              day: 'numeric',
+              month: 'long',
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          />
+        )}
+        <Row label="Источник" value={order.source ?? '—'} />
+      </View>
+      <View style={{ height: 1, backgroundColor: t.color.line.hairline }} />
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ color: t.color.ink.primary, fontSize: t.type.titleSm.fontSize, fontWeight: t.type.titleSm.fontWeight }}>
+          К оплате
+        </Text>
+        <Text
+          style={{
+            color: t.color.brand[500],
+            fontSize: t.type.titleLg.fontSize,
+            fontWeight: t.type.titleLg.fontWeight,
+            fontVariant: ['tabular-nums'],
+          }}
+        >
+          {formatMoney(order.total, order.currency)}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  const t = useTheme();
+  return (
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: t.space[3] }}>
+      <Text style={{ color: t.color.ink.secondary, fontSize: t.type.bodyMd.fontSize }}>{label}</Text>
+      <Text style={{ color: t.color.ink.primary, fontSize: t.type.bodyMd.fontSize, flex: 1, textAlign: 'right' }}>{value}</Text>
+    </View>
+  );
+}

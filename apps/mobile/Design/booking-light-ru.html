@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Shine X - Забронировать уборку</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @font-face {
+            font-family: 'Material Symbols Outlined';
+            font-style: normal;
+            font-weight: 100 700;
+            src: url(https://fonts.gstatic.com/s/materialsymbolsoutlined/v160/kJF1Eq7Dz1wD389K-xUq35832L1796D568.woff2) format('woff2');
+        }
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .price-roll { transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "brand-dark": "#52B788",
+                      "error": "#ba1a1a",
+                      "primary-fixed": "#b1f0ce",
+                      "on-secondary-container": "#6b3100",
+                      "secondary-fixed": "#ffdbc7",
+                      "inverse-on-surface": "#eff1ed",
+                      "inverse-surface": "#2e312f",
+                      "on-secondary": "#ffffff",
+                      "surface-container-low": "#f2f4f0",
+                      "surface-bright": "#f8faf6",
+                      "bg-page-light": "#FAFAF7",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-high": "#e7e9e5",
+                      "surface": "#f8faf6",
+                      "outline": "#707973",
+                      "ink-primary-dark": "#F0EBDF",
+                      "on-error-container": "#93000a",
+                      "accent-dark": "#F0935A",
+                      "surface-dim": "#d8dbd7",
+                      "on-surface": "#191c1a",
+                      "outline-variant": "#bfc9c1",
+                      "secondary-container": "#ff9243",
+                      "bg-sunken-light": "#F1EFE9",
+                      "on-tertiary-fixed-variant": "#6f3537",
+                      "surface-container-highest": "#e1e3df",
+                      "on-primary-fixed-variant": "#0e5138",
+                      "on-secondary-fixed-variant": "#733600",
+                      "secondary-fixed-dim": "#ffb688",
+                      "surface-container-lowest": "#ffffff",
+                      "primary": "#0f5238",
+                      "tertiary-fixed-dim": "#ffb3b3",
+                      "on-error": "#ffffff",
+                      "on-tertiary-container": "#ffcfce",
+                      "background": "#f8faf6",
+                      "primary-container": "#2d6a4f",
+                      "on-primary-fixed": "#002114",
+                      "on-primary": "#ffffff",
+                      "bg-page-dark": "#0F1411",
+                      "line-hairline-light": "#E6E2D7",
+                      "bg-surface-dark": "#161C18",
+                      "inverse-primary": "#95d4b3",
+                      "tertiary-fixed": "#ffdad9",
+                      "ink-primary-light": "#16201A",
+                      "on-surface-variant": "#404943",
+                      "secondary": "#974800",
+                      "surface-variant": "#e1e3df",
+                      "tertiary-container": "#8d4d4e",
+                      "tertiary": "#713638",
+                      "on-tertiary-fixed": "#390b0e",
+                      "on-background": "#191c1a",
+                      "on-secondary-fixed": "#311300",
+                      "surface-container": "#eceeea",
+                      "on-primary-container": "#a8e7c5",
+                      "primary-fixed-dim": "#95d4b3",
+                      "ink-secondary-light": "#5A6661",
+                      "surface-tint": "#2c694e",
+                      "error-container": "#ffdad6",
+                      "bg-elevated-dark": "#1E2622"
+              },
+              "borderRadius": { "lg": "0.5rem", "xl": "0.75rem" },
+              "fontFamily": {
+                      "body-md": ["Inter"], "body-lg": ["Inter"], "display-xl": ["Inter"], "title-sm": ["Inter"], "label-sm": ["Inter"],
+                      "title-lg": ["Inter"], "title-md": ["Inter"], "body-sm": ["Inter"], "label-lg": ["Inter"], "display-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "body-md": ["15px", {"lineHeight": "22px", "fontWeight": "400"}],
+                      "body-lg": ["17px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "display-xl": ["40px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "title-sm": ["17px", {"lineHeight": "22px", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "title-lg": ["24px", {"lineHeight": "30px", "fontWeight": "600"}],
+                      "title-md": ["20px", {"lineHeight": "26px", "fontWeight": "600"}],
+                      "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "label-lg": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+                      "display-lg": ["32px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface">
+<!-- Top AppBar (from JSON context) -->
+<header class="fixed top-0 w-full z-50 bg-background flex justify-between items-center px-4 h-16 max-w-[600px] mx-auto left-0 right-0">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+<h1 class="font-display-lg text-display-lg font-bold text-primary tracking-tight">Shine X</h1>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUcJ4Z8d4NkpHXSLgUG6PoVHT_cCyqb4-lRD7JWk-4xsow5MCTxvxMgYMpvVp0P1W0JSlWeSGDu87_AavFdRvxvyB1LM-nbpqaTqOz_VuQoXmgkdg-1AgIfPc5DhWSWLL4yu0yn3n6bL4nFzEG1lM430Cm4WPczMt944gjPA6FXor-g8fVLo1SnrV-WE74hArwF6Xqs_5r8ydosNtiIyRDKeT8ewHJWFs7XYOmPzvrcRAH4gAc-tMm4Y_1HG4DrCfqSdcsAWdYAtnT"/>
+</div>
+</header>
+<main class="pt-16 pb-32 max-w-[600px] mx-auto px-4">
+<!-- Hero PriceBlock -->
+<section class="py-8 text-center animate-in fade-in duration-700">
+<span class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-widest mb-2 block">ИТОГО К ОПЛАТЕ</span>
+<div class="flex items-center justify-center gap-1">
+<span class="font-display-xl text-display-xl text-primary">₸</span>
+<div class="font-display-xl text-display-xl text-primary overflow-hidden h-11 flex" id="price-container">
+<!-- Tabular numerals implementation -->
+<span class="price-roll">12 500</span>
+</div>
+</div>
+</section>
+<!-- Service Selector (Editorial Cards) -->
+<section class="mb-8">
+<h2 class="font-title-md text-title-md mb-4 px-1">Выберите тип уборки</h2>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+<!-- Standard Cleaning -->
+<button class="flex-shrink-0 w-64 text-left group transition-all active:scale-[0.98]">
+<div class="relative aspect-[16/9] rounded-xl overflow-hidden mb-3 border-2 border-primary">
+<img class="w-full h-full object-cover" data-alt="A bright, airy, modern minimalist living room in Almaty with soft warm sunlight streaming through large windows. The interior features premium neutral tones, a beige sofa, and a clean marble coffee table, conveying professional housekeeping and high-end residential cleaning services." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF7FkXDfN2PlbWYITOLuCCee2D8fFybRYNceaiC_Wdy-2o7E2wsHEH9XztGK6g4MxEhwfJZrLVbIyA0wpl3P-rlZRSBU7uDzfHJlWh6iIFik8voCYGIFqWIv_Ow842dkTJ_SJPxhPjwkoUi4-9nYPHDq3FVl2QyZDiA7a5BibuDNmWWy_fSfiYcB-HX37l4WsmfyDK0T7IN9EL0fM315zLGKjdF_Ofb9nf8MG0laIDOsr9e17kzOSBf3AZyzR055QdWxJiyOx_3C_Y"/>
+<div class="absolute top-3 right-3 bg-primary text-white p-1 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+</div>
+<p class="font-title-sm text-title-sm text-primary">Поддерживающая</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">От ₸ 12 500 • 2-3 часа</p>
+</button>
+<!-- Deep Cleaning -->
+<button class="flex-shrink-0 w-64 text-left group opacity-60 hover:opacity-100 transition-all active:scale-[0.98]">
+<div class="relative aspect-[16/9] rounded-xl overflow-hidden mb-3 border-2 border-transparent">
+<img class="w-full h-full object-cover" data-alt="A detailed shot of a pristine modern kitchen with white cabinetry and stainless steel appliances. The surface is glistening under professional lighting, emphasizing depth and thorough sanitation. The mood is sophisticated and clinical, perfect for a premium deep cleaning service advertisement." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJZF0ODDUXQ2729AIUkHrD8--jwFXtNdw80hvcojEliaG2uA28atcU9dFVB86rF0JoUAdywG5bEpQ2hYVkxig8icAYOJUvcxWA9ZxeplR8emD_5fozh_wLTaHfiPk2L2hHw77Vqx55hNqMmxWSFxxlTRFrvq-NzuQPpOwsfdq3umQCqw2DRtlzPQp23uOigp7tTTbbhnfvFo08nr5FV7deNxyV_YSeg5nY-7U9JkzZrcWxB3E_GIPMHQXDV3YVOlKsWRGZ0HFVlEgg"/>
+</div>
+<p class="font-title-sm text-title-sm">Генеральная</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">От ₸ 25 000 • 5-7 часов</p>
+</button>
+</div>
+</section>
+<!-- Room Steppers -->
+<section class="mb-8 grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-4 rounded-xl">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-primary">bed</span>
+<span class="font-label-lg text-label-lg">Комнаты</span>
+</div>
+<div class="flex items-center justify-between">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-white text-primary shadow-sm active:scale-95 transition-transform" onclick="decrement('room-count')">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="font-title-lg text-title-lg" id="room-count">1</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white shadow-sm active:scale-95 transition-transform" onclick="increment('room-count')">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-primary">bathtub</span>
+<span class="font-label-lg text-label-lg">Санузлы</span>
+</div>
+<div class="flex items-center justify-between">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-white text-primary shadow-sm active:scale-95 transition-transform" onclick="decrement('bath-count')">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="font-title-lg text-title-lg" id="bath-count">1</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white shadow-sm active:scale-95 transition-transform" onclick="increment('bath-count')">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</section>
+<!-- TimeSlotPicker -->
+<section class="mb-8">
+<h2 class="font-title-md text-title-md mb-4 px-1">Дата и время</h2>
+<!-- Horizontal Days -->
+<div class="flex gap-3 overflow-x-auto hide-scrollbar mb-4">
+<button class="flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center rounded-xl bg-primary text-white shadow-md">
+<span class="font-label-sm text-label-sm opacity-80">СЕГОДНЯ</span>
+<span class="font-title-lg text-title-lg">24</span>
+</button>
+<button class="flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors">
+<span class="font-label-sm text-label-sm text-on-surface-variant">ПТ</span>
+<span class="font-title-lg text-title-lg">25</span>
+</button>
+<button class="flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors">
+<span class="font-label-sm text-label-sm text-on-surface-variant">СБ</span>
+<span class="font-title-lg text-title-lg">26</span>
+</button>
+<button class="flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors">
+<span class="font-label-sm text-label-sm text-on-surface-variant">ВС</span>
+<span class="font-title-lg text-title-lg">27</span>
+</button>
+<button class="flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors">
+<span class="font-label-sm text-label-sm text-on-surface-variant">ПН</span>
+<span class="font-title-lg text-title-lg">28</span>
+</button>
+</div>
+<!-- Grid Slots -->
+<div class="grid grid-cols-3 gap-2">
+<button class="py-3 rounded-lg border border-primary bg-primary-container/10 text-primary font-title-sm text-center">09:00</button>
+<button class="py-3 rounded-lg border border-outline-variant hover:bg-surface-container text-on-surface-variant font-title-sm text-center">11:00</button>
+<button class="py-3 rounded-lg border border-outline-variant hover:bg-surface-container text-on-surface-variant font-title-sm text-center">13:30</button>
+<button class="py-3 rounded-lg border border-outline-variant hover:bg-surface-container text-on-surface-variant font-title-sm text-center">15:00</button>
+<button class="py-3 rounded-lg border border-outline-variant hover:bg-surface-container text-on-surface-variant font-title-sm text-center">17:00</button>
+<button class="py-3 rounded-lg border border-outline-variant hover:bg-surface-container text-on-surface-variant font-title-sm text-center">18:30</button>
+</div>
+</section>
+<!-- Address Selector -->
+<section class="mb-8">
+<h2 class="font-title-md text-title-md mb-4 px-1">Адрес в Астане</h2>
+<div class="relative mb-3">
+<input class="w-full h-14 pl-12 pr-4 rounded-xl bg-surface-container-low border-none focus:ring-2 focus:ring-primary font-body-lg text-body-lg" placeholder="Улица и номер дома" type="text" value="пр-т. Мангилик Ел, 55/1"/>
+<span class="material-symbols-outlined absolute left-4 top-4 text-primary">location_on</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<input class="w-full h-14 px-4 rounded-xl bg-surface-container-low border-none focus:ring-2 focus:ring-primary font-body-lg text-body-lg" placeholder="Подъезд" type="text"/>
+<input class="w-full h-14 px-4 rounded-xl bg-surface-container-low border-none focus:ring-2 focus:ring-primary font-body-lg text-body-lg" placeholder="Кв / Офис" type="text"/>
+</div>
+</section>
+<!-- Extra Options (Asymmetric Layout/Bento hints) -->
+<section class="mb-8">
+<h2 class="font-title-md text-title-md mb-4 px-1">Дополнительно</h2>
+<div class="grid grid-cols-2 gap-3">
+<button class="p-4 rounded-xl bg-white border border-outline-variant flex flex-col items-start gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">window</span>
+<span class="font-label-lg text-label-lg text-left">Мойка окон</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">+ ₸ 3 000</span>
+</button>
+<button class="p-4 rounded-xl bg-white border border-outline-variant flex flex-col items-start gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">kitchen</span>
+<span class="font-label-lg text-label-lg text-left">Внутри духовки</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">+ ₸ 2 500</span>
+</button>
+</div>
+</section>
+</main>
+<!-- Sticky Bottom Bar -->
+<div class="fixed bottom-0 w-full bg-white p-4 pb-safe border-t border-line-hairline-light z-50 max-w-[600px] left-1/2 -translate-x-1/2 flex flex-col gap-3">
+<button class="w-full h-14 bg-primary text-white rounded-xl font-title-md text-title-md flex items-center justify-center gap-2 shadow-lg active:scale-[0.97] transition-all duration-200" id="book-button" onclick="handleBooking()">
+<span>Забронировать за ₸ 12 500</span>
+</button>
+</div>
+<!-- Success Modal (Hidden) -->
+<div class="fixed inset-0 z-[100] hidden flex items-center justify-center p-6" id="success-modal">
+<div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeModal()"></div>
+<div class="relative w-full max-w-[400px] bg-white rounded-2xl p-8 text-center animate-in zoom-in-95 duration-300">
+<div class="w-20 h-20 bg-primary-fixed rounded-full flex items-center justify-center mx-auto mb-6">
+<span class="material-symbols-outlined text-primary text-4xl">check_circle</span>
+</div>
+<h3 class="font-display-lg text-display-lg text-primary mb-2">Ура!</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8">Ваш заказ принят. Клинер приедет сегодня к 09:00.</p>
+<button class="w-full h-14 bg-primary text-white rounded-xl font-title-md text-title-md" onclick="closeModal()">Отлично</button>
+</div>
+</div>
+<script>
+        function increment(id) {
+            const el = document.getElementById(id);
+            let val = parseInt(el.innerText);
+            el.innerText = val + 1;
+            updatePrice(3000);
+        }
+
+        function decrement(id) {
+            const el = document.getElementById(id);
+            let val = parseInt(el.innerText);
+            if (val > 1) {
+                el.innerText = val - 1;
+                updatePrice(-3000);
+            }
+        }
+
+        let currentPrice = 12500;
+        function updatePrice(delta) {
+            currentPrice += delta;
+            const container = document.querySelector('.price-roll');
+            const btnText = document.querySelector('#book-button span');
+            
+            // Subtle roll animation logic
+            container.style.transform = 'translateY(-10px)';
+            container.style.opacity = '0';
+            
+            setTimeout(() => {
+                const formatted = currentPrice.toLocaleString('ru-RU');
+                container.innerText = formatted;
+                btnText.innerText = `Забронировать за ₸ ${formatted}`;
+                container.style.transform = 'translateY(0)';
+                container.style.opacity = '1';
+            }, 100);
+        }
+
+        function handleBooking() {
+            const btn = document.getElementById('book-button');
+            const originalContent = btn.innerHTML;
+            
+            // Loading state
+            btn.innerHTML = `<span class="animate-spin material-symbols-outlined">autorenew</span>`;
+            btn.classList.add('opacity-80');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalContent;
+                btn.classList.remove('opacity-80');
+                document.getElementById('success-modal').classList.remove('hidden');
+                // Haptic feedback simulation
+                if (window.navigator.vibrate) window.navigator.vibrate(50);
+            }, 1200);
+        }
+
+        function closeModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+        }
+    </script>
+</body></html>

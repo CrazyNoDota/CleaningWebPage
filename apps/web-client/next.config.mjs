@@ -7,6 +7,7 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   typedRoutes: false,
+  output: 'standalone',
 };
 
 export default withNextIntl(nextConfig);
