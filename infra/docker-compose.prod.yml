@@ -57,6 +57,8 @@ services:
       OTP_DEV_MODE: "false"
       OTP_TTL_SECONDS: "300"
       OTP_LENGTH: "6"
+      REVIEW_PHONE: ${REVIEW_PHONE:-}
+      REVIEW_OTP: ${REVIEW_OTP:-}
       SMS_PROVIDER: ${SMS_PROVIDER:-mobizon}
       MOBIZON_API_KEY: ${MOBIZON_API_KEY}
       MOBIZON_SENDER: ${MOBIZON_SENDER:-}
