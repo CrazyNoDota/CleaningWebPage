@@ -11,15 +11,15 @@ import {
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import Constants from 'expo-constants';
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
+import {
+  GoogleSignin,
+  isErrorWithCode,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 import { Button, ErrorText, Screen } from '@/components/ui';
 import { ApiError, googleLogin, requestOtp, verifyOtp } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import { useTheme } from '@/lib/theme-provider';
-
-// Closes the in-app browser tab once Google redirects back to the app.
-WebBrowser.maybeCompleteAuthSession();
 
 type Stage = 'phone' | 'code';
 
@@ -29,14 +29,20 @@ const RESEND_SECONDS = 59;
 const googleExtra = Constants.expoConfig?.extra as
   | { googleClientIdWeb?: string; googleClientIdAndroid?: string; googleClientIdIos?: string }
   | undefined;
+// webClientId is what mints the ID token the API verifies — its value must be one of
+// the API's GOOGLE_CLIENT_IDS. Android matching is done by package + SHA-1 in Google Cloud,
+// not by a client id passed here.
 const GOOGLE_CLIENT_ID_WEB = googleExtra?.googleClientIdWeb || undefined;
-const GOOGLE_CLIENT_ID_ANDROID = googleExtra?.googleClientIdAndroid || undefined;
 const GOOGLE_CLIENT_ID_IOS = googleExtra?.googleClientIdIos || undefined;
-const GOOGLE_ENABLED = Boolean(
-  GOOGLE_CLIENT_ID_WEB || GOOGLE_CLIENT_ID_ANDROID || GOOGLE_CLIENT_ID_IOS,
-);
-// Native Android returns the ID token to this app-scheme redirect (matches android.package).
-const GOOGLE_ANDROID_REDIRECT_URI = 'kz.shinex.app:/oauthredirect';
+const GOOGLE_ENABLED = Boolean(GOOGLE_CLIENT_ID_WEB);
+
+if (GOOGLE_ENABLED) {
+  GoogleSignin.configure({
+    webClientId: GOOGLE_CLIENT_ID_WEB,
+    iosClientId: GOOGLE_CLIENT_ID_IOS,
+    offlineAccess: false,
+  });
+}
 
 export default function LoginScreen() {
   const t = useTheme();
@@ -51,14 +57,6 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(0);
   const [googleBusy, setGoogleBusy] = useState(false);
-
-  // expo-auth-session Google flow — yields an ID token we exchange for our own session.
-  const [googleRequest, googleResponse, promptGoogle] = Google.useIdTokenAuthRequest({
-    webClientId: GOOGLE_CLIENT_ID_WEB,
-    androidClientId: GOOGLE_CLIENT_ID_ANDROID,
-    iosClientId: GOOGLE_CLIENT_ID_IOS,
-    redirectUri: Platform.OS === 'android' ? GOOGLE_ANDROID_REDIRECT_URI : undefined,
-  });
 
   const otpRefs = useRef<Array<TextInput | null>>([]);
   const fullPhone = `+7${phoneLocal}`;
@@ -76,51 +74,36 @@ export default function LoginScreen() {
     return () => clearTimeout(handle);
   }, [resendIn]);
 
-  // React to the Google OAuth result: exchange the ID token for our session.
-  useEffect(() => {
-    if (!googleResponse) return;
-    if (googleResponse.type === 'success') {
-      const idToken =
-        googleResponse.params?.id_token ?? googleResponse.authentication?.idToken;
-      if (!idToken) {
-        setGoogleBusy(false);
-        setError('Google не вернул токен');
-        return;
-      }
-      (async () => {
-        try {
-          const session = await googleLogin(idToken);
-          await setSession(session);
-          router.replace(params.next ?? '/');
-        } catch (e) {
-          setError(e instanceof ApiError ? e.message : 'Не удалось войти через Google');
-        } finally {
-          setGoogleBusy(false);
-        }
-      })();
-    } else if (googleResponse.type === 'error') {
-      setGoogleBusy(false);
-      setError(googleResponse.error?.message ?? 'Не удалось войти через Google');
-    } else {
-      // 'cancel' / 'dismiss'
-      setGoogleBusy(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [googleResponse]);
-
+  // Native Google sign-in: get an ID token from the device, then exchange it for our session.
   async function signInWithGoogle() {
     if (!GOOGLE_ENABLED) {
       Alert.alert('Скоро', 'Вход через Google ещё не настроен в этой сборке.');
       return;
     }
-    if (!googleRequest) return;
     setError(null);
     setGoogleBusy(true);
     try {
-      await promptGoogle();
-    } catch {
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      const response = await GoogleSignin.signIn();
+      // v13+ returns { type, data }; older builds return the user object directly.
+      const idToken =
+        (response as { data?: { idToken?: string | null } }).data?.idToken ??
+        (response as { idToken?: string | null }).idToken ??
+        null;
+      if (!idToken) {
+        setError('Google не вернул токен');
+        return;
+      }
+      const session = await googleLogin(idToken);
+      await setSession(session);
+      router.replace(params.next ?? '/');
+    } catch (e) {
+      if (isErrorWithCode(e) && e.code === statusCodes.SIGN_IN_CANCELLED) {
+        return; // user backed out — not an error
+      }
+      setError(e instanceof ApiError ? e.message : 'Не удалось войти через Google');
+    } finally {
       setGoogleBusy(false);
-      setError('Не удалось открыть Google вход');
     }
   }
 
@@ -279,7 +262,7 @@ export default function LoginScreen() {
               phoneValid={phoneValid}
               onGoogle={signInWithGoogle}
               googleBusy={googleBusy}
-              googleDisabled={GOOGLE_ENABLED && !googleRequest}
+              googleDisabled={false}
             />
           ) : (
             <OtpStage
