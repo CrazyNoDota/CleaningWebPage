@@ -16,8 +16,9 @@ import {
   isErrorWithCode,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import { Button, ErrorText, Screen } from '@/components/ui';
-import { ApiError, googleLogin, requestOtp, verifyOtp } from '@/lib/api';
+import { ApiError, appleLogin, googleLogin, requestOtp, verifyOtp } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import { useTheme } from '@/lib/theme-provider';
 
@@ -57,6 +58,8 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(0);
   const [googleBusy, setGoogleBusy] = useState(false);
+  const [appleBusy, setAppleBusy] = useState(false);
+  const [appleAvailable, setAppleAvailable] = useState(false);
 
   const otpRefs = useRef<Array<TextInput | null>>([]);
   const fullPhone = `+7${phoneLocal}`;
@@ -73,6 +76,14 @@ export default function LoginScreen() {
     const handle = setTimeout(() => setResendIn((s) => s - 1), 1000);
     return () => clearTimeout(handle);
   }, [resendIn]);
+
+  // Apple requires Sign in with Apple to be offered alongside other social logins.
+  useEffect(() => {
+    if (Platform.OS !== 'ios') return;
+    AppleAuthentication.isAvailableAsync()
+      .then(setAppleAvailable)
+      .catch(() => setAppleAvailable(false));
+  }, []);
 
   // Native Google sign-in: get an ID token from the device, then exchange it for our session.
   async function signInWithGoogle() {
@@ -104,6 +115,40 @@ export default function LoginScreen() {
       setError(e instanceof ApiError ? e.message : 'Не удалось войти через Google');
     } finally {
       setGoogleBusy(false);
+    }
+  }
+
+  // Native Sign in with Apple: get an identity token, then exchange it for our session.
+  async function signInWithApple() {
+    setError(null);
+    setAppleBusy(true);
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      if (!credential.identityToken) {
+        setError('Apple не вернул токен');
+        return;
+      }
+      // Apple returns the name only on the first authorization.
+      const fullName = [
+        credential.fullName?.givenName,
+        credential.fullName?.familyName,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .trim();
+      const session = await appleLogin(credential.identityToken, fullName || undefined);
+      await setSession(session);
+      router.replace(params.next ?? '/');
+    } catch (e) {
+      if ((e as { code?: string })?.code === 'ERR_REQUEST_CANCELED') return;
+      setError(e instanceof ApiError ? e.message : 'Не удалось войти через Apple');
+    } finally {
+      setAppleBusy(false);
     }
   }
 
@@ -263,6 +308,9 @@ export default function LoginScreen() {
               onGoogle={signInWithGoogle}
               googleBusy={googleBusy}
               googleDisabled={false}
+              onApple={signInWithApple}
+              appleBusy={appleBusy}
+              appleAvailable={appleAvailable}
             />
           ) : (
             <OtpStage
@@ -314,6 +362,9 @@ function PhoneStage({
   onGoogle,
   googleBusy,
   googleDisabled,
+  onApple,
+  appleBusy,
+  appleAvailable,
 }: {
   theme: ReturnType<typeof useTheme>;
   phoneLocal: string;
@@ -325,6 +376,9 @@ function PhoneStage({
   onGoogle: () => void;
   googleBusy: boolean;
   googleDisabled: boolean;
+  onApple: () => void;
+  appleBusy: boolean;
+  appleAvailable: boolean;
 }) {
   const t = theme;
   return (
@@ -401,6 +455,16 @@ function PhoneStage({
           {googleBusy ? 'Вход через Google...' : 'Войти через Google'}
         </Text>
       </Pressable>
+
+      {appleAvailable && (
+        <AppleAuthentication.AppleAuthenticationButton
+          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+          cornerRadius={t.radius.md}
+          onPress={onApple}
+          style={{ height: 56, width: '100%', opacity: appleBusy ? 0.6 : 1 }}
+        />
+      )}
     </View>
   );
 }

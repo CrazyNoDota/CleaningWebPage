@@ -21,7 +21,7 @@ function resolveScheme(pref: ThemePref, system: ColorSchemeName): 'light' | 'dar
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [pref, setPrefState] = useState<ThemePref>('system');
+  const [pref, setPrefState] = useState<ThemePref>('light');
   const [system, setSystem] = useState<ColorSchemeName>(Appearance.getColorScheme() ?? 'light');
 
   useEffect(() => {
