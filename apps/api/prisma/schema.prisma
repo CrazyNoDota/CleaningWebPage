@@ -252,6 +252,7 @@ model Service {
   descRu      String      @default("")
   descKk      String      @default("")
   descEn      String      @default("")
+  photoUrl    String?     // cover photo URL (stored in Vercel Blob, WebP)
   basePrice   Int         // in minor units (tiyin) — KZT * 100
   currency    String      @default("KZT")
   // Pricing formula DSL — JSON expression evaluated server-side.

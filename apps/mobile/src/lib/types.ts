@@ -14,6 +14,7 @@ export type Service = {
   type: string;
   name: string;
   description: string;
+  photoUrl: string | null;
   basePrice: number;
   currency: string;
   options: ServiceOption[];

@@ -68,6 +68,7 @@ export class CatalogService {
       type: s.type,
       name: pickLocalized(s, 'name', locale),
       description: pickLocalized(s, 'desc', locale),
+      photoUrl: s.photoUrl ?? null,
       basePrice: s.basePrice,
       currency: s.currency,
       options: s.options.map((o) => ({
