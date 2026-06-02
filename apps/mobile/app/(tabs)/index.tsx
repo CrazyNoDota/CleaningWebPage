@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Image, ImageBackground, Pressable, ScrollView, Text, View } from 'react-native';
+import { Image, ImageBackground, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import {
@@ -7,23 +7,17 @@ import {
   ChevronDown,
   Info,
   MapPin,
-  Shirt,
   ShieldCheck,
   Sparkles,
-  SprayCan,
   Star,
   Users,
-  Wand2,
-  Wind,
-  Wrench,
 } from 'lucide-react-native';
 import { Button, Muted, Screen } from '@/components/ui';
-import { listCleaners } from '@/lib/api';
+import { listCleaners, listServices } from '@/lib/api';
 import { useTheme } from '@/lib/theme-provider';
-import type { CleanerCard } from '@/lib/types';
+import type { CleanerCard, Service } from '@/lib/types';
 
 const PROMO_IMG = require('../../assets/img/before_after.png');
-const HERO_IMG = require('../../assets/img/pro_supplies.png');
 const ROOMS = [
   { name: 'Гостиная', img: require('../../assets/img/pro_living.png') },
   { name: 'Спальня', img: require('../../assets/img/pro_bedroom.png') },
@@ -45,25 +39,6 @@ const PLANS: Record<Property, Array<{ key: string; title: string; rooms: string;
     { key: 'l', title: 'Большой', rooms: '200+ м²', bath: '2–3 с/у', price: 'от 65 000 ₸' },
   ],
 };
-
-type ServiceTile = {
-  key: string;
-  name: string;
-  tag?: string;
-  badge?: string;
-  Icon: typeof Sparkles;
-  primary: boolean;
-  slug?: string;
-};
-
-const SERVICE_TILES: ServiceTile[] = [
-  { key: 'cleaning', name: 'Уборка', tag: 'до -15%', Icon: Sparkles, primary: true, slug: 'apartment-standard' },
-  { key: 'windows', name: 'Мойка окон', Icon: Wind, primary: false },
-  { key: 'drycleaning', name: 'Химчистка', Icon: SprayCan, primary: false },
-  { key: 'ironing', name: 'Глажка', Icon: Shirt, primary: false },
-  { key: 'steam', name: 'Чистка паром', badge: 'ХИТ', Icon: Wand2, primary: false, slug: 'apartment-deep' },
-  { key: 'renovation', name: 'После ремонта', Icon: Wrench, primary: false, slug: 'post-renovation' },
-];
 
 const TIERS = [
   {
@@ -107,12 +82,12 @@ export default function HomeTab() {
   const t = useTheme();
   const insets = useSafeAreaInsets();
   const [cleaners, setCleaners] = useState<CleanerCard[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const [property, setProperty] = useState<Property>('apartment');
 
   useEffect(() => {
-    listCleaners('ru', 8)
-      .then(setCleaners)
-      .catch(() => undefined);
+    listCleaners('ru', 8).then(setCleaners).catch(() => undefined);
+    listServices('ru').then(setServices).catch(() => undefined);
   }, []);
 
   return (
@@ -236,40 +211,29 @@ export default function HomeTab() {
           Параметры можно изменить на следующем шаге
         </Text>
 
-        {/* SERVICES GRID — top.kz style icon cards */}
-        <View style={{ paddingHorizontal: t.space[4], marginTop: t.space[5] }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: t.space[3] }}>
-            <Text style={{ color: t.color.ink.primary, fontSize: t.type.titleMd.fontSize, fontWeight: '800' }}>
-              Услуги
-            </Text>
-            <Pressable onPress={() => router.push('/services')} hitSlop={10}>
-              <Text style={{ color: t.color.brand[600], fontSize: t.type.labelLg.fontSize, fontWeight: '700' }}>
-                Все услуги
+        {/* SERVICES GRID — dynamic from API */}
+        {services.length > 0 && (
+          <View style={{ paddingHorizontal: t.space[4], marginTop: t.space[5] }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: t.space[3] }}>
+              <Text style={{ color: t.color.ink.primary, fontSize: t.type.titleMd.fontSize, fontWeight: '800' }}>
+                Услуги
               </Text>
-            </Pressable>
-          </View>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: t.space[3] }}>
-            {SERVICE_TILES.map((s) => {
-              const isPastel = s.primary || Boolean(s.badge);
-              const tileBg = s.primary ? '#E7F2FF' : s.badge ? '#FFF4B8' : t.color.bg.surface;
-              const titleColor = isPastel ? '#0B1727' : t.color.ink.primary;
-              const iconBg = isPastel ? 'rgba(11,23,39,0.08)' : t.color.brand[100];
-              const iconColor = isPastel ? '#0B1727' : t.color.brand[500];
-              return (
+              <Pressable onPress={() => router.push('/services')} hitSlop={10}>
+                <Text style={{ color: t.color.brand[600], fontSize: t.type.labelLg.fontSize, fontWeight: '700' }}>
+                  Все услуги
+                </Text>
+              </Pressable>
+            </View>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: t.space[3] }}>
+              {services.map((s, idx) => (
                 <Pressable
-                  key={s.key}
-                  onPress={() => {
-                    if (s.slug) {
-                      router.push({ pathname: '/(tabs)/book', params: { slug: s.slug } });
-                    } else {
-                      Alert.alert(s.name, 'Эта услуга появится в одном из ближайших обновлений.');
-                    }
-                  }}
+                  key={s.id}
+                  onPress={() => router.push({ pathname: '/(tabs)/book', params: { slug: s.slug } })}
                   style={({ pressed }) => ({
                     width: '47%',
                     flexGrow: 1,
                     minHeight: 100,
-                    backgroundColor: tileBg,
+                    backgroundColor: idx === 0 ? '#E7F2FF' : t.color.bg.surface,
                     borderColor: t.color.line.hairline,
                     borderWidth: 1,
                     borderRadius: t.radius.lg,
@@ -285,49 +249,23 @@ export default function HomeTab() {
                       width: 44,
                       height: 44,
                       borderRadius: t.radius.md,
-                      backgroundColor: iconBg,
+                      backgroundColor: idx === 0 ? 'rgba(11,23,39,0.08)' : t.color.brand[100],
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
                   >
-                    <s.Icon color={iconColor} size={24} strokeWidth={2} />
+                    <Sparkles color={idx === 0 ? '#0B1727' : t.color.brand[500]} size={24} strokeWidth={2} />
                   </View>
                   <View style={{ flex: 1, gap: 4 }}>
-                    <Text style={{ color: titleColor, fontSize: t.type.labelLg.fontSize, fontWeight: '700' }}>
+                    <Text style={{ color: idx === 0 ? '#0B1727' : t.color.ink.primary, fontSize: t.type.labelLg.fontSize, fontWeight: '700' }}>
                       {s.name}
                     </Text>
-                    {s.tag && (
-                      <View
-                        style={{
-                          alignSelf: 'flex-start',
-                          backgroundColor: '#FFD2D2',
-                          paddingHorizontal: t.space[2],
-                          paddingVertical: 1,
-                          borderRadius: t.radius.pill,
-                        }}
-                      >
-                        <Text style={{ color: '#C5001A', fontSize: 11, fontWeight: '800' }}>{s.tag}</Text>
-                      </View>
-                    )}
-                    {s.badge && (
-                      <View
-                        style={{
-                          alignSelf: 'flex-start',
-                          backgroundColor: '#7A3DD2',
-                          paddingHorizontal: t.space[2],
-                          paddingVertical: 1,
-                          borderRadius: t.radius.pill,
-                        }}
-                      >
-                        <Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>{s.badge}</Text>
-                      </View>
-                    )}
                   </View>
                 </Pressable>
-              );
-            })}
+              ))}
+            </View>
           </View>
-        </View>
+        )}
 
         {/* SUBSCRIPTION BANNER */}
         <View style={{ marginHorizontal: t.space[4], marginTop: t.space[5] }}>

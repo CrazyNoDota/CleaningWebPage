@@ -7,6 +7,7 @@ import type {
   AdminOrderFull,
   AdminOrderListItem,
   AdminReview,
+  AdminService,
   CreateCleanerBody,
   DirectorSettings,
   JobApplicationStatusValue,
@@ -233,6 +234,29 @@ export function adminUpdateApplication(
     method: 'PATCH',
     body,
   });
+}
+
+// ── Admin · Services (catalog) ────────────────────────────────────
+
+export function adminListServices() {
+  return request<AdminService[]>('/admin/services');
+}
+
+export function adminUpdateService(
+  id: string,
+  body: Partial<Pick<AdminService, 'nameRu' | 'nameKk' | 'nameEn' | 'descRu' | 'descKk' | 'descEn' | 'photoUrl'>>,
+) {
+  return request<AdminService>(`/admin/services/${id}`, { method: 'PATCH', body });
+}
+
+export async function adminUploadServicePhoto(file: File): Promise<string> {
+  const { upload } = await import('@vercel/blob/client');
+  const blob = await upload(file.name, file, {
+    access: 'public',
+    handleUploadUrl: `${API_BASE}/admin/services/photo-upload`,
+    clientPayload: JSON.stringify({ token: getAccessToken() }),
+  });
+  return blob.url;
 }
 
 // ── Admin · Metrics ────────────────────────────────────────────────

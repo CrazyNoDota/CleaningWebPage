@@ -137,6 +137,22 @@ export interface AdminMetrics {
   generatedAt: string;
 }
 
+export interface AdminService {
+  id: string;
+  slug: string;
+  type: string;
+  nameRu: string;
+  nameKk: string;
+  nameEn: string;
+  descRu: string;
+  descKk: string;
+  descEn: string;
+  photoUrl: string | null;
+  basePrice: number;
+  currency: string;
+  isActive: boolean;
+}
+
 export type DirectorChannel = 'whatsapp' | 'telegram';
 
 export interface DirectorSettings {

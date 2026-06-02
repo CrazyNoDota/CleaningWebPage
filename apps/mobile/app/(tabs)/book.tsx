@@ -37,7 +37,7 @@ import { useSession } from '@/lib/session';
 import { useTheme } from '@/lib/theme-provider';
 import type { Address, Quote, Service } from '@/lib/types';
 
-// Category cover photos, mapped by service slug. Unknown slugs fall back to standard.
+// Local cover photos fallback by slug (used when service.photoUrl is null)
 const CATEGORY_IMAGES: Record<string, number> = {
   'apartment-standard': require('../../assets/img/cat_standard.png'),
   'apartment-deep': require('../../assets/img/cat_deep.png'),
@@ -45,6 +45,11 @@ const CATEGORY_IMAGES: Record<string, number> = {
   office: require('../../assets/img/cat_office.png'),
 };
 const CATEGORY_FALLBACK = require('../../assets/img/cat_standard.png');
+
+function serviceImage(service: { slug: string; photoUrl: string | null }) {
+  if (service.photoUrl) return { uri: service.photoUrl };
+  return CATEGORY_IMAGES[service.slug] ?? CATEGORY_FALLBACK;
+}
 
 const WEEKDAYS_SHORT = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
 const MONTHS_SHORT = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
@@ -344,7 +349,7 @@ export default function BookScreen() {
                     })}
                   >
                     <ImageBackground
-                      source={CATEGORY_IMAGES[service.slug] ?? CATEGORY_FALLBACK}
+                      source={serviceImage(service)}
                       resizeMode="cover"
                       style={{
                         aspectRatio: 16 / 9,
