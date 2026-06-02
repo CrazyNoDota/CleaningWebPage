@@ -11,15 +11,16 @@ import {
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import Constants from 'expo-constants';
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
+import {
+  GoogleSignin,
+  isErrorWithCode,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import { Button, ErrorText, Screen } from '@/components/ui';
-import { ApiError, googleLogin, requestOtp, verifyOtp } from '@/lib/api';
+import { ApiError, appleLogin, googleLogin, requestOtp, verifyOtp } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import { useTheme } from '@/lib/theme-provider';
-
-// Closes the in-app browser tab once Google redirects back to the app.
-WebBrowser.maybeCompleteAuthSession();
 
 type Stage = 'phone' | 'code';
 
@@ -29,14 +30,20 @@ const RESEND_SECONDS = 59;
 const googleExtra = Constants.expoConfig?.extra as
   | { googleClientIdWeb?: string; googleClientIdAndroid?: string; googleClientIdIos?: string }
   | undefined;
+// webClientId is what mints the ID token the API verifies — its value must be one of
+// the API's GOOGLE_CLIENT_IDS. Android matching is done by package + SHA-1 in Google Cloud,
+// not by a client id passed here.
 const GOOGLE_CLIENT_ID_WEB = googleExtra?.googleClientIdWeb || undefined;
-const GOOGLE_CLIENT_ID_ANDROID = googleExtra?.googleClientIdAndroid || undefined;
 const GOOGLE_CLIENT_ID_IOS = googleExtra?.googleClientIdIos || undefined;
-const GOOGLE_ENABLED = Boolean(
-  GOOGLE_CLIENT_ID_WEB || GOOGLE_CLIENT_ID_ANDROID || GOOGLE_CLIENT_ID_IOS,
-);
-// Native Android returns the ID token to this app-scheme redirect (matches android.package).
-const GOOGLE_ANDROID_REDIRECT_URI = 'kz.shinex.app:/oauthredirect';
+const GOOGLE_ENABLED = Boolean(GOOGLE_CLIENT_ID_WEB);
+
+if (GOOGLE_ENABLED) {
+  GoogleSignin.configure({
+    webClientId: GOOGLE_CLIENT_ID_WEB,
+    iosClientId: GOOGLE_CLIENT_ID_IOS,
+    offlineAccess: false,
+  });
+}
 
 export default function LoginScreen() {
   const t = useTheme();
@@ -51,14 +58,8 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(0);
   const [googleBusy, setGoogleBusy] = useState(false);
-
-  // expo-auth-session Google flow — yields an ID token we exchange for our own session.
-  const [googleRequest, googleResponse, promptGoogle] = Google.useIdTokenAuthRequest({
-    webClientId: GOOGLE_CLIENT_ID_WEB,
-    androidClientId: GOOGLE_CLIENT_ID_ANDROID,
-    iosClientId: GOOGLE_CLIENT_ID_IOS,
-    redirectUri: Platform.OS === 'android' ? GOOGLE_ANDROID_REDIRECT_URI : undefined,
-  });
+  const [appleBusy, setAppleBusy] = useState(false);
+  const [appleAvailable, setAppleAvailable] = useState(false);
 
   const otpRefs = useRef<Array<TextInput | null>>([]);
   const fullPhone = `+7${phoneLocal}`;
@@ -76,51 +77,78 @@ export default function LoginScreen() {
     return () => clearTimeout(handle);
   }, [resendIn]);
 
-  // React to the Google OAuth result: exchange the ID token for our session.
+  // Apple requires Sign in with Apple to be offered alongside other social logins.
   useEffect(() => {
-    if (!googleResponse) return;
-    if (googleResponse.type === 'success') {
-      const idToken =
-        googleResponse.params?.id_token ?? googleResponse.authentication?.idToken;
-      if (!idToken) {
-        setGoogleBusy(false);
-        setError('Google не вернул токен');
-        return;
-      }
-      (async () => {
-        try {
-          const session = await googleLogin(idToken);
-          await setSession(session);
-          router.replace(params.next ?? '/');
-        } catch (e) {
-          setError(e instanceof ApiError ? e.message : 'Не удалось войти через Google');
-        } finally {
-          setGoogleBusy(false);
-        }
-      })();
-    } else if (googleResponse.type === 'error') {
-      setGoogleBusy(false);
-      setError(googleResponse.error?.message ?? 'Не удалось войти через Google');
-    } else {
-      // 'cancel' / 'dismiss'
-      setGoogleBusy(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [googleResponse]);
+    if (Platform.OS !== 'ios') return;
+    AppleAuthentication.isAvailableAsync()
+      .then(setAppleAvailable)
+      .catch(() => setAppleAvailable(false));
+  }, []);
 
+  // Native Google sign-in: get an ID token from the device, then exchange it for our session.
   async function signInWithGoogle() {
     if (!GOOGLE_ENABLED) {
       Alert.alert('Скоро', 'Вход через Google ещё не настроен в этой сборке.');
       return;
     }
-    if (!googleRequest) return;
     setError(null);
     setGoogleBusy(true);
     try {
-      await promptGoogle();
-    } catch {
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      const response = await GoogleSignin.signIn();
+      // v13+ returns { type, data }; older builds return the user object directly.
+      const idToken =
+        (response as { data?: { idToken?: string | null } }).data?.idToken ??
+        (response as { idToken?: string | null }).idToken ??
+        null;
+      if (!idToken) {
+        setError('Google не вернул токен');
+        return;
+      }
+      const session = await googleLogin(idToken);
+      await setSession(session);
+      router.replace(params.next ?? '/');
+    } catch (e) {
+      if (isErrorWithCode(e) && e.code === statusCodes.SIGN_IN_CANCELLED) {
+        return; // user backed out — not an error
+      }
+      setError(e instanceof ApiError ? e.message : 'Не удалось войти через Google');
+    } finally {
       setGoogleBusy(false);
-      setError('Не удалось открыть Google вход');
+    }
+  }
+
+  // Native Sign in with Apple: get an identity token, then exchange it for our session.
+  async function signInWithApple() {
+    setError(null);
+    setAppleBusy(true);
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      if (!credential.identityToken) {
+        setError('Apple не вернул токен');
+        return;
+      }
+      // Apple returns the name only on the first authorization.
+      const fullName = [
+        credential.fullName?.givenName,
+        credential.fullName?.familyName,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .trim();
+      const session = await appleLogin(credential.identityToken, fullName || undefined);
+      await setSession(session);
+      router.replace(params.next ?? '/');
+    } catch (e) {
+      if ((e as { code?: string })?.code === 'ERR_REQUEST_CANCELED') return;
+      setError(e instanceof ApiError ? e.message : 'Не удалось войти через Apple');
+    } finally {
+      setAppleBusy(false);
     }
   }
 
@@ -279,7 +307,10 @@ export default function LoginScreen() {
               phoneValid={phoneValid}
               onGoogle={signInWithGoogle}
               googleBusy={googleBusy}
-              googleDisabled={GOOGLE_ENABLED && !googleRequest}
+              googleDisabled={false}
+              onApple={signInWithApple}
+              appleBusy={appleBusy}
+              appleAvailable={appleAvailable}
             />
           ) : (
             <OtpStage
@@ -331,6 +362,9 @@ function PhoneStage({
   onGoogle,
   googleBusy,
   googleDisabled,
+  onApple,
+  appleBusy,
+  appleAvailable,
 }: {
   theme: ReturnType<typeof useTheme>;
   phoneLocal: string;
@@ -342,6 +376,9 @@ function PhoneStage({
   onGoogle: () => void;
   googleBusy: boolean;
   googleDisabled: boolean;
+  onApple: () => void;
+  appleBusy: boolean;
+  appleAvailable: boolean;
 }) {
   const t = theme;
   return (
@@ -418,6 +455,16 @@ function PhoneStage({
           {googleBusy ? 'Вход через Google...' : 'Войти через Google'}
         </Text>
       </Pressable>
+
+      {appleAvailable && (
+        <AppleAuthentication.AppleAuthenticationButton
+          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+          cornerRadius={t.radius.md}
+          onPress={onApple}
+          style={{ height: 56, width: '100%', opacity: appleBusy ? 0.6 : 1 }}
+        />
+      )}
     </View>
   );
 }

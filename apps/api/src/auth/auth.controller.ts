@@ -7,6 +7,7 @@ import {
   VerifyOtpDto,
   RefreshDto,
   GoogleLoginDto,
+  AppleLoginDto,
 } from './dto/auth.dto';
 
 @ApiTags('auth')
@@ -33,6 +34,13 @@ export class AuthController {
   @ApiOperation({ summary: 'Sign in with a Google ID token; issues access + refresh tokens' })
   googleLogin(@Body() dto: GoogleLoginDto) {
     return this.auth.googleLogin(dto.idToken);
+  }
+
+  @Post('apple')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Sign in with an Apple identity token; issues access + refresh tokens' })
+  appleLogin(@Body() dto: AppleLoginDto) {
+    return this.auth.appleLogin(dto.identityToken, dto.fullName);
   }
 
   @Post('admin/login')

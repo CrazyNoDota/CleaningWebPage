@@ -118,6 +118,14 @@ export function googleLogin(idToken: string) {
   });
 }
 
+export function appleLogin(identityToken: string, fullName?: string) {
+  return request<Session>('/auth/apple', {
+    method: 'POST',
+    body: { identityToken, fullName: fullName || undefined },
+    auth: false,
+  });
+}
+
 export function listServices(locale: Locale = 'ru', city = 'astana') {
   const qs = `city=${encodeURIComponent(city)}&locale=${encodeURIComponent(locale)}`;
   return request<Service[]>(`/services?${qs}`, { auth: false, locale });

@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import appleSignin from 'apple-signin-auth';
 import { PrismaService } from '../prisma/prisma.service';
 import { OtpService } from './otp.service';
 import { TokenService } from './token.service';
@@ -103,6 +104,68 @@ export class AuthService {
         userId: user.id,
         provider: 'google',
         providerUserId: identity.providerUserId,
+      },
+    });
+
+    return this.tokens.issuePair(user);
+  }
+
+  /**
+   * Sign in with Apple. Verifies the identity token (JWT) against Apple's public
+   * keys, then finds-or-creates the user and links an OAuthAccount(provider=apple).
+   * Mirrors googleLogin — Apple's `sub` is the stable provider user id, and the
+   * email is only present on the first authorization (may be a private relay).
+   */
+  async appleLogin(identityToken: string, fullName?: string) {
+    const audience = this.config.get<string>('APPLE_BUNDLE_ID') ?? 'kz.shinex.app';
+
+    let providerUserId: string | undefined;
+    let email: string | undefined;
+    try {
+      const claims = await appleSignin.verifyIdToken(identityToken, { audience });
+      providerUserId = claims.sub;
+      email = claims.email;
+    } catch {
+      throw new UnauthorizedException('invalid Apple identity token');
+    }
+    if (!providerUserId) {
+      throw new UnauthorizedException('invalid Apple identity token');
+    }
+
+    // 1. Already linked? Use that user.
+    const existingLink = await this.prisma.oAuthAccount.findUnique({
+      where: {
+        provider_providerUserId: {
+          provider: 'apple',
+          providerUserId,
+        },
+      },
+      include: { user: true },
+    });
+    if (existingLink) {
+      return this.tokens.issuePair(existingLink.user);
+    }
+
+    // 2. No link yet — match by verified email, or create a new client.
+    let user = email
+      ? await this.prisma.user.findUnique({ where: { email } })
+      : null;
+    if (!user) {
+      user = await this.prisma.user.create({
+        data: { email: email ?? undefined, name: fullName, role: 'client' },
+      });
+    } else if (fullName && !user.name) {
+      user = await this.prisma.user.update({
+        where: { id: user.id },
+        data: { name: fullName },
+      });
+    }
+
+    await this.prisma.oAuthAccount.create({
+      data: {
+        userId: user.id,
+        provider: 'apple',
+        providerUserId,
       },
     });
 

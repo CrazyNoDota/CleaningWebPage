@@ -35,6 +35,18 @@ export class GoogleLoginDto {
   idToken!: string;
 }
 
+export class AppleLoginDto {
+  @ApiProperty({ description: 'Apple identity token (JWT) from Sign in with Apple on the client' })
+  @IsString()
+  @IsNotEmpty()
+  identityToken!: string;
+
+  @ApiProperty({ required: false, description: 'Full name — only provided by Apple on the first authorization' })
+  @IsOptional()
+  @IsString()
+  fullName?: string;
+}
+
 export class RefreshDto {
   @ApiProperty()
   @IsString()
