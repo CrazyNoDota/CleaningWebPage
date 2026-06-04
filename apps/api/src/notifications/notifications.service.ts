@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { NotificationChannel, NotificationStatus, Prisma } from '@prisma/client';
+import { randomUUID } from 'node:crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { renderOrderTemplate, type TemplateContext } from './templates/order-templates';
 import type { Locale } from '../common/locale';
@@ -121,6 +122,126 @@ export class NotificationsService {
         });
       }
     }
+  }
+
+  /**
+   * Admin-initiated push broadcast. Selects users by audience segment, sends a
+   * push to each one's device token via FCM, and records one Notification row
+   * per recipient (kind "admin.broadcast", grouped by a shared batchId).
+   */
+  async broadcastPush(input: {
+    title: string;
+    body: string;
+    segment: 'all' | 'has_orders';
+    phone?: string;
+  }): Promise<{ batchId: string; recipients: number; sent: number; failed: number }> {
+    const where: Prisma.UserWhereInput = {
+      isActive: true,
+      deletedAt: null,
+      deviceTokens: { isEmpty: false },
+    };
+    if (input.phone) {
+      where.phone = input.phone;
+    } else if (input.segment === 'has_orders') {
+      where.orders = { some: {} };
+    }
+
+    const users = await this.prisma.user.findMany({
+      where,
+      select: {
+        id: true,
+        phone: true,
+        email: true,
+        telegramChatId: true,
+        deviceTokens: true,
+      },
+    });
+
+    const push = this.drivers.get(NotificationChannel.push)!;
+    const batchId = randomUUID();
+    const payload: Prisma.InputJsonValue = { batchId, title: input.title };
+    let sent = 0;
+    let failed = 0;
+
+    for (const user of users) {
+      const recipient = push.resolveRecipient(user);
+      if (!recipient) continue;
+
+      try {
+        await push.send({ recipient, subject: input.title, body: input.body });
+        sent++;
+        await this.recordAttempt({
+          userId: user.id,
+          kind: 'admin.broadcast',
+          channel: NotificationChannel.push,
+          status: NotificationStatus.sent,
+          recipient,
+          subject: input.title,
+          body: input.body,
+          payload,
+          sentAt: new Date(),
+        });
+      } catch (err) {
+        failed++;
+        const message = err instanceof Error ? err.message : String(err);
+        this.log.warn(`broadcast push failed for user ${user.id}: ${message}`);
+        if (err instanceof DeadDeviceTokenError) {
+          await this.pruneDeviceToken(user.id, err.token);
+        }
+        await this.recordAttempt({
+          userId: user.id,
+          kind: 'admin.broadcast',
+          channel: NotificationChannel.push,
+          status: NotificationStatus.failed,
+          recipient,
+          subject: input.title,
+          body: input.body,
+          payload,
+          error: message,
+        });
+      }
+    }
+
+    this.log.log(`broadcast ${batchId}: ${sent} sent, ${failed} failed of ${users.length}`);
+    return { batchId, recipients: users.length, sent, failed };
+  }
+
+  /** Recent broadcast campaigns, grouped by batchId for the admin history view. */
+  async listBroadcasts(limit = 50) {
+    const rows = await this.prisma.notification.findMany({
+      where: { kind: 'admin.broadcast' },
+      orderBy: { createdAt: 'desc' },
+      take: 5000,
+    });
+
+    const byBatch = new Map<
+      string,
+      { batchId: string; title: string; body: string; createdAt: Date; sent: number; failed: number; total: number }
+    >();
+    for (const r of rows) {
+      const payload = (r.payload ?? {}) as { batchId?: string; title?: string };
+      const batchId = payload.batchId ?? r.id;
+      let entry = byBatch.get(batchId);
+      if (!entry) {
+        entry = {
+          batchId,
+          title: r.subject ?? payload.title ?? '',
+          body: r.body,
+          createdAt: r.createdAt,
+          sent: 0,
+          failed: 0,
+          total: 0,
+        };
+        byBatch.set(batchId, entry);
+      }
+      entry.total++;
+      if (r.status === NotificationStatus.sent) entry.sent++;
+      if (r.status === NotificationStatus.failed) entry.failed++;
+    }
+
+    return Array.from(byBatch.values())
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, limit);
   }
 
   private async pruneDeviceToken(userId: string, token: string) {

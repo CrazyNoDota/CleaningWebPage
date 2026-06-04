@@ -8,6 +8,9 @@ import type {
   AdminOrderListItem,
   AdminReview,
   AdminService,
+  BroadcastCampaign,
+  BroadcastResult,
+  BroadcastSegment,
   CreateCleanerBody,
   DirectorSettings,
   JobApplicationStatusValue,
@@ -244,9 +247,41 @@ export function adminListServices() {
 
 export function adminUpdateService(
   id: string,
-  body: Partial<Pick<AdminService, 'nameRu' | 'nameKk' | 'nameEn' | 'descRu' | 'descKk' | 'descEn' | 'photoUrl'>>,
+  body: Partial<
+    Pick<
+      AdminService,
+      | 'nameRu'
+      | 'nameKk'
+      | 'nameEn'
+      | 'descRu'
+      | 'descKk'
+      | 'descEn'
+      | 'photoUrl'
+      | 'basePrice'
+      | 'isActive'
+    >
+  >,
 ) {
   return request<AdminService>(`/admin/services/${id}`, { method: 'PATCH', body });
+}
+
+export function adminCreateService(body: {
+  slug: string;
+  type: string;
+  nameRu: string;
+  nameKk?: string;
+  nameEn?: string;
+  descRu?: string;
+  descKk?: string;
+  descEn?: string;
+  photoUrl?: string;
+  basePrice: number;
+}) {
+  return request<AdminService>('/admin/services', { method: 'POST', body });
+}
+
+export function adminDeleteService(id: string) {
+  return request<void>(`/admin/services/${id}`, { method: 'DELETE' });
 }
 
 export async function adminUploadServicePhoto(file: File): Promise<string> {
@@ -257,6 +292,24 @@ export async function adminUploadServicePhoto(file: File): Promise<string> {
     clientPayload: JSON.stringify({ token: getAccessToken() }),
   });
   return blob.url;
+}
+
+// ── Admin · Notifications (push broadcasts) ────────────────────────
+
+export function adminListBroadcasts() {
+  return request<BroadcastCampaign[]>('/admin/notifications');
+}
+
+export function adminSendBroadcast(body: {
+  title: string;
+  body: string;
+  segment: BroadcastSegment;
+  phone?: string;
+}) {
+  return request<BroadcastResult>('/admin/notifications/broadcast', {
+    method: 'POST',
+    body,
+  });
 }
 
 // ── Admin · Metrics ────────────────────────────────────────────────

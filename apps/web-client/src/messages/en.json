@@ -73,7 +73,8 @@
         "items": "Construction dust · Glue residue · Wall tile washing"
       },
       "perVisit": "/ visit",
-      "order": "Book"
+      "order": "Book",
+      "from": "from"
     },
     "whyTitle": "Why choose us",
     "why": {
@@ -135,7 +136,8 @@
     "codeLabel": "SMS code",
     "verify": "Sign in",
     "wrongPhone": "Use a different number",
-    "devCodeHint": "In dev mode the code is printed in the API logs."
+    "devCodeHint": "In dev mode the code is printed in the API logs.",
+    "orContinueWith": "or continue with"
   },
   "wizard": {
     "title": "Book a cleaning",

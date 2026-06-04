@@ -153,6 +153,25 @@ export interface AdminService {
   isActive: boolean;
 }
 
+export type BroadcastSegment = 'all' | 'has_orders';
+
+export interface BroadcastCampaign {
+  batchId: string;
+  title: string;
+  body: string;
+  createdAt: string;
+  sent: number;
+  failed: number;
+  total: number;
+}
+
+export interface BroadcastResult {
+  batchId: string;
+  recipients: number;
+  sent: number;
+  failed: number;
+}
+
 export type DirectorChannel = 'whatsapp' | 'telegram';
 
 export interface DirectorSettings {

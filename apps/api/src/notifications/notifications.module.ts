@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { SmsModule } from './sms/sms.module';
 import { SettingsModule } from '../settings/settings.module';
+import { AuthModule } from '../auth/auth.module';
 import { NotificationsService } from './notifications.service';
+import { AdminNotificationsController } from './admin-notifications.controller';
 import { OrderEventsListener } from './order-events.listener';
 import {
   WhatsappStubChannel,
@@ -14,7 +16,8 @@ import { WhatsappService } from './whatsapp/whatsapp.service';
 import { OrderCreatedWhatsappListener } from './whatsapp/order-created-whatsapp.listener';
 
 @Module({
-  imports: [SmsModule, SettingsModule],
+  imports: [SmsModule, SettingsModule, AuthModule],
+  controllers: [AdminNotificationsController],
   providers: [
     FcmChannel,
     WhatsappStubChannel,

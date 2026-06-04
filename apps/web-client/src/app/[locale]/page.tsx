@@ -3,9 +3,10 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { SiteHeader } from '@/components/SiteHeader';
 import { ServiceAudienceSection } from '@/components/ServiceAudienceSection';
-import { listCleaners } from '@/lib/api';
+import { listCleaners, listServices } from '@/lib/api';
 import { demoCleaners } from '@/lib/demo-cleaners';
-import type { CleanerCard as CleanerCardModel, Locale } from '@/lib/types';
+import { formatMoney } from '@/lib/format';
+import type { CleanerCard as CleanerCardModel, Locale, Service } from '@/lib/types';
 
 export default async function HomePage({
   params,
@@ -15,7 +16,10 @@ export default async function HomePage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
-  const featuredCleaners = await getFeaturedCleaners(locale as Locale);
+  const [featuredCleaners, services] = await Promise.all([
+    getFeaturedCleaners(locale as Locale),
+    getServices(locale as Locale),
+  ]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -71,36 +75,53 @@ export default async function HomePage({
           </div>
         </section>
 
-        {/* PRICING TIERS */}
+        {/* SERVICES / PRICING — dynamic from the admin-managed catalog */}
         <section className="mx-auto max-w-6xl px-4 md:px-6 mt-10">
           <h2 className="section-title">{t('home.pricingTitle')}</h2>
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <PricingCard
-              name={t('home.pricing.maintenance.name')}
-              price="12 750 ₸"
-              perVisit={t('home.pricing.perVisit')}
-              desc={t('home.pricing.maintenance.desc')}
-              items={t('home.pricing.maintenance.items')}
-              cta={t('home.pricing.order')}
-            />
-            <PricingCard
-              featured
-              name={`⭐ ${t('home.pricing.deep.name')}`}
-              price="27 119 ₸"
-              perVisit={t('home.pricing.perVisit')}
-              desc={t('home.pricing.deep.desc')}
-              items={t('home.pricing.deep.items')}
-              cta={t('home.pricing.order')}
-            />
-            <PricingCard
-              name={t('home.pricing.renovation.name')}
-              price="43 500 ₸"
-              perVisit={t('home.pricing.perVisit')}
-              desc={t('home.pricing.renovation.desc')}
-              items={t('home.pricing.renovation.items')}
-              cta={t('home.pricing.order')}
-            />
-          </div>
+          {services.length > 0 ? (
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+              {services.map((s, i) => (
+                <ServiceCard
+                  key={s.id}
+                  service={s}
+                  locale={locale as Locale}
+                  featured={i === 1}
+                  perVisit={t('home.pricing.perVisit')}
+                  fromLabel={t('home.pricing.from')}
+                  cta={t('home.pricing.order')}
+                />
+              ))}
+            </div>
+          ) : (
+            // Fallback to static tiers if the catalog API is unavailable.
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <PricingCard
+                name={t('home.pricing.maintenance.name')}
+                price="12 750 ₸"
+                perVisit={t('home.pricing.perVisit')}
+                desc={t('home.pricing.maintenance.desc')}
+                items={t('home.pricing.maintenance.items')}
+                cta={t('home.pricing.order')}
+              />
+              <PricingCard
+                featured
+                name={`⭐ ${t('home.pricing.deep.name')}`}
+                price="27 119 ₸"
+                perVisit={t('home.pricing.perVisit')}
+                desc={t('home.pricing.deep.desc')}
+                items={t('home.pricing.deep.items')}
+                cta={t('home.pricing.order')}
+              />
+              <PricingCard
+                name={t('home.pricing.renovation.name')}
+                price="43 500 ₸"
+                perVisit={t('home.pricing.perVisit')}
+                desc={t('home.pricing.renovation.desc')}
+                items={t('home.pricing.renovation.items')}
+                cta={t('home.pricing.order')}
+              />
+            </div>
+          )}
         </section>
 
         {/* WHY US */}
@@ -260,6 +281,63 @@ function PricingCard({
   );
 }
 
+function ServiceCard({
+  service,
+  locale,
+  featured,
+  perVisit,
+  fromLabel,
+  cta,
+}: {
+  service: Service;
+  locale: Locale;
+  featured?: boolean;
+  perVisit: string;
+  fromLabel: string;
+  cta: string;
+}) {
+  return (
+    <div
+      className={`relative flex flex-col overflow-hidden rounded-2xl bg-white border ${
+        featured
+          ? 'border-brand-600 shadow-soft-md ring-1 ring-brand-600'
+          : 'border-slate-200 shadow-soft'
+      }`}
+    >
+      <div className="relative h-40 w-full bg-slate-100">
+        {service.photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={service.photoUrl}
+            alt={service.name}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-4xl text-slate-300">
+            🧹
+          </div>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col p-6">
+        <h3 className="text-lg font-bold text-ink-900">{service.name}</h3>
+        <div className="mt-2 text-2xl font-extrabold text-brand-600">
+          {fromLabel} {formatMoney(service.basePrice, service.currency, locale)}{' '}
+          <span className="text-sm font-normal text-ink-400">{perVisit}</span>
+        </div>
+        {service.description && (
+          <p className="mt-2 text-sm text-ink-700">{service.description}</p>
+        )}
+        <Link
+          href="/book"
+          className="mt-5 block text-center rounded-pill border-2 border-brand-600 text-brand-600 py-2 font-semibold hover:bg-brand-600 hover:text-white transition"
+        >
+          {cta}
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 function WhyItem({ icon, title, body }: { icon: string; title: string; body: string }) {
   return (
     <div className="flex items-start gap-3">
@@ -304,6 +382,19 @@ function CleanerCard({
       </div>
     </Link>
   );
+}
+
+async function getServices(locale: Locale): Promise<Service[]> {
+  try {
+    return await Promise.race([
+      listServices(locale),
+      new Promise<Service[]>((resolve) => {
+        setTimeout(() => resolve([]), 1500);
+      }),
+    ]);
+  } catch {
+    return [];
+  }
 }
 
 async function getFeaturedCleaners(locale: Locale): Promise<CleanerCardModel[]> {

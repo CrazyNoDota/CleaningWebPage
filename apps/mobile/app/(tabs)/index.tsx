@@ -14,6 +14,7 @@ import {
 } from 'lucide-react-native';
 import { Button, Muted, Screen } from '@/components/ui';
 import { listCleaners, listServices } from '@/lib/api';
+import { formatMoney } from '@/lib/format';
 import { useTheme } from '@/lib/theme-provider';
 import type { CleanerCard, Service } from '@/lib/types';
 
@@ -352,59 +353,114 @@ export default function HomeTab() {
           </View>
         </Section>
 
-        {/* PRICING TIERS */}
-        <Section title="Какая уборка нужна?">
-          <View style={{ gap: t.space[3] }}>
-            {TIERS.map((tier) => (
-              <View
-                key={tier.name}
-                style={{
-                  backgroundColor: t.color.bg.surface,
-                  borderColor: tier.featured ? t.color.brand[500] : t.color.line.hairline,
-                  borderWidth: tier.featured ? 2 : 1,
-                  borderRadius: t.radius.lg,
-                  padding: t.space[4],
-                  gap: t.space[2],
-                }}
-              >
-                {tier.badge && (
-                  <View
-                    style={{
-                      alignSelf: 'flex-start',
-                      backgroundColor: t.color.brand[500],
-                      paddingHorizontal: t.space[3],
-                      paddingVertical: 4,
-                      borderRadius: t.radius.pill,
-                    }}
+        {/* PRICING TIERS — dynamic from the admin-managed catalog */}
+        {services.length > 0 ? (
+          <Section title="Какая уборка нужна?" action={{ label: 'Все', onPress: () => router.push('/services') }}>
+            <View style={{ gap: t.space[3] }}>
+              {services.map((s, i) => {
+                const featured = i === 1;
+                return (
+                  <Pressable
+                    key={s.id}
+                    onPress={() => router.push({ pathname: '/(tabs)/book', params: { slug: s.slug } })}
+                    style={({ pressed }) => ({
+                      backgroundColor: t.color.bg.surface,
+                      borderColor: featured ? t.color.brand[500] : t.color.line.hairline,
+                      borderWidth: featured ? 2 : 1,
+                      borderRadius: t.radius.lg,
+                      overflow: 'hidden',
+                      transform: [{ scale: pressed ? 0.98 : 1 }],
+                    })}
                   >
-                    <Text style={{ color: t.color.ink.onBrand, fontSize: 11, fontWeight: '700' }}>{tier.badge}</Text>
-                  </View>
-                )}
-                <Text style={{ color: t.color.ink.primary, fontSize: t.type.titleSm.fontSize, fontWeight: t.type.titleSm.fontWeight }}>
-                  {tier.name}
-                </Text>
-                <Text style={{ color: t.color.brand[600], fontSize: t.type.titleMd.fontSize, fontWeight: '800' }}>
-                  {tier.price}{' '}
-                  <Text style={{ color: t.color.ink.tertiary, fontSize: t.type.bodySm.fontSize, fontWeight: '400' }}>
-                    / уборка
-                  </Text>
-                </Text>
-                <Text style={{ color: t.color.ink.secondary, fontSize: t.type.bodySm.fontSize }}>{tier.desc}</Text>
-                <View style={{ gap: 6, marginTop: t.space[1] }}>
-                  {tier.items.map((it) => (
-                    <View key={it} style={{ flexDirection: 'row', gap: t.space[2], alignItems: 'flex-start' }}>
-                      <Text style={{ color: t.color.brand[500], fontWeight: '700' }}>✓</Text>
-                      <Text style={{ color: t.color.ink.primary, fontSize: t.type.bodyMd.fontSize, flex: 1 }}>{it}</Text>
+                    {s.photoUrl ? (
+                      <Image source={{ uri: s.photoUrl }} resizeMode="cover" style={{ height: 130, width: '100%' }} />
+                    ) : (
+                      <View style={{ height: 90, backgroundColor: t.color.brand[100], alignItems: 'center', justifyContent: 'center' }}>
+                        <Sparkles color={t.color.brand[500]} size={32} strokeWidth={2} />
+                      </View>
+                    )}
+                    <View style={{ padding: t.space[4], gap: t.space[2] }}>
+                      <Text style={{ color: t.color.ink.primary, fontSize: t.type.titleSm.fontSize, fontWeight: '800' }}>
+                        {s.name}
+                      </Text>
+                      <Text style={{ color: t.color.brand[600], fontSize: t.type.titleMd.fontSize, fontWeight: '800' }}>
+                        от {formatMoney(s.basePrice, s.currency)}{' '}
+                        <Text style={{ color: t.color.ink.tertiary, fontSize: t.type.bodySm.fontSize, fontWeight: '400' }}>
+                          / уборка
+                        </Text>
+                      </Text>
+                      {s.description.length > 0 && (
+                        <Text style={{ color: t.color.ink.secondary, fontSize: t.type.bodySm.fontSize, lineHeight: 20 }}>
+                          {s.description}
+                        </Text>
+                      )}
+                      <Button
+                        variant={featured ? 'primary' : 'secondary'}
+                        onPress={() => router.push({ pathname: '/(tabs)/book', params: { slug: s.slug } })}
+                      >
+                        Заказать
+                      </Button>
                     </View>
-                  ))}
+                  </Pressable>
+                );
+              })}
+            </View>
+          </Section>
+        ) : (
+          // Fallback to static tiers if the catalog API is unavailable.
+          <Section title="Какая уборка нужна?">
+            <View style={{ gap: t.space[3] }}>
+              {TIERS.map((tier) => (
+                <View
+                  key={tier.name}
+                  style={{
+                    backgroundColor: t.color.bg.surface,
+                    borderColor: tier.featured ? t.color.brand[500] : t.color.line.hairline,
+                    borderWidth: tier.featured ? 2 : 1,
+                    borderRadius: t.radius.lg,
+                    padding: t.space[4],
+                    gap: t.space[2],
+                  }}
+                >
+                  {tier.badge && (
+                    <View
+                      style={{
+                        alignSelf: 'flex-start',
+                        backgroundColor: t.color.brand[500],
+                        paddingHorizontal: t.space[3],
+                        paddingVertical: 4,
+                        borderRadius: t.radius.pill,
+                      }}
+                    >
+                      <Text style={{ color: t.color.ink.onBrand, fontSize: 11, fontWeight: '700' }}>{tier.badge}</Text>
+                    </View>
+                  )}
+                  <Text style={{ color: t.color.ink.primary, fontSize: t.type.titleSm.fontSize, fontWeight: t.type.titleSm.fontWeight }}>
+                    {tier.name}
+                  </Text>
+                  <Text style={{ color: t.color.brand[600], fontSize: t.type.titleMd.fontSize, fontWeight: '800' }}>
+                    {tier.price}{' '}
+                    <Text style={{ color: t.color.ink.tertiary, fontSize: t.type.bodySm.fontSize, fontWeight: '400' }}>
+                      / уборка
+                    </Text>
+                  </Text>
+                  <Text style={{ color: t.color.ink.secondary, fontSize: t.type.bodySm.fontSize }}>{tier.desc}</Text>
+                  <View style={{ gap: 6, marginTop: t.space[1] }}>
+                    {tier.items.map((it) => (
+                      <View key={it} style={{ flexDirection: 'row', gap: t.space[2], alignItems: 'flex-start' }}>
+                        <Text style={{ color: t.color.brand[500], fontWeight: '700' }}>✓</Text>
+                        <Text style={{ color: t.color.ink.primary, fontSize: t.type.bodyMd.fontSize, flex: 1 }}>{it}</Text>
+                      </View>
+                    ))}
+                  </View>
+                  <Button variant={tier.featured ? 'primary' : 'secondary'} onPress={() => router.push('/(tabs)/book')}>
+                    Заказать
+                  </Button>
                 </View>
-                <Button variant={tier.featured ? 'primary' : 'secondary'} onPress={() => router.push('/(tabs)/book')}>
-                  Заказать
-                </Button>
-              </View>
-            ))}
-          </View>
-        </Section>
+              ))}
+            </View>
+          </Section>
+        )}
 
         {/* WHY US */}
         <Section title="Почему выбирают нас">
