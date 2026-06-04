@@ -50,7 +50,7 @@ const CONTENT: Record<string, { title: string; updated: string; sections: Sectio
       },
       {
         h: '9. Контакты',
-        p: 'support@shinex.kz — по вопросам сервиса; privacy@shinex.kz — по обработке персональных данных.',
+        p: 'developersdevelopers20@gmail.com — по вопросам сервиса и обработки персональных данных.',
       },
     ],
   },
@@ -100,7 +100,7 @@ const CONTENT: Record<string, { title: string; updated: string; sections: Sectio
       },
       {
         h: '9. Contact',
-        p: 'support@shinex.kz for service questions; privacy@shinex.kz for data-handling questions.',
+        p: 'developersdevelopers20@gmail.com for service and data-handling questions.',
       },
     ],
   },
@@ -150,7 +150,7 @@ const CONTENT: Record<string, { title: string; updated: string; sections: Sectio
       },
       {
         h: '9. Байланыс',
-        p: 'support@shinex.kz — сервис сұрақтары; privacy@shinex.kz — дербес деректер сұрақтары.',
+        p: 'developersdevelopers20@gmail.com — сервис және дербес деректер сұрақтары бойынша.',
       },
     ],
   },

@@ -26,7 +26,7 @@ const CONTENT: Record<string, {
       },
       {
         h: 'Удаление через e-mail',
-        p: 'Если вы не можете получить доступ к приложению, отправьте запрос на адрес support@shinex.kz с темой письма «Удаление аккаунта» и укажите номер телефона, привязанный к аккаунту. Мы обработаем запрос в течение 3 рабочих дней.',
+        p: 'Если вы не можете получить доступ к приложению, отправьте запрос на адрес developersdevelopers20@gmail.com с темой письма «Удаление аккаунта» и укажите номер телефона, привязанный к аккаунту. Мы обработаем запрос в течение 3 рабочих дней.',
       },
       {
         h: 'Какие данные удаляются',
@@ -43,7 +43,7 @@ const CONTENT: Record<string, {
       },
       {
         h: 'Вопросы',
-        p: 'По всем вопросам обращайтесь: support@shinex.kz',
+        p: 'По всем вопросам обращайтесь: developersdevelopers20@gmail.com',
       },
     ],
   },
@@ -65,7 +65,7 @@ const CONTENT: Record<string, {
       },
       {
         h: 'Deletion via email',
-        p: 'If you cannot access the app, send a request to support@shinex.kz with the subject "Account Deletion" and include the phone number linked to your account. We will process your request within 3 business days.',
+        p: 'If you cannot access the app, send a request to developersdevelopers20@gmail.com with the subject "Account Deletion" and include the phone number linked to your account. We will process your request within 3 business days.',
       },
       {
         h: 'What data is deleted',
@@ -82,7 +82,7 @@ const CONTENT: Record<string, {
       },
       {
         h: 'Questions',
-        p: 'For any questions contact us: support@shinex.kz',
+        p: 'For any questions contact us: developersdevelopers20@gmail.com',
       },
     ],
   },
@@ -104,7 +104,7 @@ const CONTENT: Record<string, {
       },
       {
         h: 'Электрондық пошта арқылы жою',
-        p: 'Қосымшаға кіре алмасаңыз, support@shinex.kz мекенжайына «Аккаунтты жою» тақырыбымен хат жіберіп, аккаунтқа байланысты телефон нөмірін көрсетіңіз. Сұранысты 3 жұмыс күні ішінде өңдейміз.',
+        p: 'Қосымшаға кіре алмасаңыз, developersdevelopers20@gmail.com мекенжайына «Аккаунтты жою» тақырыбымен хат жіберіп, аккаунтқа байланысты телефон нөмірін көрсетіңіз. Сұранысты 3 жұмыс күні ішінде өңдейміз.',
       },
       {
         h: 'Қандай деректер жойылады',
@@ -121,7 +121,7 @@ const CONTENT: Record<string, {
       },
       {
         h: 'Сұрақтар',
-        p: 'Барлық сұрақтар бойынша: support@shinex.kz',
+        p: 'Барлық сұрақтар бойынша: developersdevelopers20@gmail.com',
       },
     ],
   },

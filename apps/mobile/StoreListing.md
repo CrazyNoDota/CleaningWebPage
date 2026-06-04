@@ -128,7 +128,7 @@ ShineX убирает все сложности из процесса заказ
 
 - **App category:** Lifestyle (primary) / House & Home (secondary)
 - **Content rating:** Everyone / 0+
-- **Contact email:** support@shinex.kz
+- **Contact email:** developersdevelopers20@gmail.com
 - **Reviewer test account:** phone `+77000000001`, OTP `123456` (see memory: review_otp_bypass)
 - **Website:** https://shinex.kz
 - **Privacy policy URL:** https://shinex.kz/privacy
