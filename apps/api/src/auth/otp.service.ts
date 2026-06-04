@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  ServiceUnavailableException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomInt } from 'node:crypto';
 import * as argon2 from 'argon2';
@@ -61,7 +67,19 @@ export class OtpService {
       this.logger.warn(`[DEV-OTP] phone=${phone} code=${code}`);
     }
 
-    await this.sms.send(phone, `Cleaning: ваш код ${code}. Срок ${this.ttlSeconds / 60} мин.`);
+    try {
+      await this.sms.send(phone, `Shinex: ваш код ${code}. Срок ${this.ttlSeconds / 60} мин.`);
+    } catch (err) {
+      // SMS delivery failed (e.g. KZ alpha-name still under moderation at the gateway).
+      // Surface a clean 503 with a user-facing message instead of leaking a 500
+      // "Internal server error" to the website.
+      this.logger.error(
+        `Failed to deliver OTP SMS to ${phone}: ${err instanceof Error ? err.message : String(err)}`,
+      );
+      throw new ServiceUnavailableException(
+        'Не удалось отправить SMS с кодом. Попробуйте позже или свяжитесь с поддержкой.',
+      );
+    }
   }
 
   async verify(phone: string, code: string): Promise<void> {

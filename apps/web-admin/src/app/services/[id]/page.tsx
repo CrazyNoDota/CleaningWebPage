@@ -1,10 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { AdminShell } from '@/components/AdminShell';
-import { ApiError, adminListServices, adminUpdateService, adminUploadServicePhoto } from '@/lib/api';
+import {
+  ApiError,
+  adminDeleteService,
+  adminListServices,
+  adminUpdateService,
+  adminUploadServicePhoto,
+} from '@/lib/api';
 import type { AdminService } from '@/lib/types';
 
 // Compress and convert an image file to WebP in the browser using Canvas
@@ -29,6 +35,7 @@ async function toWebP(file: File, maxSize = 1200, quality = 0.85): Promise<File>
 export default function ServiceEditPage() {
   const params = useParams<{ id: string }>();
   const id = params.id;
+  const router = useRouter();
 
   const [service, setService] = useState<AdminService | null>(null);
   const [draft, setDraft] = useState<AdminService | null>(null);
@@ -36,6 +43,7 @@ export default function ServiceEditPage() {
   const [flash, setFlash] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -57,7 +65,9 @@ export default function ServiceEditPage() {
       draft.descRu !== service.descRu ||
       draft.descKk !== service.descKk ||
       draft.descEn !== service.descEn ||
-      draft.photoUrl !== service.photoUrl);
+      draft.photoUrl !== service.photoUrl ||
+      draft.basePrice !== service.basePrice ||
+      draft.isActive !== service.isActive);
 
   async function onSave() {
     if (!draft || !dirty) return;
@@ -72,6 +82,8 @@ export default function ServiceEditPage() {
         descKk: draft.descKk,
         descEn: draft.descEn,
         photoUrl: draft.photoUrl ?? undefined,
+        basePrice: draft.basePrice,
+        isActive: draft.isActive,
       });
       setService(updated);
       setDraft({ ...updated });
@@ -80,6 +92,20 @@ export default function ServiceEditPage() {
       setError(e instanceof ApiError ? e.message : 'не удалось сохранить');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function onDelete() {
+    if (!draft) return;
+    if (!window.confirm(`Удалить услугу «${draft.nameRu}»? Это действие необратимо.`)) return;
+    setDeleting(true);
+    setError(null);
+    try {
+      await adminDeleteService(id);
+      router.push('/services');
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : 'не удалось удалить');
+      setDeleting(false);
     }
   }
 
@@ -214,6 +240,39 @@ export default function ServiceEditPage() {
                 </Field>
               </section>
 
+              {/* Price & status */}
+              <section className="card space-y-4">
+                <h2 className="font-semibold text-slate-900">Цена и статус</h2>
+                <Field label="Базовая цена, ₸">
+                  <input
+                    type="number"
+                    min={0}
+                    step={50}
+                    value={Math.round(draft.basePrice / 100)}
+                    onChange={(e) =>
+                      setDraft((d) =>
+                        d ? { ...d, basePrice: Math.max(0, Math.round(Number(e.target.value) * 100)) } : d,
+                      )
+                    }
+                    className="input"
+                  />
+                  <span className="mt-1 block text-xs text-slate-400">
+                    Начальная цена «от». Итоговая считается формулой по площади и опциям.
+                  </span>
+                </Field>
+                <label className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={draft.isActive}
+                    onChange={(e) => setDraft((d) => (d ? { ...d, isActive: e.target.checked } : d))}
+                    className="size-4"
+                  />
+                  <span className="text-sm text-slate-700">
+                    Активна (видна в приложении и на сайте)
+                  </span>
+                </label>
+              </section>
+
               {/* Actions */}
               <div className="flex items-center justify-end gap-3">
                 {flash && <span className="text-sm text-emerald-600">{flash}</span>}
@@ -226,6 +285,22 @@ export default function ServiceEditPage() {
                   {saving ? 'Сохранение…' : 'Сохранить'}
                 </button>
               </div>
+
+              {/* Danger zone */}
+              <section className="rounded-2xl border border-red-200 bg-red-50/50 p-4">
+                <h2 className="font-semibold text-red-700">Удаление</h2>
+                <p className="mt-1 text-xs text-slate-500">
+                  Услугу без связанных заказов можно удалить навсегда. Иначе деактивируйте её выше.
+                </p>
+                <button
+                  type="button"
+                  onClick={onDelete}
+                  disabled={deleting}
+                  className="mt-3 rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-100 disabled:opacity-60"
+                >
+                  {deleting ? 'Удаление…' : 'Удалить услугу'}
+                </button>
+              </section>
             </div>
           </>
         )}

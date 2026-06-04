@@ -17,6 +17,7 @@ const NAV: NavItem[] = [
   { href: '/orders', label: 'Заказы', ready: true },
   { href: '/reviews', label: 'Отзывы', ready: true },
   { href: '/applications', label: 'Заявки', ready: true },
+  { href: '/notifications', label: 'Уведомления', ready: true },
   { href: '/settings', label: 'Настройки', ready: true },
 ];
 

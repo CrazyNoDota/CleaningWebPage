@@ -116,6 +116,14 @@ export async function verifyOtp(phone: string, code: string): Promise<Session> {
   });
 }
 
+export async function googleLogin(idToken: string): Promise<Session> {
+  return request<Session>('/auth/google', {
+    method: 'POST',
+    body: { idToken },
+    auth: false,
+  });
+}
+
 // ── Catalog & pricing ───────────────────────────────────────────────
 
 export function listServices(locale: Locale, citySlug = 'astana') {

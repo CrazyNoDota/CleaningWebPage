@@ -4,7 +4,8 @@ import { Suspense, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
-import { ApiError, requestOtp, verifyOtp } from '@/lib/api';
+import { GoogleSignInButton } from '@/components/GoogleSignInButton';
+import { ApiError, googleLogin, requestOtp, verifyOtp } from '@/lib/api';
 import { saveSession } from '@/lib/auth';
 
 type Stage = 'phone' | 'code';
@@ -58,6 +59,20 @@ function LoginInner() {
     }
   }
 
+  async function onGoogleCredential(idToken: string) {
+    setError(null);
+    setBusy(true);
+    try {
+      const session = await googleLogin(idToken);
+      saveSession(session);
+      router.push(next ?? '/');
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Google sign-in failed');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
@@ -83,6 +98,17 @@ function LoginInner() {
                 {busy ? t('common.loading') : t('login.sendCode')}
               </button>
             </form>
+          )}
+
+          {stage === 'phone' && (
+            <>
+              <div className="my-6 flex items-center gap-3 text-xs text-slate-400">
+                <span className="h-px flex-1 bg-slate-200" />
+                {t('login.orContinueWith')}
+                <span className="h-px flex-1 bg-slate-200" />
+              </div>
+              <GoogleSignInButton onCredential={onGoogleCredential} />
+            </>
           )}
 
           {stage === 'code' && (
