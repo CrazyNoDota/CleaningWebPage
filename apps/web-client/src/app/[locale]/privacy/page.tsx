@@ -62,7 +62,7 @@ const CONTENT: Record<string, { title: string; updated: string; sections: Sectio
       },
       {
         h: '8. Контакты',
-        p: 'По вопросам обработки персональных данных пишите на privacy@shinex.kz. Адрес для официальной переписки указывается в договоре оказания услуг.',
+        p: 'По вопросам обработки персональных данных пишите на developersdevelopers20@gmail.com. Адрес для официальной переписки указывается в договоре оказания услуг.',
       },
     ],
   },
@@ -126,7 +126,7 @@ const CONTENT: Record<string, { title: string; updated: string; sections: Sectio
       },
       {
         h: '8. Contact',
-        p: 'For data-handling questions write to privacy@shinex.kz. The legal correspondence address is listed in the service agreement.',
+        p: 'For data-handling questions write to developersdevelopers20@gmail.com. The legal correspondence address is listed in the service agreement.',
       },
     ],
   },
@@ -190,7 +190,7 @@ const CONTENT: Record<string, { title: string; updated: string; sections: Sectio
       },
       {
         h: '8. Байланыс',
-        p: 'Дербес деректер бойынша сұрақтарды privacy@shinex.kz мекенжайына жазыңыз.',
+        p: 'Дербес деректер бойынша сұрақтарды developersdevelopers20@gmail.com мекенжайына жазыңыз.',
       },
     ],
   },

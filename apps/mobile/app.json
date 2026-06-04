@@ -19,7 +19,8 @@
     "ios": {
       "supportsTablet": true,
       "usesAppleSignIn": true,
-      "bundleIdentifier": "kz.shinex.app"
+      "bundleIdentifier": "kz.shinex.app",
+      "buildNumber": "2"
     },
     "android": {
       "package": "kz.shinex.app",
@@ -38,7 +39,12 @@
     },
     "plugins": [
       "expo-router",
-      "@react-native-google-signin/google-signin",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.207945527400-aog63t6o16o98e839i6l4l8vqvs2le4u"
+        }
+      ],
       [
         "expo-notifications",
         {
@@ -63,7 +69,7 @@
       "wsUrl": "https://shinex.kz",
       "googleClientIdWeb": "207945527400-97u7c9135n2qn0grio54vrrdf16dob5f.apps.googleusercontent.com",
       "googleClientIdAndroid": "207945527400-53vev89ns1ii53c8ljqp465n1fklrqbb.apps.googleusercontent.com",
-      "googleClientIdIos": "",
+      "googleClientIdIos": "207945527400-aog63t6o16o98e839i6l4l8vqvs2le4u.apps.googleusercontent.com",
       "router": {},
       "eas": {
         "projectId": "96700395-7c03-4f49-9400-33dbcbc58f08"

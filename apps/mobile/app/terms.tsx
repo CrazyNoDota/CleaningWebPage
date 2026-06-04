@@ -43,7 +43,7 @@ const SECTIONS: LegalSection[] = [
   },
   {
     h: '9. Контакты',
-    p: 'support@shinex.kz — по вопросам сервиса; privacy@shinex.kz — по обработке персональных данных.',
+    p: 'developersdevelopers20@gmail.com — по вопросам сервиса и обработки персональных данных.',
   },
 ];
 
