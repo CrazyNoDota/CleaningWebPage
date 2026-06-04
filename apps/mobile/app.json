@@ -19,7 +19,8 @@
     "ios": {
       "supportsTablet": true,
       "usesAppleSignIn": true,
-      "bundleIdentifier": "kz.shinex.app"
+      "bundleIdentifier": "kz.shinex.app",
+      "buildNumber": "2"
     },
     "android": {
       "package": "kz.shinex.app",
