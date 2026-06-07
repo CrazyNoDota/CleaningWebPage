@@ -26,19 +26,6 @@ export class WhatsappStubChannel implements NotificationChannelDriver {
 }
 
 @Injectable()
-export class TelegramStubChannel implements NotificationChannelDriver {
-  readonly channel = NotificationChannel.telegram;
-  private readonly log = new Logger('Telegram');
-  async send(msg: ChannelMessage): Promise<ChannelDispatchResult> {
-    this.log.log(`[STUB-TG] -> chat ${msg.recipient} :: ${msg.body}`);
-    return { recipient: msg.recipient, delivered: true };
-  }
-  resolveRecipient(u: { telegramChatId: string | null }): string | null {
-    return u.telegramChatId;
-  }
-}
-
-@Injectable()
 export class EmailStubChannel implements NotificationChannelDriver {
   readonly channel = NotificationChannel.email;
   private readonly log = new Logger('Email');

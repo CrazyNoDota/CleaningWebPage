@@ -4,15 +4,44 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Cleaner, UserRole, VerificationStatus } from '@prisma/client';
+import { Cleaner, OrderStatus, UserRole, VerificationStatus } from '@prisma/client';
+import { randomBytes } from 'node:crypto';
 import { PrismaService } from '../prisma/prisma.service';
+import { TelegramService } from '../telegram/telegram.service';
 import { type Locale, pickLocalized } from '../common/locale';
 import type { CreateCleanerDto } from './dto/create-cleaner.dto';
 import type { UpdateCleanerDto } from './dto/update-cleaner.dto';
 
 @Injectable()
 export class CleanersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly telegram: TelegramService,
+  ) {}
+
+  /**
+   * Issues a fresh Telegram onboarding link for a cleaner. The code is embedded
+   * in a t.me deep-link; opening it sends `/start <code>` to the bot, which links
+   * the chat. Regenerating invalidates any previously issued link.
+   */
+  async generateTelegramLink(cleanerId: string) {
+    const cleaner = await this.prisma.cleaner.findUnique({
+      where: { id: cleanerId },
+      select: { id: true },
+    });
+    if (!cleaner) throw new NotFoundException(`cleaner "${cleanerId}" not found`);
+
+    const code = randomBytes(12).toString('base64url');
+    await this.prisma.cleaner.update({
+      where: { id: cleanerId },
+      data: { tgLinkCode: code },
+    });
+    return {
+      code,
+      deepLink: this.telegram.buildDeepLink(code),
+      botUsername: this.telegram.botUsername,
+    };
+  }
 
   // ── admin-side ──────────────────────────────────────────────────
 
@@ -156,15 +185,23 @@ export class CleanersService {
     if (!order) {
       throw new NotFoundException(`order "${orderId}" not found`);
     }
-    if (order.userId && order.userId !== requestingUserId) {
+    // Strict ownership: guest orders (userId === null) are never accessible via
+    // this authenticated endpoint. Matches OrdersService.requireOwnedOrder and
+    // prevents leaking the assigned cleaner's phone on guest orders.
+    if (order.userId !== requestingUserId) {
       throw new NotFoundException(`order "${orderId}" not found`);
     }
     if (!order.cleaner) {
       return { status: order.status, cleaner: null };
     }
+    // Expose the cleaner's phone only while the order is active, so the customer
+    // can call them. Hidden before assignment and after the job is done/cancelled.
+    const phone = CALLABLE_STATUSES.has(order.status)
+      ? order.cleaner.user.phone
+      : null;
     return {
       status: order.status,
-      cleaner: this.projectPublic(order.cleaner, locale),
+      cleaner: { ...this.projectPublic(order.cleaner, locale), phone },
     };
   }
 
@@ -187,6 +224,13 @@ export class CleanersService {
     };
   }
 }
+
+// Statuses during which the assigned cleaner's phone is shared with the customer.
+const CALLABLE_STATUSES = new Set<OrderStatus>([
+  OrderStatus.assigned,
+  OrderStatus.en_route,
+  OrderStatus.in_progress,
+]);
 
 function shortenName(full: string | null): string {
   if (!full) return '';

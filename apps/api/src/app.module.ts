@@ -11,6 +11,7 @@ import { CleanersModule } from './cleaners/cleaners.module';
 import { OrdersModule } from './orders/orders.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { RealtimeModule } from './realtime/realtime.module';
+import { TelegramModule } from './telegram/telegram.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ApplicationsModule } from './applications/applications.module';
 import { AddressesModule } from './addresses/addresses.module';
@@ -37,6 +38,7 @@ const realtimeEnabled = process.env.DISABLE_REALTIME !== 'true';
     OrdersModule,
     ReviewsModule,
     ...(realtimeEnabled ? [RealtimeModule] : []),
+    TelegramModule,
     NotificationsModule,
     ApplicationsModule,
     AddressesModule,

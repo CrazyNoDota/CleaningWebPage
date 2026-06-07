@@ -5,11 +5,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { renderOrderTemplate, type TemplateContext } from './templates/order-templates';
 import type { Locale } from '../common/locale';
 import type { NotificationChannelDriver } from './channels/types';
-import {
-  WhatsappStubChannel,
-  TelegramStubChannel,
-  EmailStubChannel,
-} from './channels/stub-channels';
+import { WhatsappStubChannel, EmailStubChannel } from './channels/stub-channels';
+import { TelegramChannel } from './channels/telegram-channel';
 import { DeadDeviceTokenError, FcmChannel } from './channels/fcm-channel';
 import { SmsChannel } from './channels/sms-channel';
 
@@ -29,7 +26,7 @@ export class NotificationsService {
     private readonly prisma: PrismaService,
     push: FcmChannel,
     wa: WhatsappStubChannel,
-    tg: TelegramStubChannel,
+    tg: TelegramChannel,
     email: EmailStubChannel,
     sms: SmsChannel,
   ) {

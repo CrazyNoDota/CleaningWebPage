@@ -62,6 +62,13 @@ export class AdminCleanersController {
   update(@Param('id') id: string, @Body() body: UpdateCleanerDto) {
     return this.cleaners.adminUpdate(id, body);
   }
+
+  @Post(':id/telegram-link')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Generate a Telegram onboarding deep-link for the cleaner' })
+  telegramLink(@Param('id') id: string) {
+    return this.cleaners.generateTelegramLink(id);
+  }
 }
 
 function clamp(n: number, lo: number, hi: number): number {
