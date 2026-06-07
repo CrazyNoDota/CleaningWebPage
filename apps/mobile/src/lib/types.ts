@@ -20,6 +20,19 @@ export type Service = {
   options: ServiceOption[];
 };
 
+export type HomePlanGroup = 'apartment' | 'house';
+
+export type HomePlan = {
+  key: string;
+  title: string;
+  rooms: string;
+  bath: string;
+  price: string;
+  badge?: string;
+};
+
+export type HomePlans = Record<HomePlanGroup, HomePlan[]>;
+
 export type Quote = {
   serviceSlug: string;
   currency: string;
@@ -77,6 +90,8 @@ export type CleanerCard = {
   ratingCount: number;
   completedOrdersCount: number;
   verified: boolean;
+  // Present only on the "your cleaner" view of an active order; null otherwise.
+  phone?: string | null;
 };
 
 export type CleanerReview = {

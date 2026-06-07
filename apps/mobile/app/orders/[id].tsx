@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Check, MapPin, MessageCircle, Phone, ShieldCheck, Star } from 'lucide-react-native';
 import { io, type Socket } from 'socket.io-client';
@@ -315,16 +315,51 @@ function CleanerBlock({ cleaner }: { cleaner: CleanerCard | null }) {
       </View>
       <View style={{ flexDirection: 'row', gap: t.space[3] }}>
         <IconAction icon={<MessageCircle color={t.color.brand[500]} size={18} strokeWidth={2} />} label="Чат" />
-        <IconAction icon={<Phone color={t.color.brand[500]} size={18} strokeWidth={2} />} label="Звонок" />
+        <IconAction
+          icon={<Phone color={cleaner.phone ? t.color.brand[500] : t.color.ink.tertiary} size={18} strokeWidth={2} />}
+          label="Звонок"
+          disabled={!cleaner.phone}
+          onPress={() => callCleaner(cleaner.phone)}
+        />
       </View>
     </View>
   );
 }
 
-function IconAction({ icon, label }: { icon: React.ReactNode; label: string }) {
+async function callCleaner(phone: string | null | undefined) {
+  if (!phone) return;
+  // Strip spaces/parens/dashes so `tel:` gets a clean dialable value.
+  const sanitized = phone.replace(/[^\d+]/g, '');
+  if (!sanitized) return;
+  const url = `tel:${sanitized}`;
+  try {
+    const supported = await Linking.canOpenURL(url);
+    if (!supported) {
+      Alert.alert('Звонок недоступен', 'На этом устройстве нельзя совершить звонок.');
+      return;
+    }
+    await Linking.openURL(url);
+  } catch {
+    Alert.alert('Ошибка', 'Не удалось открыть звонилку.');
+  }
+}
+
+function IconAction({
+  icon,
+  label,
+  onPress,
+  disabled,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onPress?: () => void;
+  disabled?: boolean;
+}) {
   const t = useTheme();
   return (
-    <View
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
       style={{
         flex: 1,
         flexDirection: 'row',
@@ -336,13 +371,14 @@ function IconAction({ icon, label }: { icon: React.ReactNode; label: string }) {
         borderWidth: 1,
         borderColor: t.color.line.hairline,
         backgroundColor: t.color.bg.surface,
+        opacity: disabled ? 0.45 : 1,
       }}
     >
       {icon}
-      <Text style={{ color: t.color.brand[500], fontSize: t.type.labelLg.fontSize, fontWeight: t.type.labelLg.fontWeight }}>
+      <Text style={{ color: disabled ? t.color.ink.tertiary : t.color.brand[500], fontSize: t.type.labelLg.fontSize, fontWeight: t.type.labelLg.fontWeight }}>
         {label}
       </Text>
-    </View>
+    </Pressable>
   );
 }
 

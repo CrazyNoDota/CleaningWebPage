@@ -230,6 +230,28 @@ export class OrdersService {
     return this.applyTransition(orderId, to, { userId: actor.userId, role: actor.role, note });
   }
 
+  /**
+   * Status change initiated by the assigned cleaner (e.g. from the Telegram bot).
+   * Authorizes by matching the order's cleaner to the acting user, then defers to
+   * the state machine. NotFound (not their order) and BadRequest (invalid edge)
+   * propagate to the caller.
+   */
+  async transitionByCleaner(orderId: string, cleanerUserId: string, to: OrderStatus) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      select: { id: true, cleaner: { select: { userId: true, isActive: true } } },
+    });
+    if (!order || !order.cleaner || order.cleaner.userId !== cleanerUserId) {
+      throw new NotFoundException(`order "${orderId}" not found`);
+    }
+    // Deactivated cleaners can't drive transitions, even on an order still
+    // assigned to them — mirrors the isActive gate in assignCleaner.
+    if (!order.cleaner.isActive) {
+      throw new ForbiddenException('cleaner profile is not active');
+    }
+    return this.applyTransition(orderId, to, { userId: cleanerUserId, role: 'cleaner' });
+  }
+
   // ── private ───────────────────────────────────────────────────────
 
   private async requireOwnedOrder(orderId: string, userId: string) {

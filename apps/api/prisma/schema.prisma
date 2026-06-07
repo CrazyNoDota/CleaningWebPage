@@ -390,6 +390,9 @@ model OrderEvent {
 model Cleaner {
   id                    String             @id @default(uuid())
   userId                String             @unique
+  // One-time-ish code embedded in the Telegram deep-link (t.me/<bot>?start=<code>).
+  // When the cleaner opens it, the webhook links their chat to User.telegramChatId.
+  tgLinkCode            String?            @unique
   specialization        String[]           @default([])
   ratingAvg             Float              @default(0)
   ratingCount           Int                @default(0)
