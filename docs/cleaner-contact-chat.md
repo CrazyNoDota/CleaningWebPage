@@ -41,7 +41,7 @@ API — хаб, хранит сообщения и маршрутизирует.
 - [x] Env: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_BOT_USERNAME`, `TELEGRAM_WEBHOOK_SECRET`, `PUBLIC_API_URL` в `.env.example`.
 - [x] Unit-тест `cleaner-actions.spec.ts` (6 кейсов); `tsc --noEmit`, `nest build`, вся jest-сюита (24) зелёные.
 - Файлы: `apps/api/src/telegram/*`, `apps/api/src/notifications/channels/telegram-channel.ts`, `orders.service.ts`, `cleaners.service.ts`, `cleaners.controller`→`admin-cleaners.controller.ts`, `cleaners.module.ts`, `notifications.{service,module}.ts`, `app.module.ts`, `schema.prisma`, `.env.example`.
-- Деплой: миграция применится автоматически (`prisma migrate deploy`); задать env + вызвать `set-webhook` после деплоя; зарегистрировать бот в @BotFather.
+- Деплой: ✅ ВЫКАЧЕНО В ПРОД 2026-06-07 (PR #7 → main → CI). Бот @shinex_internal_bot; env заданы в `/opt/shinex/.env` + `environment:` блок compose (правлено вручную, т.к. CI не rsync-ит `infra/`); webhook зарегистрирован `https://shinex.kz/api/v1/telegram/webhook/<secret>`. Проверки: health 200, неверный секрет 404, верный 200, admin-link 401. Осталось: реальный e2e-тест привязки клинера.
 - Оценка саб-агента: **9/10 PASS**.
 - Пост-ревью фиксы (применены): (1) `transitionByCleaner` теперь проверяет `cleaner.isActive` (`ForbiddenException` → в боте «Профиль клинера неактивен»); (2) вебхук дополнительно сверяет заголовок `x-telegram-bot-api-secret-token` (timing-safe), если он есть.
 - Осознанные решения (не баг): телефон клиента (в т.ч. `guestPhone`) показывается клинеру в карточке `assigned` — клинеру нужен контакт для выполнения заказа.
