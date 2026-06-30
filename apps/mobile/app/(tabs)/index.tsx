@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Image, ImageBackground, Pressable, ScrollView, Text, View } from 'react-native';
+import {
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import {
@@ -13,10 +21,10 @@ import {
   Users,
 } from 'lucide-react-native';
 import { Button, Muted, Screen } from '@/components/ui';
-import { listCleaners, listServices } from '@/lib/api';
+import { getHomePlans, listCleaners, listServices } from '@/lib/api';
 import { formatMoney } from '@/lib/format';
 import { useTheme } from '@/lib/theme-provider';
-import type { CleanerCard, Service } from '@/lib/types';
+import type { CleanerCard, HomePlans, Service } from '@/lib/types';
 
 const PROMO_IMG = require('../../assets/img/before_after.png');
 const ROOMS = [
@@ -28,7 +36,14 @@ const ROOMS = [
 
 type Property = 'apartment' | 'house';
 
-const PLANS: Record<Property, Array<{ key: string; title: string; rooms: string; bath: string; price: string; badge?: string }>> = {
+const PROPERTY_LABELS: Record<Property, string> = {
+  apartment: '🏢  Квартира',
+  house: '🏠  Частный дом',
+};
+
+// Fallback tiles — shown only if the admin-managed home_plans endpoint is
+// unavailable. Mirrors the API's HOME_PLANS_DEFAULTS.
+const PLANS_FALLBACK: HomePlans = {
   apartment: [
     { key: '1k', title: 'Однушка', rooms: '1 комната', bath: '1 санузел', price: 'от 15 000 ₸' },
     { key: '2k', title: 'Двушка', rooms: '2 комнаты', bath: '1 санузел', price: 'от 19 000 ₸', badge: 'TOP' },
@@ -82,18 +97,33 @@ const STATS = [
 export default function HomeTab() {
   const t = useTheme();
   const insets = useSafeAreaInsets();
+  const { width: windowW } = useWindowDimensions();
   const [cleaners, setCleaners] = useState<CleanerCard[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [plans, setPlans] = useState<HomePlans>(PLANS_FALLBACK);
   const [property, setProperty] = useState<Property>('apartment');
 
   useEffect(() => {
     listCleaners('ru', 8).then(setCleaners).catch(() => undefined);
     listServices('ru').then(setServices).catch(() => undefined);
+    // Render whatever the admin configured verbatim — the fallback (initial
+    // state) only stands in if the request fails. An intentionally-empty group
+    // is honored, not overwritten with stale defaults.
+    getHomePlans().then(setPlans).catch(() => undefined);
   }, []);
+
+  // Only show property groups the admin actually has tiles for, and keep the
+  // selection on a non-empty group.
+  const planGroups = (['apartment', 'house'] as Property[]).filter((g) => plans[g].length > 0);
+  const activeProperty = planGroups.includes(property) ? property : planGroups[0] ?? property;
+  const PLAN_GAP = t.space[3];
+  const PLAN_PAD = t.space[4];
+  // Size cards so exactly three fill the viewport; extra tiles scroll sideways.
+  const planCardW = (windowW - PLAN_PAD * 2 - PLAN_GAP * 2) / 3;
 
   return (
     <Screen padded={false}>
-      <ScrollView contentContainerStyle={{ paddingBottom: t.space[8] }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         {/* TOP BAR — logo + address picker (top.kz style) */}
         <View
           style={{
@@ -160,20 +190,33 @@ export default function HomeTab() {
           </Pressable>
         </View>
 
-        {/* PROPERTY CHIP SWITCH */}
-        <View style={{ flexDirection: 'row', gap: t.space[3], paddingHorizontal: t.space[4], marginTop: t.space[4] }}>
-          <Chip label="🏢  Квартира" active={property === 'apartment'} onPress={() => setProperty('apartment')} />
-          <Chip label="🏠  Частный дом" active={property === 'house'} onPress={() => setProperty('house')} />
-        </View>
+        {/* PROPERTY CHIP SWITCH — only groups the admin actually configured */}
+        {planGroups.length > 0 && (
+          <View style={{ flexDirection: 'row', gap: t.space[3], paddingHorizontal: t.space[4], marginTop: t.space[4] }}>
+            {planGroups.map((g) => (
+              <Chip
+                key={g}
+                label={PROPERTY_LABELS[g]}
+                active={activeProperty === g}
+                onPress={() => setProperty(g)}
+              />
+            ))}
+          </View>
+        )}
 
-        {/* ROOM PLAN CARDS */}
-        <View style={{ flexDirection: 'row', gap: t.space[3], paddingHorizontal: t.space[4], marginTop: t.space[3] }}>
-          {PLANS[property].map((plan) => (
+        {/* ROOM PLAN CARDS — horizontally scrollable; ~3 fill the screen */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ marginTop: t.space[3] }}
+          contentContainerStyle={{ gap: PLAN_GAP, paddingHorizontal: PLAN_PAD }}
+        >
+          {plans[activeProperty].map((plan) => (
             <Pressable
               key={plan.key}
               onPress={() => router.push('/(tabs)/book')}
               style={({ pressed }) => ({
-                flex: 1,
+                width: planCardW,
                 backgroundColor: plan.badge ? t.color.brand[100] : t.color.bg.surface,
                 borderColor: plan.badge ? t.color.brand[500] : t.color.line.hairline,
                 borderWidth: plan.badge ? 1.5 : 1,
@@ -200,17 +243,19 @@ export default function HomeTab() {
               </Text>
             </Pressable>
           ))}
-        </View>
-        <Text
-          style={{
-            color: t.color.ink.tertiary,
-            fontSize: t.type.bodySm.fontSize,
-            paddingHorizontal: t.space[4],
-            marginTop: t.space[2],
-          }}
-        >
-          Параметры можно изменить на следующем шаге
-        </Text>
+        </ScrollView>
+        {planGroups.length > 0 && (
+          <Text
+            style={{
+              color: t.color.ink.tertiary,
+              fontSize: t.type.bodySm.fontSize,
+              paddingHorizontal: t.space[4],
+              marginTop: t.space[2],
+            }}
+          >
+            Параметры можно изменить на следующем шаге
+          </Text>
+        )}
 
         {/* SERVICES GRID — dynamic from API */}
         {services.length > 0 && (
@@ -572,7 +617,16 @@ export default function HomeTab() {
         </Section>
 
         {/* FOOTER */}
-        <View style={{ marginTop: t.space[6], backgroundColor: t.color.ink.primary, padding: t.space[6], gap: t.space[2] }}>
+        <View
+          style={{
+            marginTop: 'auto',
+            backgroundColor: t.color.ink.primary,
+            paddingHorizontal: t.space[6],
+            paddingTop: t.space[6],
+            paddingBottom: t.space[8],
+            gap: t.space[2],
+          }}
+        >
           <Text style={{ color: t.color.bg.surface, fontSize: t.type.titleMd.fontSize, fontWeight: '700' }}>
             Shine X
           </Text>

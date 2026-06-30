@@ -180,6 +180,19 @@ export interface DirectorSettings {
   telegramUsername: string;
 }
 
+export type HomePlanGroup = 'apartment' | 'house';
+
+export interface HomePlan {
+  key: string;
+  title: string;
+  rooms: string;
+  bath: string;
+  price: string;
+  badge?: string;
+}
+
+export type HomePlans = Record<HomePlanGroup, HomePlan[]>;
+
 export interface AdminOrderFull {
   id: string;
   status: OrderStatus;

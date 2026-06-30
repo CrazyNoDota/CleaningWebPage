@@ -4,6 +4,7 @@ import type {
   Address,
   CleanerCard,
   CleanerReview,
+  HomePlans,
   Locale,
   Order,
   Payment,
@@ -124,6 +125,10 @@ export function appleLogin(identityToken: string, fullName?: string) {
     body: { identityToken, fullName: fullName || undefined },
     auth: false,
   });
+}
+
+export function getHomePlans() {
+  return request<HomePlans>('/public/settings/home-plans', { auth: false });
 }
 
 export function listServices(locale: Locale = 'ru', city = 'astana') {

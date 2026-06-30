@@ -1,5 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import {
+  HOME_PLANS_DEFAULTS,
+  HOME_PLANS_KEY,
+  HomePlans,
+  HomePlansInput,
+  sanitizeHomePlans,
+} from './home-plans';
 
 export type DirectorChannel = 'whatsapp' | 'telegram';
 
@@ -51,5 +58,23 @@ export class SettingsService {
       update: { value: json },
     });
     return next;
+  }
+
+  async getHomePlans(): Promise<HomePlans> {
+    const row = await this.prisma.setting.findUnique({ where: { key: HOME_PLANS_KEY } });
+    // No row yet → serve the built-in defaults. Once an admin saves, their
+    // value (including an intentionally-empty group) is authoritative.
+    if (!row) return HOME_PLANS_DEFAULTS;
+    return sanitizeHomePlans(row.value);
+  }
+
+  async updateHomePlans(next: HomePlansInput): Promise<HomePlans> {
+    const sanitized = sanitizeHomePlans(next);
+    await this.prisma.setting.upsert({
+      where: { key: HOME_PLANS_KEY },
+      create: { key: HOME_PLANS_KEY, value: sanitized as object },
+      update: { value: sanitized as object },
+    });
+    return sanitized;
   }
 }
