@@ -66,15 +66,24 @@ export function Title({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function Muted({ children }: { children: React.ReactNode }) {
+export function Muted({
+  children,
+  style,
+}: {
+  children: React.ReactNode;
+  style?: TextStyle;
+}) {
   const t = useTheme();
   return (
     <Text
-      style={{
-        color: t.color.ink.secondary,
-        fontSize: t.type.bodyMd.fontSize,
-        lineHeight: t.type.bodyMd.lineHeight,
-      }}
+      style={[
+        {
+          color: t.color.ink.secondary,
+          fontSize: t.type.bodyMd.fontSize,
+          lineHeight: t.type.bodyMd.lineHeight,
+        },
+        style,
+      ]}
     >
       {children}
     </Text>

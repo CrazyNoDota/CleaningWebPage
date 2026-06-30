@@ -13,6 +13,7 @@ import type {
   BroadcastSegment,
   CreateCleanerBody,
   DirectorSettings,
+  HomePlans,
   JobApplicationStatusValue,
   OrderStatus,
   ReviewStatusValue,
@@ -327,6 +328,19 @@ export function adminGetDirectorSettings() {
 export function adminUpdateDirectorSettings(body: Partial<DirectorSettings>) {
   return request<DirectorSettings>('/admin/settings/director', {
     method: 'PATCH',
+    body,
+  });
+}
+
+// ── Admin · Home plans (top tiles on the mobile home screen) ───────────
+
+export function adminGetHomePlans() {
+  return request<HomePlans>('/admin/settings/home-plans');
+}
+
+export function adminUpdateHomePlans(body: HomePlans) {
+  return request<HomePlans>('/admin/settings/home-plans', {
+    method: 'PUT',
     body,
   });
 }

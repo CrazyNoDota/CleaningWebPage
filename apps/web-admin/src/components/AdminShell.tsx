@@ -13,6 +13,7 @@ interface NavItem {
 const NAV: NavItem[] = [
   { href: '/', label: 'Дашборд', ready: true },
   { href: '/services', label: 'Услуги', ready: true },
+  { href: '/home-plans', label: 'Тарифы на главной', ready: true },
   { href: '/cleaners', label: 'Клинеры', ready: true },
   { href: '/orders', label: 'Заказы', ready: true },
   { href: '/reviews', label: 'Отзывы', ready: true },

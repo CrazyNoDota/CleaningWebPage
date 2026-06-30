@@ -10,6 +10,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
   BottomActionBar,
@@ -124,6 +125,7 @@ function buildTimeSlots(day: Date, now = new Date()): Array<{ time: string; valu
 
 export default function BookScreen() {
   const t = useTheme();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ slug?: string }>();
   const { hydrated, session } = useSession();
   const [services, setServices] = useState<Service[] | null>(null);
@@ -297,7 +299,7 @@ export default function BookScreen() {
         <ScrollView
           contentContainerStyle={{
             paddingHorizontal: t.space[4],
-            paddingTop: t.space[5],
+            paddingTop: insets.top + t.space[5],
             paddingBottom: 120,
             gap: t.space[7],
           }}
