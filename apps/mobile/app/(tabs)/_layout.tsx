@@ -42,6 +42,7 @@ export default function TabsLayout() {
         name="book"
         options={{
           title: 'Бронь',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => <CalendarDays color={color} size={size ?? 22} strokeWidth={2} />,
         }}
       />
