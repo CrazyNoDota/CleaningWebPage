@@ -32,7 +32,7 @@ export class OtpService {
   }
 
   get devMode(): boolean {
-    return (this.config.get<string>('OTP_DEV_MODE') ?? 'true') === 'true';
+    return (this.config.get<string>('OTP_DEV_MODE') ?? 'false') === 'true';
   }
 
   private isReviewAccount(phone: string): boolean {
@@ -62,8 +62,9 @@ export class OtpService {
       data: { phone, codeHash, expiresAt },
     });
 
-    if (this.devMode) {
+    if (this.devMode && process.env.NODE_ENV !== 'production') {
       // In dev we log the code so devs can sign in without an SMS gateway.
+      // Never emit the plaintext code in production, even if devMode is on.
       this.logger.warn(`[DEV-OTP] phone=${phone} code=${code}`);
     }
 

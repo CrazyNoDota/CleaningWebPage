@@ -125,7 +125,9 @@
       "title": "Байланыс",
       "address": "Астана, Сығанақ к. 32, ВП 33",
       "email": "sales@top.kz",
-      "hours": "дс–жк: 8:00–21:00"
+      "hours": "дс–жк: 8:00–21:00",
+      "office": "Біздің кеңсе",
+      "openIn2gis": "2GIS-те ашу"
     }
   },
   "login": {
@@ -136,7 +138,7 @@
     "codeLabel": "СМС-код",
     "verify": "Кіру",
     "wrongPhone": "Басқа нөмір көрсету",
-    "devCodeHint": "Дамыту режимінде код API логіне жазылады.",
+    "devCodeHint": "Біз 6 таңбалы кодты SMS арқылы жібердік. Оны төменде енгізіңіз.",
     "orContinueWith": "немесе мынамен жалғастыру"
   },
   "wizard": {
@@ -152,6 +154,9 @@
     "extras": "Қосымшалар",
     "noOptions": "Қосымшаларсыз",
     "estimatedTotal": "Барлығы",
+    "from": "бастап",
+    "roomsSuffix": "бөлме",
+    "apartmentShort": "пәтер",
     "selectAddress": "Мекенжай таңдаңыз",
     "newAddress": "Жаңасын қосу",
     "city": "Қала",
@@ -179,6 +184,7 @@
   },
   "order": {
     "title": "Сіздің тапсырысыңыз",
+    "pay": "Төлеу",
     "status": "Күй",
     "total": "Сома",
     "scheduledAt": "Уақыт",

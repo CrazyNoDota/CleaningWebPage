@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'CleaningService — Админ',
+  title: 'Shinex — Админ',
   description: 'Панель оператора',
 };
 

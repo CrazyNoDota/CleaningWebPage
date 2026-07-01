@@ -125,7 +125,9 @@
       "title": "Contacts",
       "address": "Astana, Syganak st. 32, VP 33",
       "email": "sales@top.kz",
-      "hours": "Mon–Sun: 8:00–21:00"
+      "hours": "Mon–Sun: 8:00–21:00",
+      "office": "Our office",
+      "openIn2gis": "Open in 2GIS"
     }
   },
   "login": {
@@ -136,7 +138,7 @@
     "codeLabel": "SMS code",
     "verify": "Sign in",
     "wrongPhone": "Use a different number",
-    "devCodeHint": "In dev mode the code is printed in the API logs.",
+    "devCodeHint": "We've sent a 6-digit code by SMS. Enter it below.",
     "orContinueWith": "or continue with"
   },
   "wizard": {
@@ -152,6 +154,9 @@
     "extras": "Add-ons",
     "noOptions": "No add-ons",
     "estimatedTotal": "Total",
+    "from": "from",
+    "roomsSuffix": "rooms",
+    "apartmentShort": "apt.",
     "selectAddress": "Pick an address",
     "newAddress": "Add a new one",
     "city": "City",
@@ -179,6 +184,7 @@
   },
   "order": {
     "title": "Your order",
+    "pay": "Pay",
     "status": "Status",
     "total": "Total",
     "scheduledAt": "Scheduled",

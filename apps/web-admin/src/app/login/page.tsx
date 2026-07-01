@@ -16,7 +16,7 @@ export default function LoginPage() {
 function LoginInner() {
   const router = useRouter();
   const params = useSearchParams();
-  const next = params.get('next') ?? '/';
+  const next = sanitizeNext(params.get('next'));
 
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
@@ -46,7 +46,7 @@ function LoginInner() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-6">
       <div className="w-full max-w-md card">
         <div className="text-xs uppercase tracking-wider text-brand-600 font-semibold">
-          CleaningService
+          Shinex
         </div>
         <h1 className="mt-1 text-xl font-bold text-slate-900">Вход в админку</h1>
         <p className="mt-1 text-sm text-slate-500">
@@ -88,6 +88,25 @@ function LoginInner() {
       </div>
     </div>
   );
+}
+
+// Prevent open-redirects: only allow same-origin relative paths as the
+// post-login target. Anything else (absolute URLs, protocol-relative "//",
+// backslash tricks, or embedded schemes) falls back to the admin home.
+function sanitizeNext(value: string | null): string {
+  if (!value) return '/';
+  const lower = value.toLowerCase();
+  if (
+    !value.startsWith('/') ||
+    value.startsWith('//') ||
+    value.startsWith('/\\') ||
+    lower.includes('http:') ||
+    lower.includes('https:') ||
+    lower.includes('javascript:')
+  ) {
+    return '/';
+  }
+  return value;
 }
 
 function Field({

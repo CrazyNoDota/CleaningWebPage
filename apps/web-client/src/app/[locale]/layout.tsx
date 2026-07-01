@@ -1,14 +1,23 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, setRequestLocale } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { locales, type Locale } from '@/i18n/config';
 import '../globals.css';
 
-export const metadata: Metadata = {
-  title: 'CleaningService',
-  description: 'Профессиональная уборка квартир, домов и офисов',
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  setRequestLocale(locale as Locale);
+  const t = await getTranslations();
+  return {
+    title: 'Shinex',
+    description: t('common.tagline'),
+  };
+}
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));

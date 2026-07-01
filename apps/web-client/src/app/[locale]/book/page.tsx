@@ -397,7 +397,7 @@ function ServiceStep({
               {s.description && <div className="mt-1 text-sm text-slate-500">{s.description}</div>}
             </div>
             <div className="text-sm text-slate-500 sm:text-right">
-              {t('wizard.estimatedTotal')} от{' '}
+              {t('wizard.estimatedTotal')} {t('wizard.from')}{' '}
               <strong>{formatMoney(s.basePrice, s.currency, locale)}</strong>
             </div>
           </div>
@@ -633,7 +633,7 @@ function AddressStep({
                     <div className="flex-1 text-sm">
                       {a.label && <strong className="block">{a.label}</strong>}
                       {a.street}, {a.building}
-                      {a.apartment && `, кв. ${a.apartment}`}
+                      {a.apartment && `, ${t('wizard.apartmentShort')} ${a.apartment}`}
                     </div>
                     <div className="flex gap-3 text-xs sm:flex-col sm:items-end sm:gap-1">
                       <button
@@ -829,7 +829,7 @@ function ConfirmStep({
       <Row label={t('wizard.stepService')} value={service?.name ?? '—'} />
       <Row
         label={t('wizard.stepConfigure')}
-        value={`${areaM2} m², ${rooms} rooms${
+        value={`${areaM2} m², ${rooms} ${t('wizard.roomsSuffix')}${
           optionLines.length > 0 ? ` · ${optionLines.join(', ')}` : ''
         }`}
       />
@@ -837,8 +837,8 @@ function ConfirmStep({
         label={t('wizard.stepAddress')}
         value={
           addr
-            ? `${addr.street}, ${addr.building}${addr.apartment ? `, кв. ${addr.apartment}` : ''}`
-            : `${draft.street}, ${draft.building}${draft.apartment ? `, кв. ${draft.apartment}` : ''}`
+            ? `${addr.street}, ${addr.building}${addr.apartment ? `, ${t('wizard.apartmentShort')} ${addr.apartment}` : ''}`
+            : `${draft.street}, ${draft.building}${draft.apartment ? `, ${t('wizard.apartmentShort')} ${draft.apartment}` : ''}`
         }
       />
       <Row label={t('wizard.scheduledAt')} value={formatDateTime(scheduledAt, locale)} />

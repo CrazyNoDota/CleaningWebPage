@@ -42,7 +42,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <header className="border-b border-slate-200 bg-white lg:hidden">
         <div className="flex items-center justify-between gap-3 px-4 py-3">
           <Link href="/" className="min-w-0 text-base font-bold text-brand-600">
-            CleaningService
+            Shinex
           </Link>
           <button onClick={signOut} className="btn-ghost shrink-0">
             Выйти
@@ -71,7 +71,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <aside className="hidden w-60 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
         <div className="px-6 py-5 border-b border-slate-200">
           <Link href="/" className="text-lg font-bold text-brand-600">
-            CleaningService
+            Shinex
           </Link>
           <div className="text-xs text-slate-400">Панель оператора</div>
         </div>
