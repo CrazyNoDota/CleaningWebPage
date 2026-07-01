@@ -14,7 +14,6 @@ import {
   type OrderStateChangedEvent,
 } from '../realtime/domain-events';
 import type { CreateReviewDto } from './dto/create-review.dto';
-import { addRating, removeRating } from './running-stats';
 
 interface ActorContext {
   userId: string;
@@ -84,7 +83,7 @@ export class ReviewsService {
 
       // Stats only update for currently-published reviews.
       if (status === ReviewStatus.published && order.cleanerId) {
-        await this.bumpCleanerStats(tx, order.cleanerId, dto.rating, 'add');
+        await this.bumpCleanerStats(tx, order.cleanerId);
       }
 
       return { review, order };
@@ -176,10 +175,13 @@ export class ReviewsService {
       });
 
       if (review.cleanerId) {
-        if (!wasPublished && willBePublished) {
-          await this.bumpCleanerStats(tx, review.cleanerId, review.rating, 'add');
-        } else if (wasPublished && !willBePublished) {
-          await this.bumpCleanerStats(tx, review.cleanerId, review.rating, 'remove');
+        // Either edge (publish or unpublish) changes the published set, so
+        // recompute authoritatively from the reviews themselves.
+        if (
+          (!wasPublished && willBePublished) ||
+          (wasPublished && !willBePublished)
+        ) {
+          await this.bumpCleanerStats(tx, review.cleanerId);
         }
       }
 
@@ -189,24 +191,37 @@ export class ReviewsService {
 
   // ── private ───────────────────────────────────────────────────────
 
-  private async bumpCleanerStats(
-    tx: Prisma.TransactionClient,
-    cleanerId: string,
-    rating: number,
-    direction: 'add' | 'remove',
-  ) {
-    const c = await tx.cleaner.findUnique({
-      where: { id: cleanerId },
-      select: { ratingAvg: true, ratingCount: true },
+  /**
+   * Recompute a cleaner's denormalized rating aggregate from the source rows.
+   * Deriving the new average from the stored one (read-modify-write) loses
+   * updates when two reviews land concurrently; recomputing from the reviews
+   * themselves is authoritative. The `SELECT ... FOR NO KEY UPDATE` serializes
+   * concurrent recomputes on the cleaner row so that — under READ COMMITTED —
+   * the aggregate runs on a snapshot that already reflects any review committed
+   * by a transaction we waited on. We deliberately use FOR NO KEY UPDATE rather
+   * than FOR UPDATE: the concurrent `review.create` INSERT holds a FOR KEY SHARE
+   * lock on this same Cleaner row (FK check), which FOR UPDATE would conflict
+   * with, deadlocking two same-cleaner submissions that both try to upgrade.
+   * FOR NO KEY UPDATE does not conflict with FOR KEY SHARE but still conflicts
+   * with itself, so recomputes stay serialized without the deadlock.
+   */
+  private async bumpCleanerStats(tx: Prisma.TransactionClient, cleanerId: string) {
+    const locked = await tx.$queryRaw<Array<{ id: string }>>`
+      SELECT id FROM "Cleaner" WHERE id = ${cleanerId} FOR NO KEY UPDATE
+    `;
+    if (locked.length === 0) return;
+
+    const agg = await tx.review.aggregate({
+      where: { cleanerId, status: ReviewStatus.published },
+      _avg: { rating: true },
+      _count: { _all: true },
     });
-    if (!c) return;
-    const next =
-      direction === 'add'
-        ? addRating(c.ratingAvg, c.ratingCount, rating)
-        : removeRating(c.ratingAvg, c.ratingCount, rating);
     await tx.cleaner.update({
       where: { id: cleanerId },
-      data: { ratingAvg: next.avg, ratingCount: next.count },
+      data: {
+        ratingAvg: agg._avg.rating ?? 0,
+        ratingCount: agg._count._all,
+      },
     });
   }
 

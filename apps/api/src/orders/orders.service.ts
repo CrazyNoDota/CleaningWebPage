@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -200,10 +201,16 @@ export class OrdersService {
         if (err instanceof InvalidTransitionError) throw new BadRequestException(err.message);
         throw err;
       }
-      const updated = await tx.order.update({
-        where: { id: orderId },
+      // Conditional update guarded on the status we validated against. If a
+      // concurrent transition already moved the order off `order.status`, no
+      // row matches (count === 0) → treat as a concurrent-modification conflict.
+      const { count } = await tx.order.updateMany({
+        where: { id: orderId, status: order.status },
         data: { status: OrderStatus.assigned, cleanerId },
       });
+      if (count === 0) {
+        throw new ConflictException(`order "${orderId}" was modified concurrently`);
+      }
       await tx.orderEvent.create({
         data: {
           orderId,
@@ -212,6 +219,7 @@ export class OrdersService {
           payload: { cleanerId, by: actor.role },
         },
       });
+      const updated = await tx.order.findUniqueOrThrow({ where: { id: orderId } });
       return { updated, previousStatus: order.status };
     });
     this.emitStateChanged({
@@ -277,11 +285,20 @@ export class OrdersService {
         if (err instanceof InvalidTransitionError) throw new BadRequestException(err.message);
         throw err;
       }
-      const data: Prisma.OrderUpdateInput = { status: to };
+      const data: Prisma.OrderUpdateManyMutationInput = { status: to };
       if (to === OrderStatus.cancelled) {
         data.cancelledAt = new Date();
       }
-      const updated = await tx.order.update({ where: { id: orderId }, data });
+      // Conditional update guarded on the status we validated against. If a
+      // concurrent transition already moved the order off `order.status`, no
+      // row matches (count === 0) → treat as a concurrent-modification conflict.
+      const { count } = await tx.order.updateMany({
+        where: { id: orderId, status: order.status },
+        data,
+      });
+      if (count === 0) {
+        throw new ConflictException(`order "${orderId}" was modified concurrently`);
+      }
 
       // Denormalized counter — increment cleaner's completed count when an order finishes.
       if (to === OrderStatus.done && order.cleanerId) {
@@ -299,6 +316,7 @@ export class OrdersService {
           payload: { by: actor.role, ...(actor.note ? { note: actor.note } : {}) },
         },
       });
+      const updated = await tx.order.findUniqueOrThrow({ where: { id: orderId } });
       return { updated, previousStatus: order.status };
     });
     this.emitStateChanged({

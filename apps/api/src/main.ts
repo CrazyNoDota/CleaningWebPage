@@ -43,6 +43,10 @@ async function bootstrap() {
     SwaggerModule.setup('api/docs', app, document);
   }
 
+  // Drain in-flight requests and run OnModuleDestroy hooks on SIGTERM/SIGINT
+  // (e.g. every redeploy) so mid-transaction writes aren't dropped.
+  app.enableShutdownHooks();
+
   const port = Number(process.env.API_PORT ?? 4000);
   await app.listen(port);
   logger.log(`API listening on http://localhost:${port}`);

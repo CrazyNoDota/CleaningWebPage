@@ -3,6 +3,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  IsUrl,
   Matches,
   Max,
   MaxLength,
@@ -59,5 +60,6 @@ export class SubmitApplicationDto {
   @IsOptional()
   @IsString()
   @MaxLength(2048)
+  @IsUrl({ protocols: ['https'], require_protocol: true })
   resumeUrl?: string;
 }

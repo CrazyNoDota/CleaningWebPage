@@ -23,6 +23,7 @@ import {
   InvalidTransitionError,
 } from '../orders/order-state-machine';
 import { PaymentProviderRegistry } from './providers/registry';
+import { ProviderNotImplementedError } from './providers/types';
 import type { WebhookHeaders } from './providers/types';
 
 const DEFAULT_EXPIRY_MINUTES = 30;
@@ -255,58 +256,119 @@ export class PaymentsService {
   // ─────────────────────────────────────────────────────────────────
 
   async refund(paymentId: string, amount: number, reason: string | undefined, actorId: string) {
-    const payment = await this.prisma.payment.findUnique({ where: { id: paymentId } });
-    if (!payment) throw new NotFoundException(`payment "${paymentId}" not found`);
-    if (payment.status !== PaymentStatus.succeeded) {
-      throw new BadRequestException(
-        `cannot refund payment in status "${payment.status}" — only succeeded payments`,
-      );
-    }
-    if (amount <= 0 || amount > payment.amount) {
-      throw new BadRequestException(`refund amount ${amount} out of range (1..${payment.amount})`);
-    }
+    // Two-phase so the irreversible provider call never sits inside a rollbackable tx
+    // (real-money loss). Phase 1 (tx): lock the payment FOR UPDATE, validate the
+    // refundable balance, and reserve a Refund row in status=pending, then COMMIT.
+    // Because the balance check counts still-pending refunds, this committed
+    // reservation makes a concurrent or retried refund see the reserved amount and
+    // refuse to over-refund. Phase 2 (no tx): call driver.refund — this moves real
+    // money and can't be undone, and it runs only after the reservation is durably
+    // committed, so a crash/timeout here can never discard a refund that already
+    // left the provider. Phase 3 (tx): record the provider result on the reserved
+    // row and flip payment.status once fully refunded.
+    const reserved = await this.prisma.$transaction(async (tx) => {
+      const [payment] = await tx.$queryRaw<Payment[]>`
+        SELECT * FROM "Payment" WHERE "id" = ${paymentId} FOR UPDATE
+      `;
+      if (!payment) throw new NotFoundException(`payment "${paymentId}" not found`);
+      if (payment.status !== PaymentStatus.succeeded) {
+        throw new BadRequestException(
+          `cannot refund payment in status "${payment.status}" — only succeeded payments`,
+        );
+      }
 
-    const driver = this.providers.for(payment.provider);
-    const result = await driver.refund({ payment, amount, reason });
-
-    const refund = await this.prisma.refund.create({
-      data: {
-        paymentId: payment.id,
-        amount,
-        reason,
-        status: result.status as RefundStatus,
-        providerRefundId: result.providerRefundId,
-        rawPayload: result.rawPayload,
-      },
-    });
-
-    // Sum of succeeded refunds — flip payment.status to refunded only when fully refunded.
-    if (result.status === 'succeeded') {
-      const totalRefunded = await this.prisma.refund.aggregate({
-        where: { paymentId: payment.id, status: RefundStatus.succeeded },
+      // Already-issued refunds (succeeded + still-pending) reduce the refundable
+      // balance — validate against the remainder, never the gross payment amount.
+      const priorRefunds = await tx.refund.aggregate({
+        where: {
+          paymentId: payment.id,
+          status: { in: [RefundStatus.succeeded, RefundStatus.pending] },
+        },
         _sum: { amount: true },
       });
-      const refundedSum = totalRefunded._sum.amount ?? 0;
-      if (refundedSum >= payment.amount) {
-        await this.prisma.payment.update({
-          where: { id: payment.id },
-          data: { status: PaymentStatus.refunded },
-        });
+      const alreadyRefunded = priorRefunds._sum.amount ?? 0;
+      const refundable = payment.amount - alreadyRefunded;
+      if (amount <= 0 || amount > refundable) {
+        throw new BadRequestException(
+          `refund amount ${amount} out of range (1..${refundable})`,
+        );
       }
-    }
 
-    await this.prisma.orderEvent.create({
-      data: {
-        orderId: payment.orderId,
-        type: 'payment.refund.issued',
-        actorId,
-        payload: {
+      const created = await tx.refund.create({
+        data: {
           paymentId: payment.id,
-          refundId: refund.id,
           amount,
-          reason: reason ?? null,
+          reason,
+          status: RefundStatus.pending,
         },
-      },
+      });
+
+      return { payment, refundId: created.id };
+    });
+
+    // Phase 2 — irreversible money movement, outside the rollback window.
+    const driver = this.providers.for(reserved.payment.provider);
+    const result = await driver
+      .refund({ payment: reserved.payment, amount, reason })
+      .catch(async (err: unknown) => {
+        if (err instanceof ProviderNotImplementedError) {
+          // Deterministic failure — no money moved — so release the reservation to
+          // keep the refundable balance intact, then surface the error unchanged.
+          await this.prisma.refund.delete({ where: { id: reserved.refundId } });
+          throw err;
+        }
+        // Any other error is ambiguous (e.g. a timeout after the money already
+        // moved): leave the reserved row pending so it keeps blocking an over-refund
+        // until reconciled. Never mark it failed here — that would free the balance
+        // and let a retry double-refund the same payment.
+        const message = err instanceof Error ? err.message : String(err);
+        this.log.error(
+          `provider refund failed (${reserved.payment.provider}, refund ${reserved.refundId}): ${message}`,
+        );
+        throw err;
+      });
+
+    // Phase 3 — record the provider result and flip the payment when fully refunded.
+    const refund = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.refund.update({
+        where: { id: reserved.refundId },
+        data: {
+          status: result.status as RefundStatus,
+          providerRefundId: result.providerRefundId,
+          rawPayload: result.rawPayload,
+        },
+      });
+
+      // Sum of succeeded refunds — flip payment.status to refunded only when fully refunded.
+      if (result.status === 'succeeded') {
+        const totalRefunded = await tx.refund.aggregate({
+          where: { paymentId: reserved.payment.id, status: RefundStatus.succeeded },
+          _sum: { amount: true },
+        });
+        const refundedSum = totalRefunded._sum.amount ?? 0;
+        if (refundedSum >= reserved.payment.amount) {
+          await tx.payment.update({
+            where: { id: reserved.payment.id },
+            data: { status: PaymentStatus.refunded },
+          });
+        }
+      }
+
+      await tx.orderEvent.create({
+        data: {
+          orderId: reserved.payment.orderId,
+          type: 'payment.refund.issued',
+          actorId,
+          payload: {
+            paymentId: reserved.payment.id,
+            refundId: updated.id,
+            amount,
+            reason: reason ?? null,
+          },
+        },
+      });
+
+      return updated;
     });
 
     return refund;
