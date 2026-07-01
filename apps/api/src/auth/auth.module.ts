@@ -14,10 +14,19 @@ import { SmsModule } from '../notifications/sms/sms.module';
     SmsModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_ACCESS_SECRET') ?? 'dev_access_secret',
-        signOptions: { expiresIn: config.get<string>('JWT_ACCESS_TTL') ?? '15m' },
-      }),
+      useFactory: (config: ConfigService) => {
+        const secret = config.get<string>('JWT_ACCESS_SECRET');
+        if (!secret || secret.length < 16) {
+          // Fail closed: never boot with a missing or weak signing secret.
+          throw new Error(
+            'JWT_ACCESS_SECRET is missing or too short (min 16 chars). Refusing to start.',
+          );
+        }
+        return {
+          secret,
+          signOptions: { expiresIn: config.get<string>('JWT_ACCESS_TTL') ?? '15m' },
+        };
+      },
       inject: [ConfigService],
     }),
   ],

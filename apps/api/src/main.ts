@@ -31,19 +31,24 @@ async function bootstrap() {
     }),
   );
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('Cleaning Platform API')
-    .setDescription('Backend API for the cleaning service platform')
-    .setVersion('0.1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api/docs', app, document);
+  // Swagger exposes the whole API surface — keep it out of production.
+  if (process.env.NODE_ENV !== 'production') {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('Cleaning Platform API')
+      .setDescription('Backend API for the cleaning service platform')
+      .setVersion('0.1.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api/docs', app, document);
+  }
 
   const port = Number(process.env.API_PORT ?? 4000);
   await app.listen(port);
   logger.log(`API listening on http://localhost:${port}`);
-  logger.log(`Swagger UI on    http://localhost:${port}/api/docs`);
+  if (process.env.NODE_ENV !== 'production') {
+    logger.log(`Swagger UI on    http://localhost:${port}/api/docs`);
+  }
 }
 
 bootstrap();

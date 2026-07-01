@@ -125,7 +125,9 @@
       "title": "Контакты",
       "address": "Астана, ул. Сыганак 32, ВП 33",
       "email": "sales@top.kz",
-      "hours": "пн–вс: 8:00–21:00"
+      "hours": "пн–вс: 8:00–21:00",
+      "office": "Наш офис",
+      "openIn2gis": "Открыть в 2GIS"
     }
   },
   "login": {
@@ -136,7 +138,7 @@
     "codeLabel": "Код из СМС",
     "verify": "Войти",
     "wrongPhone": "Указать другой номер",
-    "devCodeHint": "В режиме разработки код печатается в логи API.",
+    "devCodeHint": "Мы отправили 6-значный код по SMS. Введите его ниже.",
     "orContinueWith": "или продолжить через"
   },
   "wizard": {
@@ -152,6 +154,9 @@
     "extras": "Дополнительные опции",
     "noOptions": "Без дополнительных опций",
     "estimatedTotal": "Итого",
+    "from": "от",
+    "roomsSuffix": "комн.",
+    "apartmentShort": "кв.",
     "selectAddress": "Выберите адрес",
     "newAddress": "Добавить новый",
     "city": "Город",
@@ -179,6 +184,7 @@
   },
   "order": {
     "title": "Ваш заказ",
+    "pay": "Оплатить",
     "status": "Статус",
     "total": "Сумма",
     "scheduledAt": "Дата визита",

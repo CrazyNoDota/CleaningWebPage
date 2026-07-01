@@ -21,7 +21,7 @@ import { JwtAuthGuard, Roles } from '../auth/jwt-auth.guard';
 @ApiTags('admin-orders')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Roles('manager', 'admin', 'operator', 'cleaner')
+@Roles('manager', 'admin', 'operator')
 @Controller('admin/orders')
 export class AdminOrdersController {
   constructor(private readonly orders: OrdersService) {}

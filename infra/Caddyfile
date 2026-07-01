@@ -5,6 +5,12 @@
 shinex.kz, www.shinex.kz {
 	encode zstd gzip
 
+	# Block Swagger docs from the public internet (defense-in-depth).
+	# `respond` is ordered before `reverse_proxy` in Caddy's default
+	# directive order, so these paths never reach the API.
+	@apidocs path /api/docs /api/docs-json /api/docs/*
+	respond @apidocs 404
+
 	# API + WebSocket. NestJS already prefixes routes with /api/v1.
 	@api path /api/* /socket.io/*
 	reverse_proxy @api api:4000

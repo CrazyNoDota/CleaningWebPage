@@ -188,7 +188,7 @@ export default function OrderPage() {
                   disabled={paying}
                   className="btn-primary mt-6 w-full sm:w-auto"
                 >
-                  {paying ? t('common.loading') : 'Оплатить'}
+                  {paying ? t('common.loading') : t('order.pay')}
                 </button>
               )}
             </section>
