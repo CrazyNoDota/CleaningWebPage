@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -27,6 +25,7 @@ body {
   .btn-primary {
     @apply rounded-pill bg-brand-600 px-6 py-3 text-white font-semibold
            shadow-soft hover:bg-brand-700 transition
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2
            disabled:cursor-not-allowed disabled:opacity-50;
   }
 
@@ -34,6 +33,7 @@ body {
   .btn-secondary {
     @apply rounded-pill border-2 border-brand-600 bg-white px-6 py-3 text-brand-600 font-semibold
            hover:bg-brand-600 hover:text-white transition
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2
            disabled:cursor-not-allowed disabled:opacity-50;
   }
 

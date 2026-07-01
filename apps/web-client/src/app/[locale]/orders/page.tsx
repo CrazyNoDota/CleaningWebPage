@@ -57,9 +57,7 @@ export default function OrdersListPage() {
           </p>
         )}
 
-        {orders === null && !error && (
-          <p className="mt-8 text-sm text-slate-500">{t('common.loading')}</p>
-        )}
+        {orders === null && !error && <OrdersListSkeleton />}
 
         {orders?.length === 0 && (
           <div className="mt-8 card text-center">
@@ -118,6 +116,37 @@ export default function OrdersListPage() {
         )}
       </main>
     </div>
+  );
+}
+
+/** Greyed placeholder list shown while orders load — keeps layout stable. */
+function OrdersListSkeleton() {
+  const t = useTranslations();
+  return (
+    <ul
+      className="mt-6 space-y-3"
+      role="status"
+      aria-label={t('common.loading')}
+    >
+      {Array.from({ length: 4 }).map((_, i) => (
+        <li
+          key={i}
+          className="card flex animate-pulse flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div className="min-w-0 space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="h-5 w-24 rounded-full bg-slate-200" />
+              <div className="h-3 w-16 rounded bg-slate-100" />
+            </div>
+            <div className="h-4 w-40 rounded bg-slate-200" />
+          </div>
+          <div className="shrink-0 space-y-2 sm:text-right">
+            <div className="h-5 w-24 rounded bg-slate-200 sm:ml-auto" />
+            <div className="h-3 w-16 rounded bg-slate-100 sm:ml-auto" />
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }
 

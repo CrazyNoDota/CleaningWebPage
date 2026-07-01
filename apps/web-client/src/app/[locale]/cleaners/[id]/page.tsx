@@ -46,13 +46,23 @@ export default async function CleanerProfilePage({
                   {cleaner.displayName}
                 </h1>
                 <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-ink-400">
-                  <span className="text-gold">
-                    {'★'.repeat(Math.round(cleaner.ratingAvg || 5)).padEnd(5, '☆')}
-                  </span>
-                  <span>
-                    {cleaner.ratingAvg.toFixed(1)} · {cleaner.ratingCount}{' '}
-                    {t('cleanerProfile.reviews').toLowerCase()}
-                  </span>
+                  {cleaner.ratingCount > 0 ? (
+                    <>
+                      <Stars
+                        rating={cleaner.ratingAvg}
+                        ariaLabel={t('rating.summaryWithCount', {
+                          avg: cleaner.ratingAvg.toFixed(1),
+                          count: cleaner.ratingCount,
+                        })}
+                      />
+                      <span>
+                        {cleaner.ratingAvg.toFixed(1)} · {cleaner.ratingCount}{' '}
+                        {t('cleanerProfile.reviews').toLowerCase()}
+                      </span>
+                    </>
+                  ) : (
+                    <span>{t('rating.none')}</span>
+                  )}
                   {cleaner.verified && (
                     <span className="rounded-pill bg-brand-100 px-3 py-1 text-brand-700">
                       {t('cleanerProfile.verified')}
@@ -107,7 +117,11 @@ export default async function CleanerProfilePage({
           ) : (
             <div className="mt-4 space-y-3">
               {reviews.map((review) => (
-                <ReviewCard key={review.id} review={review} />
+                <ReviewCard
+                  key={review.id}
+                  review={review}
+                  ratingLabel={t('rating.summary', { avg: String(review.rating) })}
+                />
               ))}
             </div>
           )}
@@ -142,13 +156,54 @@ function Stat({ value, label }: { value: string; label: string }) {
   );
 }
 
-function ReviewCard({ review }: { review: CleanerReview }) {
+const STAR_SLOTS = [0, 1, 2, 3, 4];
+
+function StarIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 shrink-0" aria-hidden>
+      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+    </svg>
+  );
+}
+
+/**
+ * Accessible star rating: a consistent SVG glyph with fractional fill and a
+ * numeric aria-label. Callers must guard the empty state (no reviews) and show
+ * a localized "no rating" label instead of rendering this.
+ */
+function Stars({ rating, ariaLabel }: { rating: number; ariaLabel: string }) {
+  const pct = (Math.max(0, Math.min(5, rating)) / 5) * 100;
+  return (
+    <span role="img" aria-label={ariaLabel} className="relative inline-flex leading-none">
+      <span aria-hidden className="flex text-slate-300">
+        {STAR_SLOTS.map((i) => (
+          <StarIcon key={i} />
+        ))}
+      </span>
+      <span
+        aria-hidden
+        className="absolute inset-y-0 left-0 flex overflow-hidden text-gold"
+        style={{ width: `${pct}%` }}
+      >
+        {STAR_SLOTS.map((i) => (
+          <StarIcon key={i} />
+        ))}
+      </span>
+    </span>
+  );
+}
+
+function ReviewCard({
+  review,
+  ratingLabel,
+}: {
+  review: CleanerReview;
+  ratingLabel: string;
+}) {
   return (
     <article className="rounded-2xl bg-white p-5 shadow-soft">
       <div className="flex items-center justify-between gap-3">
-        <div className="text-sm text-gold">
-          {'★'.repeat(review.rating).padEnd(5, '☆')}
-        </div>
+        <Stars rating={review.rating} ariaLabel={ratingLabel} />
         <time className="text-xs text-ink-400" dateTime={review.publishedAt ?? review.createdAt}>
           {formatDate(review.publishedAt ?? review.createdAt)}
         </time>

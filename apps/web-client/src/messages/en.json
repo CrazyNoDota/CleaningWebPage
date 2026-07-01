@@ -193,7 +193,14 @@
     "rating": "{avg} ({count})",
     "experience": "{years} years of experience",
     "verified": "Verified",
-    "live": "Status updates arrive in real time"
+    "live": "Status updates arrive in real time",
+    "stepIndicator": "Step {current} of {total}",
+    "progress": "Order progress"
+  },
+  "rating": {
+    "none": "No rating yet",
+    "summary": "{avg} out of 5",
+    "summaryWithCount": "{avg} out of 5 ({count, plural, one {# review} other {# reviews}})"
   },
   "cleanerProfile": {
     "back": "Back to specialists",
@@ -245,5 +252,16 @@
     "sending": "Uploading resume…",
     "fileTooLarge": "File is larger than 5 MB",
     "duplicateError": "An application from this phone was already submitted in the last 24 hours."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This page doesn't exist or may have been moved.",
+    "home": "Back to home"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "body": "An error occurred. Try refreshing the page or return to the home page.",
+    "retry": "Try again",
+    "home": "Back to home"
   }
 }

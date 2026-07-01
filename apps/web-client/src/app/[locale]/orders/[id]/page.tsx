@@ -127,8 +127,9 @@ export default function OrderPage() {
     return (
       <div className="min-h-screen flex flex-col">
         <SiteHeader />
-        <main className="flex-1 px-6 py-10 mx-auto max-w-3xl">
-          <p>{t('common.loading')}</p>
+        <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 px-4 py-8 sm:px-6 sm:py-10">
+          <h1 className="text-2xl font-bold text-slate-900">{t('order.title')}</h1>
+          <OrderDetailSkeleton />
         </main>
       </div>
     );
@@ -151,6 +152,8 @@ export default function OrderPage() {
           <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
         )}
 
+        {!order && !error && <OrderDetailSkeleton />}
+
         {order && (
           <>
             <section className="card">
@@ -169,18 +172,8 @@ export default function OrderPage() {
                   value={new Date(order.scheduledAt).toLocaleString(localeTag(locale))}
                 />
               )}
-              {/* Status timeline */}
-              <ol className="mt-6 grid grid-cols-7 gap-1 overflow-hidden">
-                {STATUS_ORDER.map((s, i) => (
-                  <li
-                    key={s}
-                    className={`h-1.5 rounded-full ${
-                      i <= stepIndex ? 'bg-brand-600' : 'bg-slate-200'
-                    }`}
-                    title={t(`status.${s}`)}
-                  />
-                ))}
-              </ol>
+              {/* Status stepper */}
+              <StatusStepper steps={STATUS_ORDER} currentIndex={stepIndex} />
               {order.status === 'created' && (
                 <button
                   type="button"
@@ -212,6 +205,113 @@ export default function OrderPage() {
           </>
         )}
       </main>
+    </div>
+  );
+}
+
+/**
+ * Accessible order-status stepper. Renders larger progress segments that
+ * distinguish completed / current / upcoming steps, a "Step N of M" counter,
+ * and visible localized labels for the current + adjacent steps. Statuses
+ * outside the happy path (draft / cancelled → currentIndex === -1) fall back
+ * to a plain empty track.
+ */
+function StatusStepper({
+  steps,
+  currentIndex,
+}: {
+  steps: OrderStatus[];
+  currentIndex: number;
+}) {
+  const t = useTranslations();
+  const total = steps.length;
+  const inFlow = currentIndex >= 0;
+  const prev = inFlow && currentIndex > 0 ? steps[currentIndex - 1] : null;
+  const current = inFlow ? steps[currentIndex] : null;
+  const next = inFlow && currentIndex < total - 1 ? steps[currentIndex + 1] : null;
+
+  return (
+    <div className="mt-6">
+      {inFlow && (
+        <div className="flex items-center justify-end">
+          <span className="text-xs font-medium text-slate-500">
+            {t('order.stepIndicator', { current: currentIndex + 1, total })}
+          </span>
+        </div>
+      )}
+
+      <ol className="mt-2 flex items-center gap-1.5" aria-label={t('order.progress')}>
+        {steps.map((s, i) => {
+          const done = i < currentIndex;
+          const isCurrent = i === currentIndex;
+          return (
+            <li
+              key={s}
+              className="flex-1"
+              aria-current={isCurrent ? 'step' : undefined}
+            >
+              <span
+                className={`block h-2.5 rounded-full transition-colors ${
+                  done
+                    ? 'bg-brand-600'
+                    : isCurrent
+                      ? 'bg-brand-600 ring-2 ring-brand-200'
+                      : 'bg-slate-200'
+                }`}
+              />
+              <span className="sr-only">{t(`status.${s}`)}</span>
+            </li>
+          );
+        })}
+      </ol>
+
+      {inFlow && current && (
+        <div className="mt-2 flex items-start justify-between gap-3 text-xs">
+          <span className="flex-1 truncate text-slate-400">
+            {prev ? t(`status.${prev}`) : ''}
+          </span>
+          <span className="flex-1 truncate text-center font-semibold text-brand-700">
+            {t(`status.${current}`)}
+          </span>
+          <span className="flex-1 truncate text-right text-slate-400">
+            {next ? t(`status.${next}`) : ''}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Greyed placeholder shown while the order is loading — keeps layout stable. */
+function OrderDetailSkeleton() {
+  const t = useTranslations();
+  return (
+    <div className="space-y-6" role="status" aria-label={t('common.loading')}>
+      <section className="card animate-pulse space-y-4">
+        <div className="flex items-baseline justify-between">
+          <div className="h-4 w-20 rounded bg-slate-200" />
+          <div className="h-5 w-32 rounded bg-slate-200" />
+        </div>
+        <div className="flex items-baseline justify-between">
+          <div className="h-4 w-16 rounded bg-slate-200" />
+          <div className="h-4 w-24 rounded bg-slate-200" />
+        </div>
+        <div className="mt-4 flex items-center gap-1.5">
+          {Array.from({ length: STATUS_ORDER.length }).map((_, i) => (
+            <div key={i} className="h-2.5 flex-1 rounded-full bg-slate-200" />
+          ))}
+        </div>
+      </section>
+      <section className="card animate-pulse">
+        <div className="h-4 w-32 rounded bg-slate-200" />
+        <div className="mt-4 flex items-center gap-4">
+          <div className="size-16 shrink-0 rounded-full bg-slate-200" />
+          <div className="flex-1 space-y-2">
+            <div className="h-4 w-40 rounded bg-slate-200" />
+            <div className="h-3 w-56 rounded bg-slate-100" />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
