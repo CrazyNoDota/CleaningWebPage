@@ -163,6 +163,10 @@ export default function BookScreen() {
     () => (selectedDay ? buildTimeSlots(selectedDay.date) : []),
     [selectedDay],
   );
+  // A booking is only valid when the chosen slot belongs to the currently
+  // selected day (and is still selectable). Guards against submitting a stale
+  // slot from a previously selected day.
+  const slotSelected = timeSlots.some((s) => s.value === scheduledAt && !s.disabled);
 
   useEffect(() => {
     listServices('ru')
@@ -242,6 +246,10 @@ export default function BookScreen() {
     }
     if (!selectedSlug) {
       setError('Выберите услугу');
+      return;
+    }
+    if (!slotSelected) {
+      setError('Выберите время');
       return;
     }
     if (!selectedAddress && (!street.trim() || !building.trim())) {
@@ -461,7 +469,13 @@ export default function BookScreen() {
                 return (
                   <Pressable
                     key={d.key}
-                    onPress={() => setSelectedDayKey(d.key)}
+                    onPress={() => {
+                      if (d.key === selectedDayKey) return;
+                      setSelectedDayKey(d.key);
+                      // Clear the previously selected slot so the user must pick
+                      // a time on the newly chosen day (avoids wrong-day submit).
+                      setScheduledAt('');
+                    }}
                     style={{
                       width: 64,
                       paddingVertical: t.space[3],
@@ -695,7 +709,7 @@ export default function BookScreen() {
         </ScrollView>
 
         <BottomActionBar>
-          <Button onPress={submit} disabled={busy || !selectedSlug}>
+          <Button onPress={submit} disabled={busy || !selectedSlug || !slotSelected}>
             {busy
               ? 'Создаем заказ...'
               : session

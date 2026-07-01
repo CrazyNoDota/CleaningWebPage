@@ -34,32 +34,62 @@ interface RequestOpts {
   auth?: boolean;
 }
 
+const DEFAULT_TIMEOUT_MS = 15_000;
+
+// Wrap fetch with an AbortController-based timeout so a flaky connection rejects
+// with a clear error instead of leaving the caller's spinner hanging forever.
+async function fetchWithTimeout(
+  url: string,
+  init: RequestInit,
+  timeoutMs = DEFAULT_TIMEOUT_MS,
+): Promise<Response> {
+  const controller = new AbortController();
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, timeoutMs);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } catch (err) {
+    if (timedOut) {
+      throw new ApiError(0, 'Превышено время ожидания запроса. Проверьте подключение к интернету.');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function request<T>(path: string, opts: RequestOpts = {}): Promise<T> {
   const headers: Record<string, string> = {
     'content-type': 'application/json',
   };
   if (opts.locale) headers['accept-language'] = opts.locale;
 
+  let usedToken: string | undefined;
   if (opts.auth !== false) {
     const session = await loadSession();
-    if (session?.accessToken) headers.authorization = `Bearer ${session.accessToken}`;
+    if (session?.accessToken) {
+      usedToken = session.accessToken;
+      headers.authorization = `Bearer ${usedToken}`;
+    }
   }
 
-  let res = await fetch(`${API_BASE}${path}`, {
+  const init: RequestInit = {
     method: opts.method ?? 'GET',
     headers,
     body: opts.body === undefined ? undefined : JSON.stringify(opts.body),
-  });
+  };
+
+  let res = await fetchWithTimeout(`${API_BASE}${path}`, init);
 
   if (res.status === 401 && opts.auth !== false) {
-    const refreshed = await tryRefresh();
+    const refreshed = await tryRefresh(usedToken);
     if (refreshed) {
+      // `init.headers` is this same object reference, so the retry picks it up.
       headers.authorization = `Bearer ${refreshed.accessToken}`;
-      res = await fetch(`${API_BASE}${path}`, {
-        method: opts.method ?? 'GET',
-        headers,
-        body: opts.body === undefined ? undefined : JSON.stringify(opts.body),
-      });
+      res = await fetchWithTimeout(`${API_BASE}${path}`, init);
     }
   }
 
@@ -78,16 +108,36 @@ async function request<T>(path: string, opts: RequestOpts = {}): Promise<T> {
   return (await res.json()) as T;
 }
 
-async function tryRefresh(): Promise<Session | null> {
+// Shared in-flight refresh: concurrent 401s await ONE refresh instead of each
+// consuming/rotating the single-use refresh token and racing each other out.
+let refreshPromise: Promise<Session | null> | null = null;
+
+function tryRefresh(usedToken?: string): Promise<Session | null> {
+  if (!refreshPromise) {
+    refreshPromise = doRefresh(usedToken).finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+}
+
+async function doRefresh(usedToken?: string): Promise<Session | null> {
   const session = await loadSession();
+  // A previous request already refreshed while this one was in flight — reuse
+  // the newer token instead of rotating the refresh token a second time.
+  if (usedToken && session?.accessToken && session.accessToken !== usedToken) {
+    return session;
+  }
   if (!session?.refreshToken) return null;
   try {
-    const res = await fetch(`${API_BASE}/auth/refresh`, {
+    const res = await fetchWithTimeout(`${API_BASE}/auth/refresh`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ refreshToken: session.refreshToken }),
     });
     if (!res.ok) {
+      // Genuine rejection (e.g. expired/invalid refresh token): sign out.
+      // saveSession/clearSession notify the session context via subscribeSession.
       await clearSession();
       return null;
     }
@@ -95,6 +145,7 @@ async function tryRefresh(): Promise<Session | null> {
     await saveSession(next);
     return next;
   } catch {
+    // Network/timeout failure — don't clear the session; a later request can retry.
     return null;
   }
 }
