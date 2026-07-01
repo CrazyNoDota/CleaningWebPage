@@ -24,14 +24,24 @@ export class ApiError extends Error {
   }
 }
 
+// ISR window (seconds) for public, rarely-changing catalog reads.
+export const CATALOG_REVALIDATE = 300;
+
 interface RequestOpts {
   method?: string;
   body?: unknown;
   locale?: Locale;
   auth?: boolean;
+  /**
+   * ISR revalidation window (seconds). Only applied to public
+   * (`auth: false`) GET reads; authenticated or mutating requests always
+   * stay dynamic with `cache: 'no-store'`.
+   */
+  revalidate?: number;
 }
 
 async function request<T>(path: string, opts: RequestOpts = {}): Promise<T> {
+  const method = opts.method ?? 'GET';
   const headers: Record<string, string> = {
     'content-type': 'application/json',
   };
@@ -43,20 +53,28 @@ async function request<T>(path: string, opts: RequestOpts = {}): Promise<T> {
     if (tok) headers.authorization = `Bearer ${tok}`;
   }
 
+  // Public, unauthenticated GET reads may be served from the ISR cache;
+  // everything authenticated or mutating stays dynamic (`no-store`).
+  const cacheInit: Pick<RequestInit, 'cache' | 'next'> =
+    opts.revalidate !== undefined && method === 'GET' && opts.auth === false
+      ? { next: { revalidate: opts.revalidate } }
+      : { cache: 'no-store' };
+
   let res = await fetch(`${API_BASE}${path}`, {
-    method: opts.method ?? 'GET',
+    method,
     headers,
     body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
-    cache: 'no-store',
+    ...cacheInit,
   });
 
-  // Single retry after refresh on 401.
+  // Single retry after refresh on 401. Authenticated by definition, so this
+  // path never uses the ISR cache.
   if (res.status === 401 && opts.auth !== false) {
     const refreshed = await tryRefresh();
     if (refreshed) {
       headers.authorization = `Bearer ${refreshed.accessToken}`;
       res = await fetch(`${API_BASE}${path}`, {
-        method: opts.method ?? 'GET',
+        method,
         headers,
         body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
         cache: 'no-store',
@@ -128,13 +146,18 @@ export async function googleLogin(idToken: string): Promise<Session> {
 
 export function listServices(locale: Locale, citySlug = 'astana') {
   const qs = new URLSearchParams({ city: citySlug, locale }).toString();
-  return request<Service[]>(`/services?${qs}`, { auth: false, locale });
+  return request<Service[]>(`/services?${qs}`, {
+    auth: false,
+    locale,
+    revalidate: CATALOG_REVALIDATE,
+  });
 }
 
 export function getService(slug: string, locale: Locale) {
   return request<Service>(`/services/${slug}?locale=${locale}`, {
     auth: false,
     locale,
+    revalidate: CATALOG_REVALIDATE,
   });
 }
 
@@ -225,13 +248,18 @@ export function listCleaners(locale: Locale, take = 12, skip = 0) {
     take: String(take),
     skip: String(skip),
   }).toString();
-  return request<CleanerCard[]>(`/cleaners?${qs}`, { auth: false, locale });
+  return request<CleanerCard[]>(`/cleaners?${qs}`, {
+    auth: false,
+    locale,
+    revalidate: CATALOG_REVALIDATE,
+  });
 }
 
 export function getCleaner(id: string, locale: Locale) {
   return request<CleanerCard>(`/cleaners/${id}?locale=${locale}`, {
     auth: false,
     locale,
+    revalidate: CATALOG_REVALIDATE,
   });
 }
 
@@ -240,7 +268,10 @@ export function listCleanerReviews(id: string, take = 20, skip = 0) {
     take: String(take),
     skip: String(skip),
   }).toString();
-  return request<CleanerReview[]>(`/cleaners/${id}/reviews?${qs}`, { auth: false });
+  return request<CleanerReview[]>(`/cleaners/${id}/reviews?${qs}`, {
+    auth: false,
+    revalidate: CATALOG_REVALIDATE,
+  });
 }
 
 // Payments
@@ -280,7 +311,10 @@ export function submitApplication(body: SubmitApplicationBody) {
 // ── Public settings (director routing) ─────────────────────────────
 
 export function getDirectorSettings() {
-  return request<DirectorSettings>('/public/settings/director', { auth: false });
+  return request<DirectorSettings>('/public/settings/director', {
+    auth: false,
+    revalidate: CATALOG_REVALIDATE,
+  });
 }
 
 // ── Reviews ─────────────────────────────────────────────────────────

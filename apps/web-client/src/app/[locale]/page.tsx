@@ -146,6 +146,11 @@ export default async function HomePage({
                 experienceLabel={t('home.experienceYears', {
                   years: cleaner.yearsOfExperience,
                 })}
+                ratingLabel={t('rating.summaryWithCount', {
+                  avg: cleaner.ratingAvg.toFixed(1),
+                  count: cleaner.ratingCount,
+                })}
+                noRatingLabel={t('rating.none')}
               />
             ))}
           </div>
@@ -338,6 +343,43 @@ function ServiceCard({
   );
 }
 
+const STAR_SLOTS = [0, 1, 2, 3, 4];
+
+function StarIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 shrink-0" aria-hidden>
+      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+    </svg>
+  );
+}
+
+/**
+ * Accessible star rating: a consistent SVG glyph with fractional fill and a
+ * numeric aria-label. Callers must guard the empty state (no reviews) and show
+ * a localized "no rating" label instead of rendering this.
+ */
+function Stars({ rating, ariaLabel }: { rating: number; ariaLabel: string }) {
+  const pct = (Math.max(0, Math.min(5, rating)) / 5) * 100;
+  return (
+    <span role="img" aria-label={ariaLabel} className="relative inline-flex leading-none">
+      <span aria-hidden className="flex text-slate-300">
+        {STAR_SLOTS.map((i) => (
+          <StarIcon key={i} />
+        ))}
+      </span>
+      <span
+        aria-hidden
+        className="absolute inset-y-0 left-0 flex overflow-hidden text-gold"
+        style={{ width: `${pct}%` }}
+      >
+        {STAR_SLOTS.map((i) => (
+          <StarIcon key={i} />
+        ))}
+      </span>
+    </span>
+  );
+}
+
 function WhyItem({ icon, title, body }: { icon: string; title: string; body: string }) {
   return (
     <div className="flex items-start gap-3">
@@ -355,9 +397,13 @@ function WhyItem({ icon, title, body }: { icon: string; title: string; body: str
 function CleanerCard({
   cleaner,
   experienceLabel,
+  ratingLabel,
+  noRatingLabel,
 }: {
   cleaner: CleanerCardModel;
   experienceLabel: string;
+  ratingLabel: string;
+  noRatingLabel: string;
 }) {
   return (
     <Link
@@ -375,8 +421,15 @@ function CleanerCard({
       </div>
       <div className="p-3 md:p-4">
         <div className="font-bold text-ink-900">{cleaner.displayName}</div>
-        <div className="text-sm text-gold">
-          {'★'.repeat(Math.round(cleaner.ratingAvg || 5)).padEnd(5, '☆')}
+        <div className="mt-1 flex justify-center">
+          {cleaner.ratingCount > 0 ? (
+            <Stars
+              rating={cleaner.ratingAvg}
+              ariaLabel={ratingLabel}
+            />
+          ) : (
+            <span className="text-xs text-ink-400">{noRatingLabel}</span>
+          )}
         </div>
         <div className="mt-1 text-xs text-ink-400">{experienceLabel}</div>
       </div>
