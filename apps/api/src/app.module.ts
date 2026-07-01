@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { PrismaExceptionFilter } from './common/prisma-exception.filter';
 import { PrismaModule } from './prisma/prisma.module';
 import { HealthModule } from './health/health.module';
 import { AuthModule } from './auth/auth.module';
@@ -45,6 +47,12 @@ const realtimeEnabled = process.env.DISABLE_REALTIME !== 'true';
     AdminMetricsModule,
     PaymentsModule,
     SettingsModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: PrismaExceptionFilter,
+    },
   ],
 })
 export class AppModule {}

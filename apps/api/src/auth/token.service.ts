@@ -58,11 +58,24 @@ export class TokenService {
     });
     if (!record) throw new UnauthorizedException('invalid refresh token');
 
+    // Deny rotation for deactivated or soft-deleted users: a disabled account
+    // must not keep minting access tokens for the lifetime of its refresh token.
+    // Revoke the presented token as well so it stops looking valid.
+    if (!record.user.isActive || record.user.deletedAt !== null) {
+      await this.prisma.refreshToken.update({
+        where: { id: record.id },
+        data: { revokedAt: new Date() },
+      });
+      throw new UnauthorizedException('user is not active');
+    }
+
     await this.prisma.refreshToken.update({
       where: { id: record.id },
       data: { revokedAt: new Date() },
     });
 
+    // issuePair re-stamps the role from the current DB user record, so a demoted
+    // user loses their elevated role on the next refresh.
     return this.issuePair(record.user);
   }
 
@@ -70,6 +83,17 @@ export class TokenService {
     const tokenHash = this.hashRefresh(rawRefresh);
     await this.prisma.refreshToken.updateMany({
       where: { tokenHash, revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
+  }
+
+  /**
+   * Revokes every active refresh token for a user. Call this when an account is
+   * deactivated or soft-deleted so existing sessions can no longer be refreshed.
+   */
+  async revokeAllForUser(userId: string): Promise<void> {
+    await this.prisma.refreshToken.updateMany({
+      where: { userId, revokedAt: null },
       data: { revokedAt: new Date() },
     });
   }

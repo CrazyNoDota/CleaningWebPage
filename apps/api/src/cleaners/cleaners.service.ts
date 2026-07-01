@@ -8,6 +8,7 @@ import { Cleaner, OrderStatus, UserRole, VerificationStatus } from '@prisma/clie
 import { randomBytes } from 'node:crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { TelegramService } from '../telegram/telegram.service';
+import { TokenService } from '../auth/token.service';
 import { type Locale, pickLocalized } from '../common/locale';
 import type { CreateCleanerDto } from './dto/create-cleaner.dto';
 import type { UpdateCleanerDto } from './dto/update-cleaner.dto';
@@ -17,6 +18,7 @@ export class CleanersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly telegram: TelegramService,
+    private readonly tokens: TokenService,
   ) {}
 
   /**
@@ -118,7 +120,7 @@ export class CleanersService {
     const existing = await this.prisma.cleaner.findUnique({ where: { id } });
     if (!existing) throw new NotFoundException(`cleaner "${id}" not found`);
 
-    return this.prisma.$transaction(async (tx) => {
+    const updated = await this.prisma.$transaction(async (tx) => {
       if (dto.name) {
         await tx.user.update({
           where: { id: existing.userId },
@@ -147,6 +149,14 @@ export class CleanersService {
 
       return tx.cleaner.update({ where: { id }, data });
     });
+
+    // Deactivating a cleaner cuts off their session: revoke the user's refresh
+    // tokens so the disabled account cannot mint new access tokens.
+    if (dto.isActive === false) {
+      await this.tokens.revokeAllForUser(existing.userId);
+    }
+
+    return updated;
   }
 
   // ── public-side (existing) ──────────────────────────────────────
