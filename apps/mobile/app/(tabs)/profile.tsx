@@ -16,13 +16,12 @@ import {
   Palette,
   ShieldCheck,
   Sparkles,
-  Star,
   Sun,
   Trash2,
   Users,
   UserPen,
 } from 'lucide-react-native';
-import { Button, Card, Muted, Screen, StatusChip, Title } from '@/components/ui';
+import { Button, Card, Muted, Screen, Title } from '@/components/ui';
 import { deleteAccount } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import { useTheme, useThemePref, type ThemePref } from '@/lib/theme-provider';
@@ -216,13 +215,6 @@ function ProfileHeader({ name, phone }: { name: string; phone: string }) {
         >
           {phone}
         </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.space[2], marginTop: t.space[1] }}>
-          <StatusChip label="Premium Plus" tone="brand" />
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-            <Star color={t.color.accent[500]} size={14} fill={t.color.accent[500]} />
-            <Text style={{ color: t.color.ink.secondary, fontSize: t.type.labelSm.fontSize }}>4.9</Text>
-          </View>
-        </View>
       </View>
       <Pressable
         accessibilityLabel="Редактировать"
@@ -252,14 +244,12 @@ function SettingsList() {
       <ListRow
         icon={<MapPin color={t.color.brand[500]} size={20} strokeWidth={2} />}
         title="Мои адреса"
-        subtitle="3 сохранённых места"
         onPress={() => comingSoon('Мои адреса')}
       />
       <Divider />
       <ListRow
         icon={<CreditCard color={t.color.brand[500]} size={20} strokeWidth={2} />}
         title="Способы оплаты"
-        subtitle="Kaspi Gold •••• 1245"
         onPress={() => comingSoon('Способы оплаты')}
       />
       <Divider />

@@ -12,12 +12,14 @@ import {
   getOrderCleaner,
   getPaymentStatus,
   initiatePayment,
+  listAddresses,
 } from '@/lib/api';
+import { loadSession } from '@/lib/auth';
 import { openPaymentAndAwait } from '@/lib/payment-flow';
-import { formatMoney, localeTag, statusLabel } from '@/lib/format';
+import { formatAddress, formatMoney, localeTag, statusLabel } from '@/lib/format';
 import { useSession } from '@/lib/session';
 import { useTheme } from '@/lib/theme-provider';
-import type { CleanerCard, Order, OrderStatus } from '@/lib/types';
+import type { Address, CleanerCard, Order, OrderStatus } from '@/lib/types';
 
 const TIMELINE: { status: OrderStatus; label: string }[] = [
   { status: 'created', label: 'Заказ размещён' },
@@ -34,6 +36,7 @@ export default function OrderDetailsScreen() {
   const { session } = useSession();
   const [order, setOrder] = useState<Order | null>(null);
   const [cleaner, setCleaner] = useState<CleanerCard | null>(null);
+  const [addresses, setAddresses] = useState<Address[] | null>(null);
   const [live, setLive] = useState(false);
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,12 +49,23 @@ export default function OrderDetailsScreen() {
     getOrderCleaner(id, 'ru')
       .then((res) => setCleaner(res.cleaner))
       .catch(() => undefined);
+    // The customer order endpoint returns only `addressId`; resolve the full
+    // address from the user's saved addresses (same source as the booking flow).
+    listAddresses()
+      .then(setAddresses)
+      .catch(() => setAddresses([]));
   }, [id, session]);
 
   useEffect(() => {
     if (!session || !id) return;
     const socket: Socket = io(`${WS_BASE}/realtime`, {
-      auth: { token: session.accessToken },
+      // Read the freshest token on every (re)connection attempt so a mid-session
+      // token refresh doesn't leave the socket authenticating with a stale token.
+      auth: (cb) => {
+        loadSession()
+          .then((s) => cb({ token: s?.accessToken ?? session.accessToken }))
+          .catch(() => cb({ token: session.accessToken }));
+      },
       transports: ['websocket'],
       reconnection: true,
     });
@@ -77,6 +91,11 @@ export default function OrderDetailsScreen() {
     if (!order) return -1;
     return TIMELINE.findIndex((s) => s.status === order.status);
   }, [order]);
+
+  const address = useMemo(
+    () => (order?.addressId ? addresses?.find((a) => a.id === order.addressId) ?? null : null),
+    [addresses, order],
+  );
 
   async function pay() {
     if (!order) return;
@@ -143,7 +162,7 @@ export default function OrderDetailsScreen() {
 
             <CleanerBlock cleaner={cleaner} />
 
-            <AddressBlock order={order} />
+            <AddressBlock order={order} address={address} resolving={addresses === null} />
 
             <SummaryBlock order={order} />
           </>
@@ -382,8 +401,19 @@ function IconAction({
   );
 }
 
-function AddressBlock({ order: _order }: { order: Order }) {
+function AddressBlock({
+  order,
+  address,
+  resolving,
+}: {
+  order: Order;
+  address: Address | null;
+  resolving: boolean;
+}) {
   const t = useTheme();
+  // Nothing real to show: order has no saved address, or it couldn't be
+  // resolved. Hide the block rather than render a fabricated city.
+  if (!order.addressId || (!address && !resolving)) return null;
   return (
     <View
       style={{
@@ -413,9 +443,21 @@ function AddressBlock({ order: _order }: { order: Order }) {
         <Text style={{ color: t.color.ink.secondary, fontSize: t.type.labelSm.fontSize, fontWeight: t.type.labelSm.fontWeight }}>
           АДРЕС УБОРКИ
         </Text>
-        <Text style={{ color: t.color.ink.primary, fontSize: t.type.bodyLg.fontSize, fontWeight: '600' }}>
-          Астана, Казахстан
-        </Text>
+        {address ? (
+          <Text style={{ color: t.color.ink.primary, fontSize: t.type.bodyLg.fontSize, fontWeight: '600' }}>
+            {formatAddress(address)}
+          </Text>
+        ) : (
+          <View
+            style={{
+              height: t.type.bodyLg.fontSize,
+              width: '70%',
+              marginTop: 4,
+              borderRadius: t.radius.sm,
+              backgroundColor: t.color.bg.sunken,
+            }}
+          />
+        )}
       </View>
     </View>
   );

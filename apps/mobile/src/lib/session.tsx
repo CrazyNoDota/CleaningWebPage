@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { registerDeviceToken } from './api';
-import { clearSession, loadSession, saveSession } from './auth';
+import { clearSession, loadSession, saveSession, subscribeSession } from './auth';
 import { getExpoPushToken } from './push';
 import type { Session } from './types';
 
@@ -22,6 +22,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       .then(setSessionState)
       .finally(() => setHydrated(true));
   }, []);
+
+  // Keep context in sync when the api layer refreshes or clears the session
+  // (e.g. a silent token refresh), so the UI and later requests use the fresh token.
+  useEffect(() => subscribeSession(setSessionState), []);
 
   useEffect(() => {
     if (!session) return;
